@@ -1,99 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Avatar Generator</title>
-<style>
-  body { background: #0d1117; color: #fff; text-align: center; font-family: Arial; padding: 20px; }
-  h1 { color: #58a6ff; }
-  input[type="file"] { margin: 15px 0; }
-  button {
-    background: #238636; color: white; padding: 10px 18px;
-    border: none; border-radius: 8px; cursor: pointer; font-size: 16px;
-  }
-  button:disabled { background: #555; cursor: not-allowed; }
-  img { margin-top: 20px; max-width: 100%; border-radius: 10px; border: 2px solid #58a6ff; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-<h1>AI Avatar Generator</h1>
-<p>Загрузите фото и получите уникальный стиль.<br>Первые 2 бесплатно!</p>
-
-<input type="file" id="photoInput" accept="image/*"><br>
-<button id="generateBtn">Сгенерировать</button><br>
-<button id="buyStarsBtn">Купить за звёзды</button>
-
-<div id="result"></div>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <button id="redirect">
+        Tap here
+    </button>
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-const userId = tg?.initDataUnsafe?.user?.id || null;
-if (!userId) {
-  alert("Не удалось получить ID пользователя из Telegram.");
-} else {
-  alert("Ваш Telegram ID: " + userId);
-}
-
-const photoInput = document.getElementById('photoInput');
-const generateBtn = document.getElementById('generateBtn');
-const buyStarsBtn = document.getElementById('buyStarsBtn');
-const resultDiv = document.getElementById('result');
-
-async function updateAttempts() {
-  alert("Обновление количества попыток...");
-  const res = await fetch(`/api/attempts?userId=${userId}`);
-  const data = await res.json();
-  alert("Оставшиеся попытки: " + data.attempts);
-  generateBtn.disabled = data.attempts <= 0;
-}
-
-generateBtn.addEventListener('click', async () => {
-  alert("Кнопка генерации нажата");
-  if (!photoInput.files.length) {
-    alert("Сначала выберите фото!");
-    return;
-  }
-
-  alert("Выбран файл: " + photoInput.files[0].name);
-
-  const formData = new FormData();
-  formData.append('photo', photoInput.files[0]);
-  formData.append('userId', userId);
-
-  alert("Отправка фото на сервер...");
-  const res = await fetch('/api/generate', { method: 'POST', body: formData });
-  const data = await res.json();
-
-  alert("Ответ сервера: " + JSON.stringify(data));
-
-  if (data.error) {
-    alert(data.error);
-  } else {
-    const img = document.createElement('img');
-    img.src = data.imageUrl;
-    resultDiv.innerHTML = "";
-    resultDiv.appendChild(img);
-    updateAttempts();
-  }
-});
-
-buyStarsBtn.addEventListener('click', async () => {
-  alert("Запрос покупки за звёзды...");
-  const res = await fetch(`/api/buy?userId=${userId}`);
-  const data = await res.json();
-  alert("Ответ сервера на покупку: " + JSON.stringify(data));
-  if (data.invoiceUrl) {
-    tg.openLink(data.invoiceUrl);
-  } else {
-    alert("Ошибка при создании счёта");
-  }
-});
-
-updateAttempts();
+    document.getElementById('redirect').addEventListener('click', function() {
+        window.location.href = 'dwdwdwwdw2.html';
+    });
 </script>
 </body>
 </html>

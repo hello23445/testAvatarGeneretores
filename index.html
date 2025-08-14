@@ -34,30 +34,41 @@ tg.expand();
 const userId = tg?.initDataUnsafe?.user?.id || null;
 if (!userId) {
   alert("Не удалось получить ID пользователя из Telegram.");
+} else {
+  alert("Ваш Telegram ID: " + userId);
 }
+
 const photoInput = document.getElementById('photoInput');
 const generateBtn = document.getElementById('generateBtn');
 const buyStarsBtn = document.getElementById('buyStarsBtn');
 const resultDiv = document.getElementById('result');
 
 async function updateAttempts() {
+  alert("Обновление количества попыток...");
   const res = await fetch(`/api/attempts?userId=${userId}`);
   const data = await res.json();
+  alert("Оставшиеся попытки: " + data.attempts);
   generateBtn.disabled = data.attempts <= 0;
 }
 
 generateBtn.addEventListener('click', async () => {
+  alert("Кнопка генерации нажата");
   if (!photoInput.files.length) {
     alert("Сначала выберите фото!");
     return;
   }
 
+  alert("Выбран файл: " + photoInput.files[0].name);
+
   const formData = new FormData();
   formData.append('photo', photoInput.files[0]);
   formData.append('userId', userId);
 
+  alert("Отправка фото на сервер...");
   const res = await fetch('/api/generate', { method: 'POST', body: formData });
   const data = await res.json();
+
+  alert("Ответ сервера: " + JSON.stringify(data));
 
   if (data.error) {
     alert(data.error);
@@ -71,8 +82,10 @@ generateBtn.addEventListener('click', async () => {
 });
 
 buyStarsBtn.addEventListener('click', async () => {
+  alert("Запрос покупки за звёзды...");
   const res = await fetch(`/api/buy?userId=${userId}`);
   const data = await res.json();
+  alert("Ответ сервера на покупку: " + JSON.stringify(data));
   if (data.invoiceUrl) {
     tg.openLink(data.invoiceUrl);
   } else {

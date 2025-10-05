@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <!-- Add Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        html, body {
+            overscroll-behavior-y: contain;
+        }
+        html {
+            scroll-behavior: smooth;  
+        }  
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #74ABE2, #5563DE);
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .left-section, .right-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        input.error, select.error, textarea.error {
+            border-color: red;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-in-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .radio-option:hover {
+            transform: translateY(-2px);
+            background-color: #e9ecef;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .radio-option label {
+            margin: 0;
+            flex-grow: 1;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Reduced gap between icon and text */
+        }
+
+        .radio-option label .icon-end {
+            margin-left: auto; /* Push end icon to the right */
+        }
+
+        .error-message, .success-message {
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .disabled-label {
+            color: white;
+        }
+
+        #noAttemptsMessage {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #noAttemptsModal .modal-content, #noAttemptsMessage .input-group {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #noAttemptsModal h2, #noAttemptsMessage h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        #noAttemptsModal p, #noAttemptsMessage p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #noAttemptsModal .input-group, #noAttemptsMessage .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #noAttemptsModal input, #noAttemptsMessage input {
+            padding: 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        #noAttemptsModal input:focus, #noAttemptsMessage input:focus {
+            border-color: #45a049;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+
+        #noAttemptsModal button, #noAttemptsMessage button {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #noAttemptsModal button:hover, #noAttemptsMessage button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .remember-me-group {
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .left-section, .right-section {
+                max-width: 100%;
+            }
+        }
+        .a1:hover {
+            color: blue;
+            text-decoration: underline;
+        }
+        .a1{
+            color: darkblue;
+        }
+        optgroup{
+            font-weight: normal;
+        }
+        #preloader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .preview img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="noAttemptsMessage" style="display: none;">
+        <div class="modal-content">
+            <h2>Попытки закончились</h2>
+            <p>У вас нет доступных генераций на сегодня. Загляните завтра!</p>
+            <div class="input-group">
+                <label for="promoCodeInitial">Введите промокод</label>
+                <input type="text" id="promoCodeInitial">
+            </div>
+            <button onclick="checkPromoCodeInitial()">Отправить</button>
+        </div>
+    </div>
+    <div id="mainContainer" class="container" style="display: none;">
+        <div class="left-section">
+            <div class="input-group">
+                <label for="quality">Качество фото</label>
+                <select id="quality">
+                    <option value="none" selected disabled>Выберите качество фото</option>
+                    <option value="144p">144p</option>
+                    <option value="240p">240p</option>
+                    <option value="360p">360p</option>
+                    <option value="480p">480p</option>
+                    <option value="720p60">720p60</option>
+                    <option value="1080p60">1080p60 (HD)</option>
+                    <option value="1440p60">1440p60 (HD)</option>
+                    <option value="2160p60" disabled>(Premium)2160p60 (4K)</option>
+                    <option value="4320p" disabled>(Premium)4320p (8K)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="size">Размер фото (в пикселях)</label>
+                <input type="text" id="sizeInput" placeholder="Buy Premium to type here" disabled>
+                <select id="sizeSelect">
+                    <option value="">Выберите размер</option>
+                    <option value="640x480">640x480</option>
+                    <option value="1280x720">1280x720</option>
+                    <option value="1600x900">1600x900</option>
+                    <option value="1920x1080" selected>1920x1080</option>
+                    <option value="2048x1152">2048x1152</option>
+                    <option value="2560x1080">2560x1080</option>
+                    <option value="2560x1440" disabled>(Premium)2560x1440</option>
+                    <option value="3840x2160" disabled>(Premium)3840x2160</option>
+                    <option value="4096x2160" disabled>(Premium)4096x2160 (DCI 4K)</option>
+                    <option value="5120x2880" disabled>(Premium)5120x2880 (5K)</option>
+                    <option value="7680x4320" disabled>(Premium)7680x4320 (8K UHD)</option>
+                    <option value="10240x4320" disabled>(Premium)10240x4320 (10K)</option>
+                    <option value="15360x8640" disabled>(Premium)15360x8640 (16K)</option>
+                    <option value="1200x1200" disabled>(Premium)1200x1200 (Square)</option>
+                    <option value="2048x2048" disabled>(Premium)2048x2048 (Square)</option>
+                    <option value="4096x4096" disabled>(Premium)4096x4096 (Square)</option>
+                    <option value="8192x8192" disabled>(Premium)8192x8192 (Square)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="style">Стиль фото</label>
+                <select id="style">
+                    <option value="none" selected>Без стиля</option>
+                    <option value="realistic">Реалистичный</option>
+                    <option value="cartoon">Мультяшный</option>
+                    <option value="watercolor">Акварель</option>
+                    <option value="oil-painting">Масляная живопись</option>
+                    <option value="sketch">Эскиз</option>
+                    <option value="cyberpunk">Киберпанк</option>
+                    <option value="retro">Ретро</option>
+                    <option value="minimalist">Минимализм</option>
+                    <option value="surreal">Сюрреализм</option>
+                    <option value="pop-art">Поп-арт</option>
+                    <option value="vintage">Винтаж</option>
+                    <option value="fantasy">Фэнтези</option>
+                    <option value="gothic">Готический</option>
+                    <option value="HDR">HDR</option>
+                    <option value="steampunk" disabled>(Premium)Стимпанк</option>
+                    <option value="abstract" disabled>(Premium)Абстрактный</option>
+                    <option value="baroque" disabled>(Premium)Барокко</option>
+                    <option value="futuristic" disabled>(Premium)Футуристический</option>
+                    <option value="pixel-art" disabled>(Premium)Пиксель-арт</option>
+                    <option value="impressionism" disabled>(Premium)Импрессионизм</option>
+                    <option value="pointillism" disabled>(Premium)Пуантилизм</option>
+                    <option value="cubism" disabled>(Premium)Кубизм</option>
+                    <option value="expressionism" disabled>(Premium)Экспрессионизм</option>
+                    <!-- Новые премиум стили -->
+                    <option value="low-poly" disabled>(Premium)Low Poly</option>
+                    <option value="line-art" disabled>(Premium)Линейный арт</option>
+                    <option value="noir" disabled>(Premium)Нуар</option>
+                    <option value="doodle" disabled>(Premium)Дудл</option>
+                    <option value="mosaic" disabled>(Premium)Мозаика</option>
+                    <option value="psychedelic" disabled>(Premium)Психоделика</option>
+                    <option value="glitch" disabled>(Premium)Глитч</option>
+                    <option value="vaporwave" disabled>(Premium)Vaporwave</option>
+                    <option value="comic" disabled>(Premium)Комикс</option>
+                    <option value="graffiti" disabled>(Premium)Граффити</option>
+                    <option value="chibi" disabled>(Premium)Чиби</option>
+                    <option value="dark-fantasy" disabled>(Premium)Тёмное фэнтези</option>
+                    <option value="synthwave" disabled>(Premium)Synthwave</option>
+                    <option value="flat" disabled>(Premium)Flat</option>
+                    <option value="paper-cut" disabled>(Premium)Paper Cut</option>
+                    <option value="digital-art" disabled>(Premium)Цифровое искусство</option>
+                    <option value="origami" disabled>(Premium) Оригами</option>
+                    <option value="neon" disabled>(Premium) Неон</option>
+                    <option value="fantastic-realism" disabled>(Premium) Фантастический реализм</option>
+                    <option value="bio-mechanic" disabled>(Premium) Биомеханика</option>
+                    <option value="medieval" disabled>(Premium) Средневековый</option>
+                    <option value="renaissance" disabled>(Premium) Ренессанс</option>
+                    <option value="ukiyo-e" disabled>(Premium) Укиё-э</option>
+                    <option value="low-light" disabled>(Premium) Низкая освещенность</option>
+                    <option value="dreamcore" disabled>(Premium) Dreamcore</option>
+                    <option value="gouache" disabled>(Premium) Гуашь</option>
+                    <option value="charcoal" disabled>(Premium) Угольный рисунок</option>
+                    <option value="isometric" disabled>(Premium) Изометрия</option>
+                    <option value="luxury" disabled>(Premium) Люксовый стиль</option>
+                    <option value="tribal" disabled>(Premium) Трайбл</option>
+                    <option value="space-art" disabled>(Premium) Космический стиль</option>
+                    <option value="holographic" disabled>(Premium) Голографический</option>
+                    <option value="ornamental" disabled>(Premium) Орнаментальный</option>
+                    <option value="mythology" disabled>(Premium) Мифология</option>
+
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="color-tone">Тон цвета фотографии</label>
+                <select id="color-tone">
+                    <option value="natural">Натуральный</option>
+                    <option value="warm">Теплый</option>
+                    <option value="cool">Холодный</option>
+                    <option value="monochrome">Монохромный</option>
+                    <option value="vibrant">Яркий</option>
+                    <option value="pastel" disabled>(Premium)Пастельный</option>
+                    <option value="sepia" disabled>(Premium)Сепия</option>
+                    <!-- Новые премиум тоны -->
+                    <option value="neon" disabled>(Premium)Неоновый</option>
+                    <option value="matte" disabled>(Premium)Матовый</option>
+                    <option value="metallic" disabled>(Premium)Металлик</option>
+                    <option value="gradient" disabled>(Premium)Градиентный</option>
+                    <option value="gold" disabled>(Premium)Золотой</option>
+                    <option value="silver" disabled>(Premium)Серебряный</option>
+                    <option value="pearl" disabled>(Premium)Перламутровый</option>
+                    <option value="dark" disabled>(Premium)Тёмный</option>
+                    <option value="light" disabled>(Premium)Светлый</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="detail-level">Уровень детализации фотографии</label>
+                <select id="detail-level">
+                    <option value="Низкий">Низкий</option>
+                    <option value="weak">Слабый</option>
+                    <option value="normal" selected>Нормальный</option>
+                    <option value="high" disabled>(Premium)Высокий</option>
+                    <option value="ultra" disabled>(Premium)Ультра</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="selector" style="margin-bottom: 0%;">Выберите ИИ, который будет генерировать для вас фотографию</label>
+                <select id="selector" style="margin-top: 0%; margin-block-end: 2%;">
+                    <optgroup label="По-умолчанию">
+                        <option value="Собственный" selected>Собственный</option>
+                    </optgroup>
+
+                    <optgroup label="Grok">
+                        <option value="Grok Mini">Grok Mini</option> <!-- бесплатный -->
+                        <option value="Grok Lite">Grok Lite</option> <!-- бесплатный -->
+                        <option value="Grok Nano">Grok Nano</option> <!-- бесплатный -->
+                        <option value="Grok Edge">Grok Edge</option> <!-- бесплатный -->
+                        <!-- премиум -->
+                        <option value="Grok AI" disabled>(Premium)Grok AI</option>
+                        <option value="Grok Classic" disabled>(Premium)Grok Classic</option>
+                        <option value="Grok 4" disabled>(Premium)Grok 4</option>
+                        <option value="Grok Pro" disabled>(Premium)Grok Pro</option>
+                    </optgroup>
+
+                    <optgroup label="OpenAI (ChatGPT)">
+                        <option value="ChatGPT-4o mini">ChatGPT-4o mini</option> <!-- бесплатный -->
+                        <option value="ChatGPT-3.5">ChatGPT-3.5</option> <!-- бесплатный -->
+                        <option value="ChatGPT-Free">ChatGPT Free</option> <!-- бесплатный -->
+                        <option value="ChatGPT-3">ChatGPT-3</option>
+                        <option value="ChatGPT-Turbo">ChatGPT-Turbo</option>
+                        <option value="ChatGPT 4">ChatGPT 4</option>
+
+                        <option value="ChatGPT 5" disabled>(Premium)ChatGPT 5</option>
+                        <option value="ChatGPT Plus" disabled>(Premium)ChatGPT Plus</option>
+                    </optgroup>
+
+                    <optgroup label="Google">
+                        <option value="Gemini">Gemini</option> <!-- бесплатный -->
+                        <option value="Google Bard">Google Bard</option> <!-- бесплатный -->
+                        <option value="Google Nano">Google Nano</option> <!-- бесплатный -->
+                        <option value="Google Assistant AI">Google Assistant AI</option>
+                        <!-- премиум -->
+                        <option value="Google AI Lab" disabled>(Premium)Google AI Lab</option>
+                        <option value="Google PaLM" disabled>(Premium)Google PaLM</option>
+                        <option value="Google DeepMind" disabled>(Premium)Google DeepMind</option>
+                    </optgroup>
+
+                    <optgroup label="Anthropic">
+                        <option value="Claude Haiku">Claude Haiku</option> <!-- бесплатный -->
+                        <option value="Claude Sonnet">Claude Sonnet</option> <!-- бесплатный -->
+                        <!-- премиум -->
+                        <option value="Claude 2" disabled>(Premium)Claude 2</option>
+                        <option value="Claude 3 Opus" disabled>(Premium)Claude 3 Opus</option>
+                    </optgroup>
+
+                    <optgroup label="Другие">
+                        <option value="Yandex Alisa">Yandex Alisa</option>
+                        <option value="Siri">Siri</option>
+                        <option value="DALL-E">DALL·E</option> <!-- бесплатный -->
+                        <option value="StableVoice">StableVoice</option> <!-- бесплатный -->
+                        <option value="RunwayML Basic">RunwayML Basic</option> <!-- бесплатный -->
+                        <option value="Perplexity AI">Perplexity AI</option> <!-- бесплатный -->
+                        <option value="Mistral Small">Mistral Small</option> <!-- бесплатный -->
+                        <option value="Ollama Lite">Ollama Lite</option> <!-- бесплатный -->
+                        <option value="Midjourney">Midjourney</option>
+                        <!-- премиум -->
+                        <option value="Llama 2" disabled>(Premium)Llama 2</option>
+                        <option value="Stable Diffusion" disabled>(Premium)Stable Diffusion</option>
+                        <option value="RunwayML Pro" disabled>(Premium)RunwayML Pro</option>
+                        <option value="Anthropic Claude" disabled>(Premium)Anthropic Claude</option>
+                        <option value="Mistral Large" disabled>(Premium)Mistral Large</option>
+                        <option value="Ollama Pro" disabled>(Premium)Ollama Pro</option>
+                    </optgroup>
+                </select>
+
+                <div>
+                <label for="photo_theme" style="margin-bottom: 0%;">Выберите фон фото</label><br>
+                <select id="photo_theme" style="margin-top: 0%; width: 100%;">
+                    <!-- Бесплатные -->
+                    <option value="Автоматический выбор фона" selected>Автоматический выбор фона</option>
+                    <option value="Прозрачный">Прозрачный</option>
+                    <option value="Разноцветный">Разноцветный</option>
+                    <option value="Темный">Темный</option>
+                    <option value="Заливка цветом">Заливка цветом</option>
+                    <option value="Статуя свободы">Статуя свободы</option>
+                    <option value="Горы">Горы</option>
+                    <option value="Пляж">Пляж</option>
+                    <option value="Космос">Космос</option>
+                    <option value="Закат">Закат</option>
+                    <option value="Лес">Лес</option>
+                    <option value="Озеро">Озеро</option>
+                    <option value="Снег">Снег</option>
+                    <option value="Пустыня">Пустыня</option>
+                    <option value="Футбольное поле">Футбольное поле</option>
+                    <option value="Абстракция">Абстракция</option>
+                    <option value="Акварель">Акварель</option>
+                    <option value="Мозаика">Мозаика</option>
+                    <option value="Ретро">Ретро</option>
+                    <option value="Минимализм">Минимализм</option>
+                    <option value="Киберпанк">Киберпанк</option>
+                    <option value="Эйфелева башня">Эйфелева башня</option>
+                    <option value="Случайный фон">Случайный фон</option>
+                    <option value="Фон с случайным городом">Фон с случайным городом</option>
+                    <option value="Северное сияние">Северное сияние</option>
+
+                    <!-- Премиум -->
+                    <option value="Город" disabled>(Premium) Город</option>
+                    <option value="Градиент" disabled>(Premium) Градиент</option>
+                    <option value="Тадж-Махал" disabled>(Premium) Тадж-Махал</option>
+                    <option value="Колизей" disabled>(Premium) Колизей</option>
+                    <option value="Великая китайская стена" disabled>(Premium) Великая китайская стена</option>
+                    <option value="Огни мегаполиса" disabled>(Premium) Огни мегаполиса</option>
+                    <option value="Фантастический мир" disabled>(Premium) Фантастический мир</option>
+                    <option value="Неон" disabled>(Premium) Неон</option>
+                    <option value="Океанские глубины" disabled>(Premium) Океанские глубины</option>
+                    <option value="Пещера кристаллов" disabled>(Premium) Пещера кристаллов</option>
+                    <option value="Галактика" disabled>(Premium) Галактика</option>
+                    <option value="Замок" disabled>(Premium) Замок</option>
+                    <option value="Футуризм" disabled>(Premium) Футуризм</option>
+                    <option value="Райский остров" disabled>(Premium) Райский остров</option>
+                </select>
+
+                    <label for="razmitiyPHON" style="user-select: none;">
+                        <input type="checkbox" id="razmitiyPHON">
+                        Размытие фона
+                    </label>
+                </div>
+                <div  style="margin-top: 4%;">
+                    <label for="fileInput" id="fileInputTextLabel">Вы можете загрузить фото для примера и так далее...(Premium)</label><br>
+                    <input type="file" id="fileInput" multiple accept="image/*" disabled>
+                    <button id="uploadButton" onclick="uploadPhotos()">Загрузить</button>
+                </div>
+                <div id="previews"></div>
+                <div id="preloader">Загрузка...</div>
+                <div id="result"></div>
+                
+                
+            </div>
+        </div>
+        <script>
+            var gasUrl = 'https://script.google.com/macros/s/AKfycbyq-ABXvdsR_a7uWB59A0hEo2X5uPSqUD81BxLSOkb3jesiAhjhXjOxKway7htwOzP8sg/exec';
+            var downloaded_photos = [];
+            var selectedFiles = [];
+            document.getElementById('fileInput').addEventListener('change', function() {
+                var newFiles = Array.from(this.files);
+                if (selectedFiles.length + newFiles.length > 4) {
+                    alert('Нельзя загружать больше 4 фото.');
+                    this.value = '';
+                    return;
+                }
+                selectedFiles.push(...newFiles);
+                displayPreviews();
+                this.value = '';
+            });
+
+            function displayPreviews() {
+                var previewsDiv = document.getElementById('previews');
+                previewsDiv.innerHTML = '';
+                selectedFiles.forEach(function(file, index) {
+                    var previewDiv = document.createElement('div');
+                    previewDiv.className = 'preview';
+                    var img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    var delBtn = document.createElement('button');
+                    delBtn.textContent = 'Удалить';
+                    delBtn.onclick = function() {
+                        selectedFiles.splice(index, 1);
+                        displayPreviews();
+                    };
+                    previewDiv.appendChild(img);
+                    previewDiv.appendChild(delBtn);
+                    previewsDiv.appendChild(previewDiv);
+                });
+            }
+
+            function uploadPhotos() {
+                console.log('Starting upload process. gasUrl:', gasUrl);
+                console.log('Current origin:', window.location.origin);
+                if (selectedFiles.length === 0) {
+                    console.error('No files selected');
+                    alert('Пожалуйста, выберите файлы для загрузки.');
+                    return;
+                }
+                if (selectedFiles.length > 4) {
+                    alert('Нельзя загружать больше 4 фото.');
+                    return;
+                }
+                console.log('Files selected:', selectedFiles.length);
+
+                var uploadBtn = document.getElementById('uploadButton');
+                uploadBtn.disabled = true;
+                var preloader = document.getElementById('preloader');
+                preloader.style.display = 'block';
+                document.getElementById('generate').disabled = true;
+
+                var promises = [];
+                for (var i = 0; i < selectedFiles.length; i++) {
+                    promises.push(readFileAsArrayBuffer(selectedFiles[i]));
+                }
+
+                Promise.all(promises).then(function(fileData) {
+                    console.log('Files read successfully:', fileData.length);
+                    fetch(gasUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(fileData),
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        mode: 'cors',
+                        credentials: 'omit'
+                    })
+                    .then(response => {
+                        console.log('Fetch response:', response.status, response.statusText);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP ${response.status}: ${text || response.statusText}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(links => {
+                        if (links.error) {
+                            throw new Error(links.error);
+                        }
+                        onSuccess(links);
+                    })
+                    .catch(error => onFailure(error));
+                }).catch(error => {
+                    console.error('Error reading files:', error);
+                    onFailure(error);
+                });
+            }
+
+            function readFileAsArrayBuffer(file) {
+                return new Promise(function(resolve, reject) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        console.log('File read:', file.name);
+                        resolve({
+                            filename: file.name,
+                            mimeType: file.type,
+                            bytes: [...new Uint8Array(e.target.result)]
+                        });
+                    };
+                    reader.onerror = function(error) {
+                        console.error('Error reading file:', file.name, error);
+                        reject(error);
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+            if (localStorage.getItem('downloaded_photos')){
+                localStorage.removeItem('downloaded_photos')
+            }
+            function onSuccess(links) {
+                console.log('Upload successful, links:', links);
+                // Нумеруем
+                const numbered = links.map((item, index) => `${index + 1}. ${item}`);
+                // Превращаем в строку с разделителем " , "
+                const downloaded_photos = numbered.join(' , ');
+
+                localStorage.setItem('downloaded_photos', downloaded_photos || 'Не загружено')
+                document.getElementById('result').innerHTML = 'Загружено успешно!';
+                setTimeout(() => {
+                    document.getElementById('result').style.display = 'none'
+                }, 3000);
+                console.log('downloaded_photos:', downloaded_photos);
+                resetUpload();
+            }
+
+            function onFailure(error) {
+                console.error('Upload failure:', error.message, error.stack);
+                let msg = error.message;
+                if (msg.includes('Failed to fetch') || msg.includes('CORS')) {
+                    msg += ' (Вероятно, проблема с CORS: проверьте развертывание GAS на "Anyone" и используйте text/plain для simple request)';
+                }
+                document.getElementById('result').innerHTML = 'Ошибка: ' + msg + '. Проверьте консоль для деталей.';
+                resetUpload();
+            }
+
+            function resetUpload() {
+                document.getElementById('generate').disabled = false
+                var uploadBtn = document.getElementById('uploadButton');
+                uploadBtn.disabled = false;
+                var preloader = document.getElementById('preloader');
+                preloader.style.display = 'none';
+                // Опционально: очистить selectedFiles и previews после успешной загрузки
+                // selectedFiles = [];
+                // displayPreviews();
+            }
+        </script>
+        <div class="right-section">
+            <div>
+                <label for="soot">Соотношение сторон</label>
+                <select id="soot" style="margin-top:1%;width: 100%;">
+                    <option value="1:1">1:1 (Квадрат)</option>
+                    <option value="3:2">3:2 (Классика фото)</option>
+                    <option value="4:3" disabled>(Premium) 4:3 (Фотоаппарат)</option>
+                    <option value="5:4">5:4 (Полароид)</option>
+                    <option value="9:16" selected>9:16 (Вертикаль / Сторис)</option>
+                    <option value="16:9" disabled>(Premium) 16:9 (Горизонталь / Видео)</option>
+                    <option value="2:3">2:3 (Портрет)</option>
+                    <option value="4:5">4:5 (Instagram-пост)</option>
+                    <option value="21:9" disabled>(Premium) 21:9 (Панорама / Кино)</option>
+                    <option value="32:9" disabled>(Premium) 32:9 (Ультраширокая панорама)</option>
+                    <option value="9:4">9:4 (Баннер / Обложка)</option>
+                    <option value="27:40">27:40 (Постер / Афиша)</option>
+                </select>
+
+            </div>
+            <div>
+                <label for="ram">Выберите рамку для фото</label>
+                <select id="ram" style="margin-top:1%;width:100%;">
+                    <optgroup label="🔹 Простые рамки">
+                        <option value="none" selected>Без рамки</option>
+                        <option value="simple">Обычная</option>
+                        <option value="rounded">Скруглённая</option>
+                        <option value="thick">Толстая</option>
+                        <option value="shadow">Тонкая с тенью</option>
+                    </optgroup>
+
+                    <optgroup label="🎨 Художественные рамки">
+                        <option value="gradient">Градиентная</option>
+                        <option value="neon">Неоновая</option>
+                        <option value="metallic" disabled>(Premium) Металлическая</option>
+                        <option value="watercolor">Акварельная</option>
+                        <option value="vintage">Ретро / Винтаж</option>
+                    </optgroup>
+
+                    <optgroup label="🌿 Тематические рамки">
+                        <option value="nature">Природная (листья, ветви)</option>
+                        <option value="fantasy">Фантастическая (сияние, орнаменты)</option>
+                        <option value="tech">Технологичная (цифровые линии)</option>
+                        <option value="space" disabled>(Premium) Космическая (звёзды, планеты)</option>
+                        <option value="holiday">Праздничная (гирлянды, конфетти)</option>
+                    </optgroup>
+
+                    <optgroup label="💎 Особые эффекты">
+                        <option value="strip">Рамка-полоса (сверху и снизу)</option>
+                        <option value="broken">Разорванная</option>
+                        <option value="transparent">Прозрачные края</option>
+                        <option value="glass">Фотообъём (стеклянная)</option>
+                        <option value="glitch" disabled>(Premium) Глитч / цифровой сбой</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div>
+                <label for="rakurs">Выберите ракурс фото</label>
+                <select id="rakurs" style="width: 100%;">
+                <!-- Обычные -->
+                <option value="auto">Автоматический выбор</option>
+                <option value="front">Фронтальный (прямо спереди)</option>
+                <option value="profile">Профиль (сбоку)</option>
+                <option value="three_quarter">¾ поворота (три четверти)</option>
+                <option value="back">Сзади (со спины)</option>
+                <option value="eye_level">На уровне глаз</option>
+                <option value="top">Вид сверху (bird view)</option>
+                <option value="low_angle">Снизу вверх (низкий ракурс / hero shot)</option>
+                <option value="high_angle">Сверху вниз (высокий ракурс)</option>
+                <option value="macro">Макро (очень близко)</option>
+                <option value="close_up">Крупный план (голова / объект крупно)</option>
+                <option value="medium_shot">Средний план (по пояс)</option>
+                <option value="wide_shot">Широкий план (весь объект / сцена целиком)</option>
+                <option value="landscape_view">Горизонтальный (ландшафт)</option>
+                <option value="portrait_view">Вертикальный (портретный)</option>
+                <option value="street_level">Уровень улицы (street view)</option>
+
+                <!-- Премиум -->
+                <option value="aerial" disabled>(Premium) Воздушный вид (с дрона / самолёта)</option>
+                <option value="isometric" disabled>(Premium) Изометрический (3D перспектива)</option>
+                <option value="perspective" disabled>(Premium) Перспективный (с глубиной поля)</option>
+                <option value="dynamic_angle" disabled>(Premium) Динамический угол (наклон камеры / action)</option>
+                <option value="tilt_shift" disabled>(Premium) Tilt-shift (эффект миниатюры)</option>
+                <option value="over_shoulder" disabled>(Premium) Через плечо (Over-the-shoulder)</option>
+                <option value="first_person" disabled>(Premium) От первого лица</option>
+                <option value="third_person" disabled>(Premium) От третьего лица</option>
+                <option value="cinematic" disabled>(Premium) Кинематографический (широкий формат)</option>
+                <option value="long_shot" disabled>(Premium) Дальний план (вид издалека)</option>
+                <option value="underground" disabled>(Premium) Подземный / низкий уровень</option>
+                <option value="diagonal_view" disabled>(Premium) Диагональный ракурс</option>
+                <option value="top_down" disabled>(Premium) Прямо сверху (вид 90° сверху)</option>
+                <option value="bottom_up" disabled>(Premium) Прямо снизу (вид 90° снизу)</option>
+                <option value="corner_view" disabled>(Premium) Из угла комнаты / здания</option>
+                <option value="depth_focus" disabled>(Premium) С глубиной резкости</option>
+                <option value="focus_pull" disabled>(Premium) Смена фокуса (передний/задний план)</option>
+                <option value="overhead" disabled>(Premium) Над объектом (обзорная точка)</option>
+                <option value="worm_eye" disabled>(Premium) С точки зрения червя (очень низкий ракурс)</option>
+                <option value="bird_eye" disabled>(Premium) С точки зрения птицы (высокий ракурс)</option>
+                <option value="angled_top" disabled>(Premium) Под углом сверху</option>
+                <option value="angled_bottom" disabled>(Premium) Под углом снизу</option>
+                <option value="45deg" disabled>(Premium) 45° ракурс</option>
+                <option value="90deg" disabled>(Premium) 90° ракурс</option>
+                <option value="panoramic" disabled>(Premium) Панорамный вид</option>
+                <option value="drone_view" disabled>(Premium) С дрона</option>
+                <option value="security_camera" disabled>(Premium) Камера наблюдения (CCTV)</option>
+                <option value="mirror_reflection" disabled>(Premium) Отражение в зеркале</option>
+                <option value="through_window" disabled>(Premium) Через окно / стекло</option>
+                <option value="behind_object" disabled>(Premium) Скрытый / из-за объекта</option>
+                <option value="fisheye" disabled>(Premium) Fisheye (широкоугольный эффект)</option>
+                <option value="zoomed_in" disabled>(Premium) Приближённый (zoom-in)</option>
+                <option value="zoomed_out" disabled>(Premium) Отдалённый (zoom-out)</option>
+                </select>
+            </div>
+            <div>
+                <label for="photo_count">Выберите нужное количество фото<br>(Cколько фотографий ИИ должен сгенерировать. Это дает выбирать лучший результат)</label><br>
+                <select id="photo_count" style="width: 100%;">
+                    <option value="1" selected>1</option>
+
+                    <option value="2">2</option>
+                    <option value="3" disabled>(Premium)3</option>
+                    <option value="4" disabled>(Premium)4</option>
+                    <option value="5" disabled>(Premium)5</option>
+                    <option value="6" disabled>(Premium)6</option>
+                    <option value="7" disabled>(Premium)7</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="text">Текст на фото(необязательно)</label>
+                <input type="text" id="text" maxlength="30" oninput="updateTextLimit()">
+                <div id="textCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/30</div>
+                <script>
+                    function updateTextLimit() {
+                        const textInput = document.getElementById('text');
+                        const textCounter = document.getElementById('textCounter');
+                        let maxLen = localStorage.getItem('premium') === 'true' ? 500 : 30;
+                        textInput.maxLength = maxLen;
+                        textCounter.textContent = textInput.value.length + '/' + maxLen;
+                    }
+                    window.addEventListener('DOMContentLoaded', updateTextLimit);
+                    document.getElementById('text').addEventListener('input', updateTextLimit);
+                </script>
+            </div>
+            <div class="input-group">
+                <label for="autoTextStyle" class="disabled-label" id="autoTextStyleLabel">
+                    <input type="checkbox" id="autoTextStyle" disabled> Автоматический выбор стиля текста
+                </label>
+            </div>
+            <div class="input-group">
+                <label for="exclusions">Чего на фото не должно быть?</label>
+                <input type="text" id="exclusions" disabled placeholder="Buy Premium to type here" maxlength="250" oninput="if(this.value.length>250)this.value=this.value.slice(0,250);">
+                <div id="exclusionsCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/250</div>
+                <script>
+                    function updateExclusionsLimit() {
+                        const exclusionsInput = document.getElementById('exclusions');
+                        const exclusionsCounter = document.getElementById('exclusionsCounter');
+                        let maxLen = 250;
+                        exclusionsInput.maxLength = maxLen;
+                        exclusionsCounter.textContent = exclusionsInput.value.length + '/' + maxLen;
+                    }
+                    window.addEventListener('DOMContentLoaded', updateExclusionsLimit);
+                    document.getElementById('exclusions').addEventListener('input', updateExclusionsLimit);
+                </script>
+            </div>
+            <div class="input-group">
+                <label for="description">Описание фото (обязательно)</label>
+                <textarea id="description" rows="4" required maxlength="250" oninput="updateDescriptionLimit()" placeholder="Пример: город будущего в неоне."></textarea>
+                <div id="descriptionCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/250</div>
+                <script>
+                    function updateDescriptionLimit() {
+                        const description = document.getElementById('description');
+                        const counter = document.getElementById('descriptionCounter');
+                        let maxLen = localStorage.getItem('premium') === 'true' ? 1000 : 250;
+                        description.maxLength = maxLen;
+                        counter.textContent = description.value.length + '/' + maxLen;
+                    }
+                    window.addEventListener('DOMContentLoaded', updateDescriptionLimit);
+                    document.getElementById('description').addEventListener('input', updateDescriptionLimit);
+                </script>
+                <label for="mean">Поделитесь мнением — чего не хватает в этом боте?(максимум 400 символов)</label>
+                <textarea id="mean" maxlength="400" placeholder="Необязательно"></textarea>
+            </div>
+            <p>
+            <label id="agreeLabel" style="user-select: none;">
+                <input type="checkbox" id="agree" accesskey="a">Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
+            </label>
+            </p>
+
+            <button onclick="checkBadWords()" accesskey="g" id="generate">Сгенерировать</button>
+            <button onclick="surpriseMode()" accesskey="w">Режим: Удиви меня</button>
+            <button onclick="BuyPremium()" style="margin-top: 0%;" accesskey="p">Купить Premium</button>
+            <div id="attemptsDisplay"><b>Осталось генераций: <span id="attemptsLeft"></span>/2</b></div>
+        </div>
+    </div>
+
+    <div id="noAttemptsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Попытки закончились</h2>
+            <p>У вас нет доступных генераций на сегодня. Загляните завтра!</p>
+            <div class="input-group">
+                <label for="promoCode">Введите промокод</label>
+                <input type="text" id="promoCode">
+            </div>
+            <button onclick="checkPromoCode()">Отправить</button>
+        </div>
+    </div>
+
+    <div id="promoClearModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Очистить промокод?</h2>
+            <p>У вас стоит промокод. Хотите очистить его и вернуть 2 генерации?</p>
+            <button onclick="clearPromoCode()">Да</button>
+            <button onclick="keepPromoCode()">Нет</button>
+        </div>
+    </div>
+
+    <div id="messengerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Выберите способ получения результата</h2>
+            <div class="radio-group">
+                <div class="radio-option" onclick="document.getElementById('whatsapp').click()">
+                    <input type="radio" name="messenger" id="whatsapp" value="whatsapp" disabled>
+                    <label for="whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        Отправить мне по WhatsApp <p id="p1">(Premium)</p>
+                        <i class="fa-brands fa-whatsapp icon-end"></i>
+                    </label>
+                </div>
+                <div class="radio-option" onclick="document.getElementById('email').click()">
+                    <input type="radio" name="messenger" id="email" value="email">
+                    <label for="email">
+                        <i class="fa-solid fa-envelope"></i>
+                        Отправить мне на почту
+                        <i class="fa-solid fa-envelope icon-end"></i>
+                    </label>
+                </div>
+                <div class="radio-option" onclick="document.getElementById('telegram').click()" >
+                    <input type="radio" name="messenger" id="telegram" value="telegram" disabled>
+                    <label for="telegram">
+                        <i class="fa-brands fa-telegram"></i>
+                        Отправить мне по Telegram <p id="p2">(Premium)</p>
+                        <i class="fa-brands fa-telegram icon-end"></i>
+                    </label>
+                </div>
+                <div class="radio-option" onclick="document.getElementById('telegramBot').click()">
+                    <input type="radio" name="messenger" id="telegramBot" value="telegramBot">
+                    <label for="telegramBot">
+                        <i class="fa-brands fa-telegram"></i>
+                        Отправить мне через Telegram бота
+                        <i class="fa-brands fa-telegram icon-end"></i>
+                    </label>
+                </div>
+            </div>
+            <div id="contactInput" style="display: none;">
+                <div class="input-group">
+                    <label id="contactLabel"></label>
+                    <input type="text" id="contact">
+                </div>
+                <div class="input-group remember-me-group">
+                    <label>
+                        <input type="checkbox" id="rememberMe"> Запомнить меня
+                    </label>
+                </div>
+                <div id="warning" class="warning" style="display: none;"></div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                <button id="continueButton" style="display: none;" onclick="handleContinue()">Продолжить</button>
+                <button onclick="goToMainMenu()">Главное меню</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="botUnlockModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Разблокируйте бота</h2>
+            <p>Чтобы получить результат, вы должны разблокировать этого бота, если он у вас заблокирован: <a href="https://t.me/NickNaymesBot" target="_blank">@NickNaymesBot</a></p>
+            <button onclick="proceedToSend()">Продолжить</button>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div id="successMessage" style="display: none;">
+                <h1 class="success-message">✨Творю волшебство!✨</h1>
+                <p>| Моё творение может занять около 2-х часов! |</p>
+                <p>!Вы не получите фото если оно нарушает наши правила!</p>
+            </div>
+            <div id="errorMessage" style="display: none;">
+                <h2 class="error-message">Ошибка: <span id="errorCode"></span></h2>
+                <button onclick="goBack()">Назад</button>
+            </div>
+        </div>
+    </div>
+    <div id="div1" style="display: none;">
+        <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
+        <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">1.</span>
+            Доступ к высоким разрешениям фото(2560x1440, 3840x2160, 4096x2160, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">2.</span>
+            Больше стилей (аниме, стимпанк, абстрактный, готический, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">3.</span>
+            Уровень детализации (высокий, ультра).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">4.</span>
+            Тон цвета (пастельный, сепия, неоновый, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">5.</span>
+            Возможность писать в закрытых полях.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">6.</span>
+            Доступ к высоким качествам (2160p60(4K), 4320p(8K)).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">7.</span>
+            Описание фото увеличевается с 250 до 1000 символов.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">8.</span>
+            Текст на фото увеличевается с 250 до 500 символов.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">9.</span>
+            Возможность выбирать ИИ (Grok 4, ChatGPT 5 и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">10.</span>
+            Возможность выбирать другие фоны фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">11.</span>
+            Возможность выбирать другие соотношения сторон.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">12.</span>
+            Возможность получить фото по WhatsApp и Telegram.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">13.</span>
+            Возможность выбирать другие рамки для фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">14.</span>
+            Возможность выбирать другие ракурсы для фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">15.</span>
+            Возможность выбирать количество фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">16.</span>
+            Возможность загружать фотографии для примера или для других вещей.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">17.</span>
+            Бесконечное количество генераций в день.
+            </li>
+        </ul>
+            </ol>
+        </ul>
+        <button onclick="removePremium()" id="removePremiumButton">Убрать премиум</button>
+        <h4>ℹ️Список со временнем будет пополняться</h4>
+        <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
+        <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
+        <button id="goto" onclick="Goto()">Перейти к покупке</button>
+        <button onclick="goToMainMenu()" style="margin-top: 1%;">Главное меню</button>
+    </div>
+    <div id="div2" style="display: none;">
+        <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a></h2>
+        <input type="text" id="promoCodeInput2" placeholder="Введите промокод, полученный от @Clickerstart_bot" style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
+        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
+        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
+    </div>
+
+    <script>
+        const badWords = ['порно', 'минет', 'голая', 'тварь', 'без одежды', 'Аллах', 'Аллаh', 'Allah', 'сосет', 'отсасывает', 'хуй', 'член', 'обнаженная']
+        const promoCodes = ['QWERTY', 'ASDFGH', 'ZXCVBN', '123456', 'PROMO2023'];
+        const BOT_TOKEN = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
+        const CHAT_ID = '6434781065';
+        const PROMO_CODE = 'QWERTY';
+        const MAX_DAILY_ATTEMPTS = 2;
+
+        const textInput = document.getElementById('text');
+        const autoTextStyle = document.getElementById('autoTextStyle');
+        const autoTextStyleLabel = document.getElementById('autoTextStyleLabel');
+        const descriptionInput = document.getElementById('description');
+        const sizeInput = document.getElementById('sizeInput');
+        const sizeSelect = document.getElementById('sizeSelect');
+        const exclusionsInput = document.getElementById('exclusions');
+        const qualitySelect = document.getElementById('quality');
+        const styleSelect = document.getElementById('style');
+        const colorToneSelect = document.getElementById('color-tone');
+        const detailLevelInput = document.getElementById('detail-level');
+        const mainContainer = document.getElementById('mainContainer');
+        const noAttemptsModal = document.getElementById('noAttemptsModal');
+        const promoClearModal = document.getElementById('promoClearModal');
+        const messengerModal = document.getElementById('messengerModal');
+        const botUnlockModal = document.getElementById('botUnlockModal');
+        const resultModal = document.getElementById('resultModal');
+        const contactInput = document.getElementById('contactInput');
+        const contactLabel = document.getElementById('contactLabel');
+        const continueButton = document.getElementById('continueButton');
+        const attemptsDisplay = document.getElementById('attemptsLeft');
+        const warning = document.getElementById('warning');
+        const noAttemptsMessage = document.getElementById('noAttemptsMessage');
+        const rememberMe = document.getElementById('rememberMe');
+
+        let formData = JSON.parse(localStorage.getItem('formData')) || {};
+        let contactData = JSON.parse(localStorage.getItem('contactData')) || { contact: '', messenger: '' };
+        let hasShownPromoClear = false;
+
+        let clickCount = 0;
+        let timer;
+        let admin = false;
+
+        // Hide keyboard on click outside input
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('input, textarea, select, button')) {
+                document.activeElement.blur();
+            }
+        });
+
+        function saveFormData() {
+            formData = {
+                text: textInput.value,
+                autoTextStyle: autoTextStyle.checked,
+                description: descriptionInput.value,
+                exclusions: exclusionsInput.value,
+                quality: qualitySelect.value,
+                size: sizeInput.value || sizeSelect.value,
+                style: styleSelect.value,
+                colorTone: colorToneSelect.value,
+                detailLevel: detailLevelInput.value || 'normal'
+            };
+            localStorage.setItem('formData', JSON.stringify(formData));
+        }
+
+        function restoreFormData() {
+            textInput.value = formData.text || '';
+            autoTextStyle.checked = formData.autoTextStyle || false;
+            autoTextStyle.disabled = !textInput.value.trim();
+            autoTextStyleLabel.className = autoTextStyle.disabled ? 'disabled-label' : '';
+            descriptionInput.value = formData.description || '';
+            exclusionsInput.value = formData.exclusions || '';
+            qualitySelect.value = formData.quality || 'none';
+            sizeInput.value = formData.size || '';
+            sizeSelect.value = formData.size || '';
+            styleSelect.value = formData.style || 'none';
+            colorToneSelect.value = formData.colorTone || 'natural';
+            detailLevelInput.value = formData.detailLevel || 'normal';
+        }
+
+        function getStoredData() {
+            return JSON.parse(localStorage.getItem('imageGeneratorData')) || {};
+        }
+
+        function setStoredData(data) {
+            localStorage.setItem('imageGeneratorData', JSON.stringify(data));
+        }
+
+        function checkAttempts() {
+            const data = getStoredData();
+            const today = new Date().toISOString().split('T')[0];
+            if (!data.date || data.date !== today) {
+                data.date = today;
+                data.attempts = 0;
+                data.promoCode = data.promoCode || null;
+                setStoredData(data);
+            }
+            let attemptsLeft;
+
+            if (localStorage.getItem('premium') === 'true') {
+                attemptsLeft = 999;
+            } else {
+            // здесь можно задать обычное количество попыток
+                attemptsLeft = MAX_DAILY_ATTEMPTS - data.attempts; 
+            }
+
+            attemptsDisplay.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
+            if (data.promoCode === PROMO_CODE) {
+                if (data.attempts >= 6 && !hasShownPromoClear) {
+                    hasShownPromoClear = true;
+                    promoClearModal.style.display = 'flex';
+                    mainContainer.style.display = 'none';
+                    return false;
+                }
+            } else if (data.attempts >= MAX_DAILY_ATTEMPTS) {
+                if (!data.promoCode) {
+                    noAttemptsMessage.style.display = 'block';
+                    mainContainer.style.display = 'none';
+                    return false;
+                } else if (data.attempts >= 6 && !hasShownPromoClear) {
+                    hasShownPromoClear = true;
+                    promoClearModal.style.display = 'flex';
+                    mainContainer.style.display = 'none';
+                    return false;
+                }
+            }
+
+            noAttemptsMessage.style.display = 'none';
+            mainContainer.style.display = 'flex';
+            hasShownPromoClear = false;
+            return true;
+        }
+
+        function incrementAttempts() {
+            const data = getStoredData();
+            data.attempts = (data.attempts || 0) + 1;
+            setStoredData(data);
+            const attemptsLeft = data.promoCode === PROMO_CODE ? 6 - data.attempts : MAX_DAILY_ATTEMPTS - data.attempts;
+            attemptsDisplay.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
+        }
+
+        function checkPromoCode() {
+            const promoInput = document.getElementById('promoCode');
+            if (promoInput.value === PROMO_CODE) {
+                const data = getStoredData();
+                data.promoCode = PROMO_CODE;
+                data.attempts = 0;
+                setStoredData(data);
+                noAttemptsModal.style.display = 'none';
+                mainContainer.style.display = 'flex';
+                checkAttempts();
+            } else {
+                warning.textContent = 'Неверный промокод';
+                warning.style.display = 'block';
+            }
+        }
+
+        function checkPromoCodeInitial() {
+            const promoInput = document.getElementById('promoCodeInitial');
+            if (promoInput.value === PROMO_CODE) {
+                const data = getStoredData();
+                data.promoCode = PROMO_CODE;
+                data.attempts = 0;
+                setStoredData(data);
+                noAttemptsMessage.style.display = 'none';
+                mainContainer.style.display = 'flex';
+                checkAttempts();
+            } else {
+                const messageDiv = noAttemptsMessage.querySelector('.modal-content');
+                const warningDiv = messageDiv.querySelector('.warning') || document.createElement('div');
+                warningDiv.className = 'warning';
+                warningDiv.textContent = 'Неверный промокод';
+                warningDiv.style.display = 'block';
+                messageDiv.appendChild(warningDiv);
+            }
+        }
+
+        function clearPromoCode() {
+            const data = getStoredData();
+            data.promoCode = null;
+            data.attempts = 0;
+            setStoredData(data);
+            promoClearModal.style.display = 'none';
+            noAttemptsModal.style.display = 'flex';
+        }
+
+        function keepPromoCode() {
+            promoClearModal.style.display = 'none';
+            mainContainer.style.display = 'flex';
+        }
+
+        textInput.addEventListener('input', () => {
+            autoTextStyle.disabled = !textInput.value.trim();
+            if (autoTextStyle.checked && !textInput.value.trim()) {
+                autoTextStyle.checked = false;
+            }
+            autoTextStyleLabel.className = autoTextStyle.disabled ? 'disabled-label' : '';
+            saveFormData();
+        });
+
+        sizeSelect.addEventListener('change', () => {
+            if (sizeSelect.value) {
+                sizeInput.value = sizeSelect.value;
+            }
+            saveFormData();
+        });
+
+        function validateInputs() {
+            let isValid = true;
+            [descriptionInput, sizeInput].forEach(input => {
+                input.classList.remove('error');
+                if (!input.value.trim()) {
+                    input.classList.add('error');
+                    isValid = false;
+                }
+            });
+
+            const sizePattern = /^\d+x\d+$/;
+            if (sizeInput.value && !sizePattern.test(sizeInput.value)) {
+                warning.textContent = 'Размер должен быть указан в формате пикселей (например, 1920x1080)';
+                warning.style.display = 'block';
+                sizeInput.classList.add('error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function generateImage() {
+            if (!validateInputs()) return;
+            saveFormData();
+            if (!checkAttempts()) {
+                if (getStoredData().promoCode) {
+                    promoClearModal.style.display = 'flex';
+                } else {
+                    noAttemptsModal.style.display = 'flex';
+                }
+                return;
+            }
+            messengerModal.style.display = 'flex';
+            if (contactData.messenger && rememberMe.checked) {
+                contactInput.style.display = 'block';
+                const contactField = contactInput.querySelector('input');
+                if (contactData.messenger === 'whatsapp') {
+                    contactLabel.textContent = 'Отправьте мне номер телефона привязанный к нужному аккаунту WhatsApp';
+                    contactField.placeholder = '+1234567890';
+                    contactField.type = 'text';
+                } else if (contactData.messenger === 'email') {
+                    contactLabel.textContent = 'Введите свой адрес электронной почты';
+                    contactField.placeholder = 'example@email.com';
+                    contactField.type = 'email';
+                } else if (contactData.messenger === 'telegram') {
+                    contactLabel.textContent = 'Введите свой Telegram @username или номер телефона в международном формате (+код)';
+                    contactField.placeholder = '@username или +1234567890';
+                    contactField.type = 'text';
+                } else if (contactData.messenger === 'telegramBot') {
+                    contactLabel.textContent = 'Введите свой Telegram ID';
+                    contactField.placeholder = '1234567890';
+                    contactField.type = 'text';
+                }
+                contactField.value = contactData.contact || '';
+                document.getElementById(contactData.messenger).checked = true;
+                continueButton.style.display = 'block';
+                warning.style.display = 'none';
+                rememberMe.checked = true;
+            }
+        }
+
+        document.querySelectorAll('input[name="messenger"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                contactInput.style.display = 'block';
+                const contactField = contactInput.querySelector('input');
+                if (radio.value === 'whatsapp') {
+                    contactLabel.textContent = 'Отправьте мне номер телефона привязанный к нужному аккаунту WhatsApp';
+                    contactField.placeholder = '+1234567890';
+                    contactField.type = 'text';
+                } else if (radio.value === 'email') {
+                    contactLabel.textContent = 'Введите свой адрес электронной почты';
+                    contactField.placeholder = 'example@email.com';
+                    contactField.type = 'email';
+                } else if (radio.value === 'telegram') {
+                    contactLabel.textContent = 'Введите свой Telegram @username или номер телефона в международном формате (+код)';
+                    contactField.placeholder = '@username или +1234567890';
+                    contactField.type = 'text';
+                } else if (radio.value === 'telegramBot') {
+                    contactLabel.textContent = 'Введите свой Telegram ID';
+                    contactField.placeholder = '1234567890';
+                    contactField.type = 'text';
+                }
+                continueButton.style.display = 'block';
+                warning.style.display = 'none';
+            });
+        });
+
+        function handleContinue() {
+            if (document.getElementById('telegram').disabled || document.getElementById('whatsapp').disabled) {
+                if (document.getElementById('telegram').checked || document.getElementById('whatsapp').checked){
+                    alert('Эти способы отправки доступны только в Premium-версии.');
+                    return;
+                }
+            }
+            const selectedMessenger = document.querySelector('input[name="messenger"]:checked');
+            if (!selectedMessenger) {
+                warning.textContent = 'Выберите способ отправки';
+                warning.style.display = 'block';
+                return;
+            }
+
+            const contact = contactInput.querySelector('input');
+            if (!contact.value.trim()) {
+                contact.classList.add('error');
+                warning.textContent = 'Введите контакт';
+                warning.style.display = 'block';
+                return;
+            }
+
+            const phoneRegex = /^\+\d{6,14}$/;
+            const telegramUsernameRegex = /^@[\w]{5,32}$/;
+            if (selectedMessenger.value === 'whatsapp') {
+                if (!phoneRegex.test(contact.value.trim())) {
+                    contact.classList.add('error');
+                    warning.textContent = 'Введите номер телефона в международном формате (например, +1234567890)';
+                    warning.style.display = 'block';
+                    return;
+                }
+            } else if (selectedMessenger.value === 'telegram') {
+                if (!phoneRegex.test(contact.value.trim()) && !telegramUsernameRegex.test(contact.value.trim())) {
+                    contact.classList.add('error');
+                    warning.textContent = 'Введите @username или номер телефона в международном формате (например, +1234567890)';
+                    warning.style.display = 'block';
+                    return;
+                }
+            } else if (selectedMessenger.value === 'email') {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(contact.value.trim())) {
+                    contact.classList.add('error');
+                    warning.textContent = 'Неверный формат электронной почты';
+                    warning.style.display = 'block';
+                    return;
+                }
+            } else if (selectedMessenger.value === 'telegramBot') {
+                const telegramIdPattern = /^\d{1,10}$/;
+                if (!telegramIdPattern.test(contact.value.trim())) {
+                    contact.classList.add('error');
+                    warning.textContent = 'ID должен содержать до 10 цифр';
+                    warning.style.display = 'block';
+                    return;
+                }
+            }
+
+            if (rememberMe.checked) {
+                contactData.contact = contact.value;
+                contactData.messenger = selectedMessenger.value;
+                localStorage.setItem('contactData', JSON.stringify(contactData));
+            } else {
+                contactData = { contact: '', messenger: '' };
+                localStorage.removeItem('contactData');
+            }
+
+            if (selectedMessenger.value === 'telegramBot') {
+                messengerModal.style.display = 'none';
+                botUnlockModal.style.display = 'flex';
+            } else {
+                proceedToSend();
+            }
+        }
+
+        function goBack() {
+            resultModal.style.display = 'none';
+            mainContainer.style.display = 'flex';
+            restoreFormData();
+        }
+
+        function goToMainMenu() {
+            messengerModal.style.display = 'none';
+            mainContainer.style.display = 'flex';
+            document.getElementById('div1').style.display = 'none';
+            restoreFormData();
+        }
+
+        function proceedToSend() {
+            const AI_selected = document.getElementById('selector').value;
+            const selectedMessenger = document.querySelector('input[name="messenger"]:checked').value;
+            const contact = contactInput.querySelector('input').value;
+            const autoTextStyleText = autoTextStyle.checked ? 'Автоматический выбор стиля текста включено.' : 'Автоматический выбор стиля текста выключено.';
+            const message = `
+1. Описание: ${descriptionInput.value}
+2. ИИ: ${AI_selected}
+3. Текст на фото: ${textInput.value || 'Not Specified'}
+4. Исключения: ${exclusionsInput.value || 'Not Specified'}
+5. Качество: ${qualitySelect.value}
+6. Размер: ${sizeInput.value || sizeSelect.value}
+7. Стиль: ${styleSelect.value}
+8. Тон цвета: ${colorToneSelect.value}
+9. Уровень детализации: ${detailLevelInput.value || 'normal'}
+10. ${autoTextStyleText}
+11. Фон фото: ${document.getElementById('photo_theme').value}
+12. Размытие фона: ${document.getElementById('razmitiyPHON').checked ? 'Включено' : 'Выключено'}
+13. Соотношение сторон фото: ${document.getElementById('soot').value}
+14. Выбранная рамка: ${document.getElementById('ram').value}
+15. Выбранный ракурс: ${document.getElementById('rakurs').value}
+16. Выбранное количество фото: ${document.getElementById('photo_count').value}
+17. Выбранные фотографии: ${localStorage.getItem('downloaded_photos') || 'Не загружено'}
+18. Мнение пользователя: ${document.getElementById('mean').value || 'Не указано'}
+19. Контакт: ${selectedMessenger} (${contact})
+            `;
+
+            incrementAttempts();
+
+            messengerModal.style.display = 'none';
+            botUnlockModal.style.display = 'none';
+            resultModal.style.display = 'flex';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            fetch('https://script.google.com/macros/s/AKfycbwW_N_tvHXz1M4Dce8iQsJob1ZZq8oiQFOE5n5IC21bqaMI2BE7LTx1L1agAilYxLCA/exec', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error updating spreadsheet:', error));
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.ok) {
+                    const storedData = getStoredData();
+                    storedData.attempts = Math.max(0, (storedData.attempts || 0) - 1);
+                    setStoredData(storedData);
+                    checkAttempts();
+                    document.getElementById('successMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorCode').textContent = data.error_code || 'Неизвестная ошибка';
+                }
+            })
+            .catch(error => {
+                const storedData = getStoredData();
+                storedData.attempts = Math.max(0, (storedData.attempts || 0) - 1);
+                setStoredData(storedData);
+                checkAttempts();
+                document.getElementById('successMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorCode').textContent = error.message || 'Ошибка';
+            });
+        }
+
+        window.onload = () => {
+            restoreFormData();
+            checkAttempts();
+            if (contactData.messenger && JSON.parse(localStorage.getItem('contactData'))) {
+                rememberMe.checked = true;
+            }
+        };
+
+        function BuyPremium(){
+            checkPremium()
+            document.getElementById('messengerModal').style.display = 'none';
+            document.getElementById('resultModal').style.display = 'none';
+            document.getElementById('noAttemptsModal').style.display = 'none';
+            document.getElementById('promoClearModal').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('div1').style.display = 'block';
+            if (localStorage.getItem('premium') !== 'true') {
+                document.getElementById('goto').style.display = 'block';
+            }
+            else {
+                document.getElementById('goto').style.display = 'none';
+                document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
+            }
+        }
+        function GoBackToPremiumScreen(){
+            checkAdmin();
+            document.getElementById('div2').style.display = 'none';
+            document.getElementById('div1').style.display = 'block';
+            document.getElementById('goto').style.display = 'block';
+            document.getElementById('promoCom').innerHTML = '';
+            if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
+                document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
+                localStorage.setItem('premiumCongratsShown', 'true');
+            }
+            if (localStorage.getItem('premium') === 'true') {
+                document.getElementById('removePremiumButton').style.display = 'block';
+            }
+            else {
+                document.getElementById('removePremiumButton').style.display = 'none';
+            }
+            checkPremium()
+        }
+        function CheckPromoCodeToPremium(){
+            if (localStorage.getItem('premium') === 'true') {
+                alert('Вы уже купили премиум!');
+                checkPremium()
+                return;
+            }
+            if (writtenPromos.includes(document.getElementById('promoCodeInput2').value) && localStorage.getItem('admin') !== 'true'){
+                alert('Вы уже использовали этот промокод!');
+                document.getElementById('promoCodeInput2').style.background = 'red';
+                document.getElementById('promoCodeInput2').style.borderColor = 'red';
+            }
+            else if (promoCodes.includes(document.getElementById('promoCodeInput2').value) && !writtenPromos.includes(document.getElementById('promoCodeInput2').value) || localStorage.getItem('admin') === 'true' && promoCodes.includes(document.getElementById('promoCodeInput2').value)){
+                localStorage.setItem('premium', 'true');
+                writtenPromos.push(document.getElementById('promoCodeInput2').value) || [];
+                localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
+                document.getElementById('promoCodeInput2').style.background = 'green';
+                document.getElementById('promoCodeInput2').style.borderColor = 'green';
+                checkPremium()
+                GoBackToPremiumScreen()
+                setTimeout(() => {
+                    alert('Промокод принят!\nВы получили премиум навсегда!');
+                }, 100);
+            }
+            else if (document.getElementById('promoCodeInput2').value === ''){
+                alert('Промокод не может быть пустым!');
+                document.getElementById('promoCodeInput2').style.borderColor = 'red';
+            }
+            else {
+                document.getElementById('promoCodeInput2').style.background = 'red';
+                setTimeout(() => {
+                    alert('Неверный промокод!');
+                }, 0.5);
+            }
+            document.getElementById('promoCodeInput2').value = '';
+        }
+        function checkRulesAgree(){
+            if (!document.getElementById('agree').checked) {
+                alert('Вы должны согласиться с правилами, чтобы продолжить.');
+                document.getElementById('agree').focus();
+                document.getElementById('agreeLabel').style.color = 'darkred';
+                
+                return false;
+            }
+            else{
+                checkPremiumOptions();
+            }
+            return true;
+            
+        }
+
+        function checkPremiumOptions(){
+            document.getElementById('quality').style.borderColor = ''
+            // Получаем все селекты на странице
+            const selects = document.querySelectorAll('select');
+
+            let foundPremium = false;
+
+            selects.forEach(select => {
+            // Получаем текст выбранной опции
+            const selectedText = select.options[select.selectedIndex].text;
+
+            if (selectedText.includes('Premium')) {
+                foundPremium = true;
+            }
+            });
+
+            if (foundPremium) {
+                checkPremium();
+                if (localStorage.getItem('premium') !== 'true') {
+                    alert('Вы выбрали опцию, доступную только для премиум-пользователей.\nПожалуйста, купите премиум, чтобы использовать эту опцию.');
+                }
+                else {
+                    generateImage()
+                }
+            }
+            else if (document.getElementById('quality').value === 'none'){
+                alert('Пожалуйста выберите качество фото.')
+                document.getElementById('quality').style.borderColor = 'red'
+            }
+            else if(descriptionInput.value.length > 250 && localStorage.getItem('premium') !== 'true') {
+                alert('Описание не может превышать 250 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 1000 символов.');
+            }
+            else if (textInput.value.length > 250 && localStorage.getItem('premium') !== 'true') {
+                alert('Текст на фото не может превышать 250 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 500 символов.');
+            }
+            else if (exclusionsInput.value.length > 250){
+                alert('Исключения не могут превышать 250 символов.');
+            }
+            else if (document.getElementById('exclusions').value && document.getElementById('exclusions').value !== '' && localStorage.getItem('premium') !== 'true'){
+                exclusionsInput.value = '';
+                generateImage();
+            }
+            else {
+                generateImage()
+            }
+
+        }
+        function removePremium(){
+            if (confirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(1/4)') && prompt('Введите "Убрать"(2/4)') === 'Убрать' && prompt('Введите "ПОДТВЕРЖДАЮ"(3/4)') === 'ПОДТВЕРЖДАЮ' && confirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(4/4)')) {
+                localStorage.removeItem('premium');
+                localStorage.setItem('premium', 'false');
+                localStorage.removeItem('premiumCongratsShown');
+                alert('Премиум успешно убран!');
+                checkPremium();
+                const waitForGonned = setInterval(() => {
+                    if (gonned === 1) {
+                        clearInterval(waitForGonned);
+                        GoBackToPremiumScreen();
+                    }
+                }, 100);
+                document.getElementById('selector').disabled = true;
+                location.reload();
+            }
+        }
+        function Goto(){
+            document.getElementById('div1').style.display = 'none';
+            document.getElementById('div2').style.display = 'block';
+            document.getElementById('goto').style.display = 'none';
+            document.getElementById('promoCom').innerHTML = '';
+        }
+        document.addEventListener('click', function (event) {
+            // Проверка на "пустое место" — без нажатия на интерактивные элементы
+            if (event.target === document.body) {
+                console.log("Активация/Деактивация начинается!");
+                clickCount++;
+
+                if (clickCount === 1) {
+                    // Запускаем 20-секундный таймер при первом клике
+                    timer = setTimeout(() => {
+                        clickCount = 0; // сброс
+                    }, 20000);
+                }
+
+                if (clickCount >= 15) {
+                    if (localStorage.getItem('admin') !== 'true') {
+                        admin = true;
+                        localStorage.setItem('admin', 'true');
+                        clearTimeout(timer); // останавливаем таймер
+                        console.log("Режим администратора активирован!", admin);
+                        clickCount = 0; // сброс
+                        alert("Режим администратора активирован!");
+                        checkAdmin();
+                        document.getElementById('voz').textContent = 'Вы в режиме администратора!';
+                    }
+                    else{
+                        checkAdmin();
+                        admin = false;
+                        localStorage.setItem('admin', 'false');
+                        clearTimeout(timer); // останавливаем таймер
+                        clickCount = 0; // сброс
+                        console.log("Режим администратора деактивирован!", admin);
+                        alert("Режим администратора деактивирован!");
+                        document.getElementById('voz').textContent = 'Возможности Premium-версии';
+                    }
+                }
+            }
+        });
+
+        function checkAdmin(){
+            if (localStorage.getItem('admin') === 'true') {
+                document.getElementById('voz').textContent = 'Вы в режиме администратора!';
+            } else {
+                document.getElementById('voz').textContent = 'Возможности Premium-версии';
+            }
+        }
+
+        function checkPremium(){
+            checkPremiumToUploadPhotos();
+            if (localStorage.getItem('premium') === 'true') {
+                // Открываем все премиум-поля и опции
+                let data = getStoredData();
+                gonned = 0;
+                data.attempts = 0;
+                setStoredData(data);
+                attemptsDisplay.textContent = 999999;
+                document.getElementById('removePremiumButton').style.display = 'block';
+                document.getElementById('goto').style.display = 'none';
+                document.getElementById('sizeInput').disabled = false;
+                document.getElementById('sizeInput').placeholder = '';
+                document.getElementById('exclusions').disabled = false;
+                document.getElementById('exclusions').placeholder = '';
+                document.getElementById('autoTextStyle').disabled = false;
+                document.getElementById('autoTextStyleLabel').classList.remove('disabled-label');
+                document.getElementById('description').maxLength = 1000;
+                document.getElementById('descriptionCounter').textContent = document.getElementById('description').value.length + '/1000';
+                
+                // Включаем все premium option в select-ах
+                document.querySelectorAll('option[disabled]').forEach(opt => {
+                    opt.disabled = false;
+                    opt.textContent = opt.textContent.replace('(Premium)', '').trim();
+                });
+
+                if (localStorage.getItem('writtenPromos')) {
+                    writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
+                } else {
+                    writtenPromos = [];
+                }
+            } else {
+                document.getElementById('removePremiumButton').style.display = 'none';
+                document.getElementById('goto').style.display = 'block';
+                document.getElementById('sizeInput').disabled = true;
+                document.getElementById('sizeInput').placeholder = 'Купите Premium, чтобы писать здесь';
+                document.getElementById('exclusions').disabled = true;
+                document.getElementById('exclusions').placeholder = 'Купите Premium, чтобы писать здесь';
+                document.getElementById('autoTextStyle').disabled = true;
+                document.getElementById('autoTextStyleLabel').classList.add('disabled-label');
+                exclusionsInput.value = '';
+
+                // Отключаем все premium option в select-ах
+                document.querySelectorAll('option').forEach(opt => {
+                    if (opt.textContent.includes('Premium') || opt.textContent.match(/^\(Premium\)/)) {
+                        opt.disabled = true;
+                    }
+                });
+                const gonned = 1;
+                if (localStorage.getItem('writtenPromos')) {
+                    writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
+                } else {
+                    writtenPromos = [];
+                }
+
+            }
+        }
+        function checkBadWords() {
+            if (localStorage.getItem('premium') === 'true') {
+                document.getElementById('telegram').disabled = false;
+                document.getElementById('whatsapp').disabled = false;
+                document.getElementById('p1').style.display = 'none';
+                document.getElementById('p2').style.display = 'none';
+            }
+            else {
+                document.getElementById('telegram').disabled = true;
+                document.getElementById('whatsapp').disabled = true;
+                document.getElementById('p1').style.display = 'block';
+                document.getElementById('p2').style.display = 'block';
+            }
+            const description = document.getElementById('description');
+            const text = document.getElementById('text');
+
+            const descValue = description.value.toLowerCase();
+            const textValue = text.value.toLowerCase();
+
+            // Проверяем: есть ли хотя бы одно запрещённое слово
+            const hasBadInDesc = badWords.some(word => descValue.includes(word));
+            const hasBadInText = badWords.some(word => textValue.includes(word));
+
+            if (hasBadInDesc && hasBadInText) {
+                alert("Описание и текст на фото содержат нецензурные слова, пожалуйста уберите их и попробуйте заново.");
+                description.style.background = 'red';
+                text.style.background = 'red';
+            } 
+            else if (hasBadInDesc) {
+                alert('Описание нарушает наши правила');
+                description.style.background = 'red';
+                text.style.background = '';
+            } 
+            else if (hasBadInText) {
+                alert('Текст на фото нарушает наши правила');
+                description.style.background = '';
+                text.style.background = 'red';
+            } 
+            else {
+                description.style.background = '';
+                text.style.background = '';
+                checkRulesAgree();
+            }
+        }
+
+        // New surprise mode functionality
+        let usedDescriptions = JSON.parse(localStorage.getItem('usedDescriptions')) || [];
+
+        const descriptions = [
+            { desc: 'Красивый закат над океаном с пальмами на переднем плане', category: 'nature' },
+            { desc: 'Футуристический город с летающими машинами и неоновыми огнями', category: 'sci-fi' },
+            { desc: 'Милый котенок, играющий с клубком ниток в уютной комнате', category: 'animals' },
+            { desc: 'Древний замок в тумане на вершине холма', category: 'fantasy' },
+            { desc: 'Абстрактная композиция из геометрических фигур в ярких цветах', category: 'abstract' },
+            { desc: 'Космический корабль, летящий через астероидное поле', category: 'space' },
+            { desc: 'Цветущий сад весной с бабочками и пчелами', category: 'nature' },
+            { desc: 'Супергерой в плаще, стоящий на крыше небоскреба ночью', category: 'comic' },
+            { desc: 'Подводный мир с коралловыми рифами и тропическими рыбами', category: 'ocean' },
+            { desc: 'Старинный паровоз, мчащийся по железной дороге в горах', category: 'vintage' },
+            { desc: 'Магический лес с светящимися грибами и феями', category: 'fantasy' },
+            { desc: 'Городской пейзаж с уличными музыкантами и прохожими', category: 'urban' },
+            { desc: 'Зимний лес с заснеженными деревьями и оленями', category: 'winter' },
+            { desc: 'Робот, танцующий в стиле диско под разноцветными огнями', category: 'fun' },
+            { desc: 'Древнеегипетская пирамида под звездным небом', category: 'historical' },
+            { desc: 'Веселый пикник на лужайке с друзьями и едой', category: 'lifestyle' },
+            { desc: 'Космическая станция с видом на Землю', category: 'space' },
+            { desc: 'Арт-деко интерьер с золотыми элементами и зеркалами', category: 'art' },
+            { desc: 'Дикий запад с ковбоями и лошадьми на фоне каньона', category: 'western' },
+            { desc: 'Мирный пруд с лилиями и лягушками на закате', category: 'nature' }
+            // Add more as needed to reduce repetitions
+        ];
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function getAvailableOptions(selectId, isPremium) {
+            const select = document.getElementById(selectId);
+            const options = Array.from(select.options).filter(opt => !opt.disabled && opt.value !== 'none' && opt.value !== '');
+            if (isPremium) {
+                // Include all, but since checkPremium enables them, it's fine
+            }
+            return options.map(opt => opt.value);
+        }
+
+        function surpriseMode() {
+            const isPremium = localStorage.getItem('premium') === 'true';
+
+            // Filter unused descriptions
+            let availableDescs = descriptions.filter(d => !usedDescriptions.includes(d.desc));
+
+            if (availableDescs.length === 0) {
+                // Reset if all used
+                usedDescriptions = [];
+                availableDescs = descriptions;
+            }
+
+            const randomDescObj = getRandomElement(availableDescs);
+            const randomDesc = randomDescObj.desc;
+            const category = randomDescObj.category;
+
+            usedDescriptions.push(randomDesc);
+            localStorage.setItem('usedDescriptions', JSON.stringify(usedDescriptions));
+
+            // Set description
+            descriptionInput.value = randomDesc;
+            updateDescriptionLimit();
+
+            // Clear other fields
+            textInput.value = '';
+            updateTextLimit();
+            exclusionsInput.value = '';
+            updateExclusionsLimit();
+            autoTextStyle.checked = false;
+            document.getElementById('razmitiyPHON').checked = Math.random() > 0.5;
+
+            // Select parameters based on category
+            // Quality
+            const qualities = getAvailableOptions('quality', isPremium);
+            qualitySelect.value = getRandomElement(qualities);
+
+            // Size
+            const sizes = getAvailableOptions('sizeSelect', isPremium);
+            sizeSelect.value = getRandomElement(sizes);
+            sizeInput.value = sizeSelect.value;
+
+            // Style - try to match category
+            const styles = getAvailableOptions('style', isPremium);
+            let suitableStyle = 'none';
+            if (category === 'nature') suitableStyle = 'realistic';
+            else if (category === 'sci-fi') suitableStyle = 'cyberpunk' || 'futuristic';
+            else if (category === 'fantasy') suitableStyle = 'fantasy' || 'dark-fantasy';
+            else if (category === 'abstract') suitableStyle = 'abstract' || 'surreal';
+            else if (category === 'comic') suitableStyle = 'comic' || 'pop-art';
+            else if (category === 'vintage') suitableStyle = 'vintage' || 'retro';
+            else if (category === 'space') suitableStyle = 'space-art' || 'futuristic';
+            // Fallback to random if not found or not available
+            if (!styles.includes(suitableStyle)) {
+                suitableStyle = getRandomElement(styles);
+            }
+            styleSelect.value = suitableStyle;
+
+            // Color tone
+            const colorTones = getAvailableOptions('color-tone', isPremium);
+            let suitableTone = 'natural';
+            if (category === 'sci-fi' || category === 'space') suitableTone = 'neon' || 'cool';
+            else if (category === 'fantasy' || category === 'winter') suitableTone = 'cool' || 'monochrome';
+            else if (category === 'nature' || category === 'ocean') suitableTone = 'vibrant' || 'warm';
+            if (!colorTones.includes(suitableTone)) {
+                suitableTone = getRandomElement(colorTones);
+            }
+            colorToneSelect.value = suitableTone;
+
+            // Detail level
+            const detailLevels = getAvailableOptions('detail-level', isPremium);
+            detailLevelInput.value = getRandomElement(detailLevels);
+
+            // AI selector - random from available
+            const aiOptions = Array.from(document.getElementById('selector').options).filter(opt => !opt.disabled).map(opt => opt.value);
+            document.getElementById('selector').value = getRandomElement(aiOptions);
+
+            // Photo theme
+            const themes = getAvailableOptions('photo_theme', isPremium);
+            document.getElementById('photo_theme').value = getRandomElement(themes);
+
+            // Aspect ratio
+            const aspects = getAvailableOptions('soot', isPremium);
+            document.getElementById('soot').value = getRandomElement(aspects);
+
+            // If premium, maybe set exclusions or text
+            if (isPremium) {
+                if (Math.random() > 0.7) {
+                    exclusionsInput.value = 'Без людей';
+                }
+                if (Math.random() > 0.8) {
+                    textInput.value = 'Удивительно!';
+                    autoTextStyle.checked = true;
+                }
+            }
+
+            saveFormData();
+            alert('Готово! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
+        }
+
+
+        function checkPremiumToUploadPhotos(){
+            if (localStorage.getItem('premium') === 'true'){
+                document.getElementById('fileInput').disabled = false
+                const label = document.getElementById('fileInputTextLabel');
+                label.textContent = label.textContent.replace('(Premium)', '');
+            }
+            else{
+                document.getElementById('fileInput').disabled = true
+                const label = document.getElementById('fileInputTextLabel');
+                if (!label.textContent.includes('(Premium)')){
+                    label.textContent = label.textContent + '(Premium)'
+                }
+            }
+        }
+
+        checkPremiumToUploadPhotos();
+        checkAdmin();
+        checkPremium();
+    </script>
+</body>
+</html>

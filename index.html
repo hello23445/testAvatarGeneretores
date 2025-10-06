@@ -564,28 +564,36 @@
         </div>
         <script>
             document.addEventListener('keydown', (event) => {
-                if (document.getElementById('mainContainer').style.display === 'flex' && document.getElementById('messengerModal').style.display != 'flex'){
+                const active = document.activeElement;
+                const isTyping =
+                    active.tagName === 'INPUT' ||
+                    active.tagName === 'TEXTAREA' ||
+                    active.tagName === 'SELECT' ||
+                    active.isContentEditable;
+
+                // если пользователь вводит текст — ничего не делаем
+                if (isTyping) return;
+
+                // дальше — твоя логика
+                if (document.getElementById('mainContainer').style.display === 'flex' &&
+                    document.getElementById('messengerModal').style.display != 'flex') {
+
                     if (event.key === '1') {
                         checkBadWords();
                     }
-                    else if (event.key === '2'){
-                        surpriseMode()
+                    else if (event.key === '2') {
+                        surpriseMode();
                     }
-                    else if (event.key === '3'){
+                    else if (event.key === '3') {
                         BuyPremium();
                     }
                     else if (event.key === '4') {
                         const agree = document.getElementById('agree');
                         if (agree) {
-                            agree.checked = !agree.checked; // ← переключаем состояние
+                            agree.checked = !agree.checked;
                         }
                     }
-                    else{
-                        return true;
-                    }
-
                 }
-
             });
 
             var gasUrl = 'https://script.google.com/macros/s/AKfycbyq-ABXvdsR_a7uWB59A0hEo2X5uPSqUD81BxLSOkb3jesiAhjhXjOxKway7htwOzP8sg/exec';

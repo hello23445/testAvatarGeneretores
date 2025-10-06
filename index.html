@@ -551,8 +551,8 @@
                     </label>
                 </div>
                 <div  style="margin-top: 4%;">
-                    <label for="fileInput" id="fileInputTextLabel">Вы можете загрузить фото для примера и так далее...(Premium)</label><br>
-                    <input type="file" id="fileInput" multiple accept="image/*" disabled>
+                    <label for="fileInput" id="fileInputTextLabel">Вы можете загрузить фото для примера и так далее...</label><br>
+                    <input type="file" id="fileInput" multiple accept="image/*">
                     <button id="uploadButton" onclick="uploadPhotos()">Загрузить</button>
                 </div>
                 <div id="previews"></div>
@@ -563,16 +563,39 @@
             </div>
         </div>
         <script>
+            document.addEventListener('keydown', (event) => {
+                if (event.key === '1' && document.getElementById('div1').style.display != 'block') {
+                    checkBadWords();
+                }
+                else if (event.key === '2'){
+                    surpriseMode()
+                }
+                else if (event.key === '3'){
+                    BuyPremium();
+                }
+                else if (event.key === '4') {
+                    const agree = document.getElementById('agree');
+                    if (agree) {
+                        agree.checked = !agree.checked; // ← переключаем состояние
+                    }
+                }
+
+            });
+
             var gasUrl = 'https://script.google.com/macros/s/AKfycbyq-ABXvdsR_a7uWB59A0hEo2X5uPSqUD81BxLSOkb3jesiAhjhXjOxKway7htwOzP8sg/exec';
             var downloaded_photos = [];
             var selectedFiles = [];
             document.getElementById('fileInput').addEventListener('change', function() {
                 var newFiles = Array.from(this.files);
-                if (selectedFiles.length + newFiles.length > 4) {
-                    alert('Нельзя загружать больше 4 фото.');
+                const isPremium = localStorage.getItem('premium') === 'true';
+                const maxFiles = isPremium ? 10 : 2;
+
+                if (selectedFiles.length + newFiles.length > maxFiles) {
+                    alert('Нельзя загружать больше ' + maxFiles + ' фото.');
                     this.value = '';
                     return;
                 }
+
                 selectedFiles.push(...newFiles);
                 displayPreviews();
                 this.value = '';
@@ -606,8 +629,10 @@
                     alert('Пожалуйста, выберите файлы для загрузки.');
                     return;
                 }
-                if (selectedFiles.length > 4) {
-                    alert('Нельзя загружать больше 4 фото.');
+                const isPremium = localStorage.getItem('premium') === 'true';
+                const maxFiles = isPremium ? 10 : 2;
+                if (selectedFiles.length > maxFiles) {
+                    alert('Нельзя загружать больше '+ maxFiles + ' фото.');
                     return;
                 }
                 console.log('Files selected:', selectedFiles.length);
@@ -896,13 +921,13 @@
             </div>
             <p>
             <label id="agreeLabel" style="user-select: none;">
-                <input type="checkbox" id="agree" accesskey="a">Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
+                <input type="checkbox" id="agree" accesskey="a">[4] Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
             </label>
             </p>
-
-            <button onclick="checkBadWords()" accesskey="g" id="generate">Сгенерировать</button>
-            <button onclick="surpriseMode()" accesskey="w">Режим: Удиви меня</button>
-            <button onclick="BuyPremium()" style="margin-top: 0%;" accesskey="p">Купить Premium</button>
+            
+            <button onclick="checkBadWords()" accesskey="g" id="generate">[1] Сгенерировать</button>
+            <button onclick="surpriseMode()" accesskey="w">[2] Режим: Удиви меня</button>
+            <button onclick="BuyPremium()" style="margin-top: 0%;" accesskey="p">[3] Купить Premium</button>
             <div id="attemptsDisplay"><b>Осталось генераций: <span id="attemptsLeft"></span>/2</b></div>
         </div>
     </div>
@@ -1752,7 +1777,6 @@
         }
 
         function checkPremium(){
-            checkPremiumToUploadPhotos();
             if (localStorage.getItem('premium') === 'true') {
                 // Открываем все премиум-поля и опции
                 let data = getStoredData();
@@ -1991,24 +2015,6 @@
             saveFormData();
             alert('Готово! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
         }
-
-
-        function checkPremiumToUploadPhotos(){
-            if (localStorage.getItem('premium') === 'true'){
-                document.getElementById('fileInput').disabled = false
-                const label = document.getElementById('fileInputTextLabel');
-                label.textContent = label.textContent.replace('(Premium)', '');
-            }
-            else{
-                document.getElementById('fileInput').disabled = true
-                const label = document.getElementById('fileInputTextLabel');
-                if (!label.textContent.includes('(Premium)')){
-                    label.textContent = label.textContent + '(Premium)'
-                }
-            }
-        }
-
-        checkPremiumToUploadPhotos();
         checkAdmin();
         checkPremium();
     </script>

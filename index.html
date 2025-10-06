@@ -564,20 +564,23 @@
         </div>
         <script>
             document.addEventListener('keydown', (event) => {
-                if (event.key === '1' && document.getElementById('div1').style.display != 'block') {
-                    checkBadWords();
-                }
-                else if (event.key === '2'){
-                    surpriseMode()
-                }
-                else if (event.key === '3'){
-                    BuyPremium();
-                }
-                else if (event.key === '4') {
-                    const agree = document.getElementById('agree');
-                    if (agree) {
-                        agree.checked = !agree.checked; // ← переключаем состояние
+                if (document.getElementById('mainContainer').style.display === 'flex' && document.getElementById('messengerModal').style.display != 'flex'){
+                    if (event.key === '1') {
+                        checkBadWords();
                     }
+                    else if (event.key === '2'){
+                        surpriseMode()
+                    }
+                    else if (event.key === '3'){
+                        BuyPremium();
+                    }
+                    else if (event.key === '4') {
+                        const agree = document.getElementById('agree');
+                        if (agree) {
+                            agree.checked = !agree.checked; // ← переключаем состояние
+                        }
+                    }
+
                 }
 
             });

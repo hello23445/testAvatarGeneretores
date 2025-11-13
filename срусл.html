@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор фото с ИИ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #imageContainer {
+            max-width: 512px;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #loading {
+            display: none;
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Бесплатный генератор фото с ИИ</h1>
+    <form id="imageForm">
+        <input type="text" id="prompt" placeholder="Введите описание (например, 'кот в космосе')" required>
+        <button type="submit">Генерировать</button>
+    </form>
+    <div id="loading">Генерация изображения...</div>
+    <div id="imageContainer"></div>
+
+    <script>
+        const form = document.getElementById('imageForm');
+        const promptInput = document.getElementById('prompt');
+        const loading = document.getElementById('loading');
+        const imageContainer = document.getElementById('imageContainer');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+
+            loading.style.display = 'block';
+            imageContainer.innerHTML = '';
+
+            try {
+                const encodedPrompt = encodeURIComponent(prompt);
+                const seed = Math.floor(Math.random() * 1000000); // Рандомный seed для вариаций
+                const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&model=flux&nologo=true`;
+
+                // Проверяем, загрузилось ли изображение
+                const img = new Image();
+                img.src = url;
+                img.alt = prompt;
+                img.onload = () => {
+                    loading.style.display = 'none';
+                    imageContainer.appendChild(img);
+                };
+                img.onerror = () => {
+                    loading.style.display = 'none';
+                    imageContainer.innerHTML = '<p>Ошибка генерации. Попробуйте другой промпт.</p>';
+                };
+            } catch (error) {
+                loading.style.display = 'none';
+                imageContainer.innerHTML = '<p>Произошла ошибка.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

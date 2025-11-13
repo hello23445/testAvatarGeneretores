@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Доступ заблокирован</title>
+  <style>
+    :root {
+      --bg-color: #001f5b;
+      --text-color: #fff;
+      --button-bg: #007bff;
+      --button-hover: #0056d2;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h3 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    button {
+      background-color: var(--button-bg);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <h3>Вы заблокированы</h3>
+  <button onclick="window.location.href='https://t.me/Clickerstart_bot'">
+    Служба поддержки
+  </button>
+  <button id="tokenBtn" style="margin-top: 1%;"></button>
+  <script>
+    const tokenBtn = document.getElementById('tokenBtn');
+    const token = localStorage.getItem('user_Token');
+
+    if (token) {
+      tokenBtn.textContent = `Токен: ${token}`;
+      tokenBtn.onclick = () => {
+        navigator.clipboard.writeText(token).then(() => {
+          tokenBtn.textContent = 'Скопировано!';
+          setTimeout(() => {
+            tokenBtn.textContent = `Токен: ${token}`;
+          }, 2000);
+        });
+      };
+    } else {
+      tokenBtn.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

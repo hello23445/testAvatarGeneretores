@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История Генераций</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #74ABE2, #5563DE);
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button, .clear-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .history-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        #modal, #confirmModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modal-content, #confirm-content {
+            background-color: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #confirm-content {
+            text-align: center;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+        }
+
+        .action-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 30px;
+            cursor: pointer;
+            margin: 10px 5px 0;
+            border-radius: 5px;
+        }
+
+        #emptyMessage {
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .back-button, .clear-button, .action-button {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            #modal-content, #confirm-content {
+                max-width: 95%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href = 'menu.html';">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</button>
+    <button class="clear-button" onclick="showConfirm('Удалить всю историю?', clearHistory)">Удалить всю историю</button>
+    <h1 id="story" style="white-space: pre;">ИСТОРИЯ ГЕНЕРАЦИЙ</h1>
+    <ul class="history-list" id="historyList"></ul>
+    <div id="emptyMessage" style="display: none;">
+        <button class="action-button" onclick="window.location.href = 'index.html';">Перейти</button>
+    </div>
+
+    <div id="modal">
+        <div id="modal-content">
+            <div id="details"></div>
+            <button class="action-button" id="applyButton">Применить эти параметры</button>
+            <button class="action-button" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <div id="confirmModal">
+        <div id="confirm-content">
+            <p id="confirmText"></p>
+            <button class="action-button" id="confirmYes">Да</button>
+            <button class="action-button" onclick="closeConfirm()">Нет</button>
+        </div>
+    </div>
+
+    <script>
+        const keysTranslation = {
+            "text": "1. Текст",
+            "autoTextStyle": "2. Автоматический стиль текста",
+            "description": "3. Описание",
+            "exclusions": "4. Исключения",
+            "quality": "5. Качество",
+            "sizeInput": "6. Размер фото",
+            "style": "7. Стиль",
+            "color-tone": "8. Цветовой тон",
+            "detail-level": "9. Уровень детализации",
+            "photo_theme": "10. Тема фото",
+            "razmitiyPHON": "11. Размытый фон",
+            "soot": "12. Соотношение",
+            "ram": "13. Рамка",
+            "rakurs": "14. Ракурс",
+            "mean": "15. Ваше мнение",
+            "selector": "16. ИИ"
+        };
+
+        let currentIndex = null;
+        let confirmCallback = null;
+
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            const emptyMessage = document.getElementById('emptyMessage');
+
+            for (let i = 1; i <= 6; i++) {
+                const data = localStorage.getItem(`saveDatas${i}`);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        if (parsed.description) {
+                            const li = document.createElement('li');
+                            li.className = 'history-item';
+                            li.textContent = parsed.description;
+                            li.onclick = () => showDetails(i, parsed);
+                            historyList.appendChild(li);
+                        }
+                    } catch (e) {
+                        console.error(`Error parsing saveDatas${i}:`, e);
+                    }
+                }
+            }
+
+            if (historyList.children.length === 0) {
+                historyList.style.display = 'none';
+                emptyMessage.style.display = 'block';
+                story.textContent = 'Тут пусто!\nНачните генерировать свое первое фото прямо сейчас!';
+            } else {
+                historyList.style.display = 'block';
+                emptyMessage.style.display = 'none';
+            }
+        }
+
+        function formatValue(key, value) {
+            if (typeof value === 'boolean') {
+                return value ? 'Включен' : 'Выключен';
+            }
+            return value;
+        }
+
+        function showDetails(index, data) {
+            currentIndex = index;
+            const detailsDiv = document.getElementById('details');
+            detailsDiv.innerHTML = '';
+
+            for (const key in data) {
+                if (data.hasOwnProperty(key) && key !== 'sizeSelect') {
+                    const p = document.createElement('p');
+                    p.className = 'detail-item';
+                    const translatedKey = keysTranslation[key] || key;
+                    p.textContent = `${translatedKey}: ${formatValue(key, data[key])}`;
+                    detailsDiv.appendChild(p);
+                }
+            }
+
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showConfirm(text, callback) {
+            document.getElementById('confirmText').textContent = text;
+            confirmCallback = callback;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmModal').style.display = 'none';
+            confirmCallback = null;
+        }
+
+        document.getElementById('confirmYes').onclick = function() {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeConfirm();
+        };
+
+        function clearHistory() {
+            for (let i = 1; i <= 6; i++) {
+                localStorage.removeItem(`saveDatas${i}`);
+            }
+            loadHistory();
+        }
+
+        document.getElementById('applyButton').onclick = function() {
+            showConfirm('Применить параметры?', applyParameters);
+        };
+
+        function applyParameters() {
+            if (currentIndex !== null) {
+                const data = localStorage.getItem(`saveDatas${currentIndex}`);
+                if (data) {
+                    localStorage.setItem('savedDatasToLoad', data);
+                    window.location.href = 'index.html';
+                }
+            }
+        };
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            const confirmModal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            } else if (event.target === confirmModal) {
+                closeConfirm();
+            }
+        };
+
+        loadHistory();
+    </script>
+</body>
+</html>

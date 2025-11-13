@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Меню</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: white;
+      text-align: center;
+      padding-top: 60px; /* отступ сверху */
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 70%;
+      max-width: 220px;
+      margin-top: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    /* 📱 Адаптивность */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 40px;
+      }
+
+      .btn {
+        padding: 9px 18px;
+        font-size: 0.95rem;
+        width: 75%;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding-top: 30px;
+      }
+
+      .btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        width: 80%;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .btn {
+        font-size: 1.05rem;
+        padding: 12px 25px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="btn">ВЕРНУТЬСЯ НАЗАД</a>
+  <h2>Меню</h2>
+  <a href="story.html" class="btn">История генераций</a>
+</body>
+</html>

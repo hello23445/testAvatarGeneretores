@@ -34,6 +34,7 @@
             border-radius: 5px;
             width: 100%;
             max-width: 300px;
+            box-sizing: border-box;
         }
 
         .history-list {
@@ -51,6 +52,9 @@
             cursor: pointer;
             text-align: center;
             transition: background-color 0.3s;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         #modal, #confirmModal {
@@ -75,6 +79,9 @@
             max-height: 80%;
             overflow-y: auto;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         #confirm-content {
@@ -83,6 +90,9 @@
 
         .detail-item {
             margin-bottom: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .action-button {
@@ -90,10 +100,11 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            font-size: 30px;
+            font-size: 16px;
             cursor: pointer;
             margin: 10px 5px 0;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
         #emptyMessage {
@@ -108,11 +119,25 @@
             .back-button, .clear-button, .action-button {
                 width: 100%;
                 margin: 10px 0;
+                font-size: 14px;
             }
 
             #modal-content, #confirm-content {
                 max-width: 95%;
                 padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+
+            .history-item {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+
+            .detail-item {
+                font-size: 0.9em;
             }
         }
     </style>
@@ -169,6 +194,9 @@
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
             const emptyMessage = document.getElementById('emptyMessage');
+            const story = document.getElementById('story');
+
+            let hasHistory = false;
 
             for (let i = 1; i <= 6; i++) {
                 const data = localStorage.getItem(`saveDatas${i}`);
@@ -181,6 +209,7 @@
                             li.textContent = parsed.description;
                             li.onclick = () => showDetails(i, parsed);
                             historyList.appendChild(li);
+                            hasHistory = true;
                         }
                     } catch (e) {
                         console.error(`Error parsing saveDatas${i}:`, e);
@@ -188,13 +217,14 @@
                 }
             }
 
-            if (historyList.children.length === 0) {
+            if (!hasHistory) {
                 historyList.style.display = 'none';
                 emptyMessage.style.display = 'block';
                 story.textContent = 'Тут пусто!\nНачните генерировать свое первое фото прямо сейчас!';
             } else {
                 historyList.style.display = 'block';
                 emptyMessage.style.display = 'none';
+                story.textContent = 'ИСТОРИЯ ГЕНЕРАЦИЙ';
             }
         }
 

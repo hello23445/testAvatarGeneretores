@@ -1881,6 +1881,12 @@ function generateImage() {
         } else if (contactData.messenger === 'app') {
             contactInput.style.display = 'none';
         }
+        else{
+            contactInput.style.display = 'none';
+            userIdDisplay.style.display = 'block';
+            userIdDisplay.textContent += localStorage.getItem('userID') || '';
+            userIdDisplay.style.fontWeight = 'bolder';
+        }
         contactField.value = contactData.contact || '';
         document.getElementById(contactData.messenger).checked = true;
         continueButton.style.display = 'block';

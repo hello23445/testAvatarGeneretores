@@ -1884,7 +1884,9 @@ function generateImage() {
         else{
             contactInput.style.display = 'none';
             userIdDisplay.style.display = 'block';
-            userIdDisplay.textContent += localStorage.getItem('userID') || '';
+            if (userIdDisplay.textContent.indexOf(localStorage.getItem('userID')) === -1){
+                userIdDisplay.textContent += localStorage.getItem('userID') || '';
+            }
             userIdDisplay.style.fontWeight = 'bolder';
         }
         contactField.value = contactData.contact || '';

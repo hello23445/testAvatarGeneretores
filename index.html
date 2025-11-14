@@ -858,8 +858,8 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
-            
-            
+          
+          
             </div>
         </div>
         <div class="right-section">
@@ -1078,7 +1078,7 @@
                 <input type="checkbox" id="agree">Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
             </label>
             </p>
-        
+      
             <button onclick="checkBadWords()" id="generate">Сгенерировать(точно по описанию и параметрам)</button>
             <button onclick="fastGenerate()" id="fastGenerateButton" disabled>Сгенерировать(Максимально быстро)</button>
             <button onclick="surpriseMode()">Режим: Удиви меня</button>
@@ -1284,7 +1284,7 @@ Premium на 1 год - 200🌟
 Premium навсегда - 1 000🌟
         </div>
         <div class="payment-info">Принимаются только Телеграм звезды(Telegram Stars)🌟</div>
-        <input type="text" id="promoCodeInput2" placeholder="Введите промокод, полученный от @Clickerstart_bot" style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
+        <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
         <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
         <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
     </div>
@@ -1452,6 +1452,15 @@ let timer;
 let admin = false;
 const telegramBotToken = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
 const telegramChatId = '6434781065';
+if (!slashMax.textContent){
+    if (localStorage.getItem('premium') === 'true') {
+        slashMax.textContent = '∞';
+    } else if (promoUsed) {
+        slashMax.textContent = '∞';
+    } else {
+        slashMax.textContent = '5';
+    }
+}
 function generateToken24() {
   const $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';
   const $len = $chars.length;
@@ -1766,7 +1775,9 @@ function checkAttempts() {
     if (!data.date || data.date !== today) {
         data.date = today;
         data.attempts = 0;
-        data.promoCode = data.promoCode || null;
+        data.promoCode = null;
+        data.promoUsed = false;
+        data.maxAttempts = null;
         data.dailyPremiumUsed = false;
         setStoredData(data);
     }
@@ -2740,11 +2751,11 @@ function fastGenerate() {
         if (document.getElementById('rakurs').value !== 'auto') {
             prompt += `, angle: ${document.getElementById('rakurs').value}`;
         }
-    
+  
         const encodedPrompt = encodeURIComponent(prompt);
         const seed = Math.floor(Math.random() * 1000000);
         const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&model=flux&nologo=true`;
-    
+  
         const imageItem = document.createElement('div');
         imageItem.className = 'image-item';
         const img = new Image();

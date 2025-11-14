@@ -1452,15 +1452,20 @@ let timer;
 let admin = false;
 const telegramBotToken = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
 const telegramChatId = '6434781065';
-if (!slashMax.textContent){
-    if (localStorage.getItem('premium') === 'true') {
-        slashMax.textContent = '∞';
-    } else if (promoUsed) {
-        slashMax.textContent = '∞';
-    } else {
-        slashMax.textContent = '5';
+function checkErrors(){
+    if (slashMax.textContent.includes('undefined')){
+        if (localStorage.getItem('premium') === 'true') {
+            slashMax.textContent = '∞';
+        }
+        else if (getStoredData().promoUsed) {
+            slashMax.textContent = '/' + (getStoredData().maxAttempts || MAX_DAILY_ATTEMPTS);
+        }
+        else {
+            slashMax.textContent = '/' + MAX_DAILY_ATTEMPTS;
+        }
     }
 }
+setInterval(checkErrors, 1000);
 function generateToken24() {
   const $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';
   const $len = $chars.length;

@@ -1452,20 +1452,6 @@ let timer;
 let admin = false;
 const telegramBotToken = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
 const telegramChatId = '6434781065';
-function checkErrors(){
-    if (slashMax.textContent.includes('undefined')){
-        if (localStorage.getItem('premium') === 'true') {
-            slashMax.textContent = '∞';
-        }
-        else if (getStoredData().promoUsed) {
-            slashMax.textContent = '/' + (getStoredData().maxAttempts || MAX_DAILY_ATTEMPTS);
-        }
-        else {
-            slashMax.textContent = '/' + MAX_DAILY_ATTEMPTS;
-        }
-    }
-}
-setInterval(checkErrors, 1000);
 function generateToken24() {
   const $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';
   const $len = $chars.length;
@@ -1795,7 +1781,7 @@ function checkAttempts() {
         attemptsDisplayDiv.innerHTML = '<b>Осталось генераций: ∞</b>';
         return true;
     } else {
-        const max = data.promoUsed ? data.maxAttempts : MAX_DAILY_ATTEMPTS;
+        const max = data.promoUsed ? (data.maxAttempts ?? MAX_DAILY_ATTEMPTS) : MAX_DAILY_ATTEMPTS;
         slashMax.textContent = '/' + max;
         attemptsLeft = max - data.attempts;
         attemptsLeftSpan.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
@@ -1814,7 +1800,7 @@ function incrementAttempts() {
     const data = getStoredData();
     data.attempts = (data.attempts || 0) + 1;
     setStoredData(data);
-    const max = data.promoUsed ? data.maxAttempts : MAX_DAILY_ATTEMPTS;
+    const max = data.promoUsed ? (data.maxAttempts ?? MAX_DAILY_ATTEMPTS) : MAX_DAILY_ATTEMPTS;
     const attemptsLeft = max - data.attempts;
     attemptsLeftSpan.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
 }

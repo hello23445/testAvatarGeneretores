@@ -146,7 +146,7 @@
     </style>
 </head>
 <body>
-    <button class="back-button" onclick="window.location.href = 'menu.html';">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</button>
+    <button class="back-button" onclick="window.location.href = 'menu.html';">ВЕРНУТЬСЯ НАЗАД</button>
     <button class="clear-button" onclick="showConfirm('Удалить всю историю?', clearHistory)">Удалить всю историю</button>
     <h1 id="story">ИСТОРИЯ ГЕНЕРАЦИЙ</h1>
     <ul class="history-list" id="historyList"></ul>
@@ -201,7 +201,10 @@
 
             let hasHistory = false;
 
-            for (let i = 1; i <= 6; i++) {
+            const isPremium = localStorage.getItem('premium') === 'true';
+            const maxSlots = isPremium ? 20 : 10;
+
+            for (let i = 1; i <= maxSlots; i++) {
                 const data = localStorage.getItem(`saveDatas${i}`);
                 if (data) {
                     try {
@@ -279,7 +282,9 @@
         };
 
         function clearHistory() {
-            for (let i = 1; i <= 6; i++) {
+            const isPremium = localStorage.getItem('premium') === 'true';
+            const maxSlots = isPremium ? 20 : 10;
+            for (let i = 1; i <= maxSlots; i++) {
                 localStorage.removeItem(`saveDatas${i}`);
             }
             loadHistory();

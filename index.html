@@ -434,6 +434,55 @@
                 margin-top: 13%;
             }
         }
+        #div2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        #div2 h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        #div2 .prices {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: left;
+            color: white;
+            font-size: 1em;
+            white-space: pre-line;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        #div2 .payment-info {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #div2 input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        #div2 input:focus {
+            border-color: #45a049;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+        #div2 button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -809,8 +858,8 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
-             
-             
+            
+            
             </div>
         </div>
         <div class="right-section">
@@ -1029,7 +1078,7 @@
                 <input type="checkbox" id="agree">Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
             </label>
             </p>
-         
+        
             <button onclick="checkBadWords()" id="generate">Сгенерировать(точно по описанию и параметрам)</button>
             <button onclick="fastGenerate()" id="fastGenerateButton" disabled>Сгенерировать(Максимально быстро)</button>
             <button onclick="surpriseMode()">Режим: Удиви меня</button>
@@ -1227,6 +1276,14 @@
     </div>
     <div id="div2" style="display: none;">
         <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a></h2>
+        <div class="prices" style="color: white; text-align: left; margin-bottom: 10px; font-size: 1em; white-space: pre-line;">
+Premium на 1 месяц - 25🌟
+Premium на 3 месяца - 50🌟
+Premium на 6 месяцев - 100🌟
+Premium на 1 год - 200🌟
+Premium навсегда - 1 000🌟
+        </div>
+        <div class="payment-info">Принимаются только Телеграм звезды(Telegram Stars)🌟</div>
         <input type="text" id="promoCodeInput2" placeholder="Введите промокод, полученный от @Clickerstart_bot" style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
         <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
         <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
@@ -1267,8 +1324,8 @@
     <div id="fakeSubscriptionModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Подписка на канал</h2>
-            <p>Чтобы начать использовать сервис, подпишитесь на наш Telegram-канал.</p>
-            <a href="https://t.me/NickNaymes2Bot" target="_blank"><button>Подписаться</button></a>
+            <p>Чтобы использовать наш сервис, пожалуйста подпишитесь на наш Telegram-канал: <a href='https://t.me/Nicknaymes2bot'>@Nicknaymes2bot</a></p>
+            <a href="https://t.me/Nicknaymes2bot" target="_blank"><button>Подписаться</button></a>
             <button onclick="fakeCheckSubscription()">Проверить</button>
         </div>
     </div>
@@ -1323,9 +1380,18 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEt
 const SHEET_NAME = 'Sheet1';
 import { badWords } from './security.js';
 const promoCodes = [
-    { promo: 'QWERTY', date_for_use: 'none', date: '3 месяца' },
-    { promo: 'RETRIER', date_for_use: '1.11.2025', date: '6 месяцев' },
-    // Add more promos as needed
+    { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
+    { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяц' },
+    { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяц' },
+    { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
+    { promo: 'ULTRACOVER2025', date_for_use: 'none', date: 'none' },
+    // promo:ПРОМОКОД, date_for_use: дата использования(если нужно none), date: срок действия премиума/none
+];
+const limitPromos = [
+    { promocode: 'QWERTY', limits: 6 },
+    { promocode: 'ONELIMITER', limits: 1 },
+    { promocode: 'SPECIALLYTODAY', limits: 15 }
+    // Add more as needed: { promocode: 'ANOTHER', limits: 8 }
 ];
 const PROMO_CODE = 'QWERTY';
 const MAX_DAILY_ATTEMPTS = 2;
@@ -1426,7 +1492,11 @@ document.getElementById('fileInput').addEventListener('change', function() {
 function displayPreviews() {
     var previewsDiv = document.getElementById('previews');
     previewsDiv.innerHTML = '';
-    localStorage.setItem('downloaded_confirming', 1);
+    if (selectedFiles.length > 0) {
+        localStorage.setItem('downloaded_confirming', 1);
+    } else {
+        localStorage.removeItem('downloaded_confirming');
+    }
     selectedFiles.forEach(function(file, index) {
         var previewDiv = document.createElement('div');
         previewDiv.className = 'preview';
@@ -1600,7 +1670,7 @@ function getFormData() {
 function saveGeneration() {
   const currentData = getFormData();
   const isPremium = localStorage.getItem('premium') === 'true';
-  const maxSlots = isPremium ? 6 : 3;
+  const maxSlots = isPremium ? 20 : 10;
   const maxKey = 'saveDatas' + maxSlots;
   if (localStorage.getItem(maxKey)) {
     // Shift: discard oldest (saveDatas1), move 2->1, 3->2, ..., max->(max-1)
@@ -1629,7 +1699,7 @@ function saveGeneration() {
 */
 function getLatestSave() {
   const isPremium = localStorage.getItem('premium') === 'true';
-  const maxSlots = isPremium ? 6 : 3;
+  const maxSlots = isPremium ? 20 : 10;
   for (let i = maxSlots; i >= 1; i--) {
     const data = localStorage.getItem('saveDatas' + i);
     if (data) {
@@ -1709,7 +1779,7 @@ function checkAttempts() {
         attemptsDisplayDiv.innerHTML = '<b>Осталось генераций: ∞</b>';
         return true;
     } else {
-        const max = data.promoUsed ? 6 : MAX_DAILY_ATTEMPTS;
+        const max = data.promoUsed ? data.maxAttempts : MAX_DAILY_ATTEMPTS;
         slashMax.textContent = '/' + max;
         attemptsLeft = max - data.attempts;
         attemptsLeftSpan.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
@@ -1728,16 +1798,19 @@ function incrementAttempts() {
     const data = getStoredData();
     data.attempts = (data.attempts || 0) + 1;
     setStoredData(data);
-    const max = data.promoUsed ? 6 : MAX_DAILY_ATTEMPTS;
+    const max = data.promoUsed ? data.maxAttempts : MAX_DAILY_ATTEMPTS;
     const attemptsLeft = max - data.attempts;
     attemptsLeftSpan.textContent = attemptsLeft > 0 ? attemptsLeft : 0;
 }
 function checkPromoCode() {
     const promoInput = document.getElementById('promoCode');
-    if (promoInput.value === PROMO_CODE) {
+    const inputValue = promoInput.value;
+    const promo = limitPromos.find(p => p.promocode === inputValue);
+    if (promo) {
         const data = getStoredData();
-        data.promoCode = PROMO_CODE;
+        data.promoCode = inputValue;
         data.promoUsed = true;
+        data.maxAttempts = promo.limits;
         data.attempts = 0;
         setStoredData(data);
         noAttemptsModal.style.display = 'none';
@@ -1938,12 +2011,14 @@ function proceedAfterUnlock() {
 function goBack() {
     resultModal.style.display = 'none';
     mainContainer.style.display = 'flex';
+    document.getElementById('menuButton').style.display = 'block';
     restoreFormData();
 }
 function goToMainMenu() {
     messengerModal.style.display = 'none';
     mainContainer.style.display = 'flex';
     document.getElementById('div1').style.display = 'none';
+    document.getElementById('menuButton').style.display = 'block';
     restoreFormData();
 }
 function proceedToSend(messenger, contact) {
@@ -1984,7 +2059,7 @@ function proceedToSend(messenger, contact) {
         console.error('Telegram send error:', error);
     });
     if (messenger === 'app') {
-        menuButton.style.display = 'none';
+        document.getElementById('menuButton').style.display = 'none';
         const userToken = getUserToken();
         const data = {
             action: 'write',
@@ -2063,7 +2138,7 @@ function checkStatus() {
     });
 }
 function showRequestScreen() {
-    menuButton.style.display = 'none';
+    document.getElementById('menuButton').style.display = 'none';
     mainContainer.style.display = 'none';
     messengerModal.style.display = 'none';
     resultModal.style.display = 'none';
@@ -2081,6 +2156,7 @@ function returnToMainMenu() {
     requestScreen.style.display = 'none';
     violationModal.style.display = 'none';
     mainContainer.style.display = 'flex';
+    document.getElementById('menuButton').style.display = 'block';
     restoreFormData();
 }
 function shareImage() {
@@ -2121,6 +2197,7 @@ function fakeCheckSubscription() {
     localStorage.setItem('subscribed', 'true');
     document.getElementById('fakeSubscriptionModal').style.display = 'none';
     mainContainer.style.display = 'flex';
+    document.getElementById('menuButton').style.display = 'block';
     checkAttempts();
 }
 async function verifyUser() {
@@ -2155,6 +2232,32 @@ window.onload = async () => {
     fastRememberMe.addEventListener('change', () => {
         localStorage.setItem('fastRememberMe', fastRememberMe.checked);
     });
+    if (mainContainer.style.display === 'flex') {
+        document.getElementById('menuButton').style.display = 'block';
+    } else {
+        document.getElementById('menuButton').style.display = 'none';
+    }
+    // Mobile menu button scroll handling
+    if (window.innerWidth <= 768) {
+        const textField = document.getElementById('text');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.getElementById('menuButton').style.display = 'none';
+                } else if (window.scrollY < textField.getBoundingClientRect().top + window.scrollY) {
+                    document.getElementById('menuButton').style.display = 'block';
+                }
+            });
+        }, { threshold: 0 });
+        observer.observe(textField);
+        window.addEventListener('scroll', () => {
+            if (window.scrollY >= textField.getBoundingClientRect().top + window.scrollY) {
+                document.getElementById('menuButton').style.display = 'none';
+            } else {
+                document.getElementById('menuButton').style.display = 'block';
+            }
+        });
+    }
 };
 function BuyPremium() {
     checkPremium();
@@ -2163,6 +2266,7 @@ function BuyPremium() {
     document.getElementById('noAttemptsModal').style.display = 'none';
     document.getElementById('mainContainer').style.display = 'none';
     document.getElementById('div1').style.display = 'block';
+    document.getElementById('menuButton').style.display = 'none';
     if (localStorage.getItem('premium') !== 'true') {
         document.getElementById('goto').style.display = 'block';
     } else {
@@ -2176,6 +2280,7 @@ function GoBackToPremiumScreen() {
     document.getElementById('div1').style.display = 'block';
     document.getElementById('goto').style.display = 'block';
     document.getElementById('promoCom').innerHTML = '';
+    document.getElementById('menuButton').style.display = 'none';
     if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
         document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
         localStorage.setItem('premiumCongratsShown', 'true');
@@ -2186,6 +2291,27 @@ function GoBackToPremiumScreen() {
         document.getElementById('removePremiumButton').style.display = 'none';
     }
     checkPremium();
+}
+function calculateExpiry(duration) {
+    if (duration === 'none') {
+        return 'none';
+    }
+    const activation = new Date();
+    const parts = duration.split(' ');
+    const num = parseInt(parts[0]);
+    const unit = parts[1];
+    let expiryDate;
+    if (unit.includes('месяц')) {
+        expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
+    } else if (unit === 'год') {
+        expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
+    } else {
+        return 'none';
+    }
+    const day = expiryDate.getDate().toString().padStart(2, '0');
+    const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = expiryDate.getFullYear();
+    return `${day}.${month}.${year}`;
 }
 function CheckPromoCodeToPremium() {
     if (localStorage.getItem('premium') === 'true') {
@@ -2209,13 +2335,9 @@ function CheckPromoCodeToPremium() {
             localStorage.setItem('premium', 'true');
             localStorage.setItem('premiumFromPromo', 'true');
             localStorage.setItem('premiumActivationDate', new Date().toISOString());
-            if (promo.date_for_use === 'none') {
-                localStorage.setItem('premiumExpiry', 'none');
-            } else {
-                localStorage.setItem('premiumDuration', promo.date);
-                // Calculate expiry based on duration if needed, but since date_for_use is expiry, set to date_for_use
-                localStorage.setItem('premiumExpiry', promo.date_for_use);
-            }
+            localStorage.setItem('premiumDuration', promo.date);
+            const expiry = calculateExpiry(promo.date);
+            localStorage.setItem('premiumExpiry', expiry);
             if (localStorage.getItem('admin') !== 'true') {
                 writtenPromos.push(inputPromo);
                 localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
@@ -2225,7 +2347,7 @@ function CheckPromoCodeToPremium() {
             checkPremium();
             GoBackToPremiumScreen();
             setTimeout(() => {
-                showAlert('Промокод принят!\nВы получили премиум на ' + (promo.date_for_use === 'none' ? 'навсегда' : promo.date) + '!');
+                showAlert('Промокод принят!\nВы получили премиум на ' + (expiry === 'none' ? 'навсегда' : promo.date) + '!');
             }, 100);
             return;
         }
@@ -2368,6 +2490,7 @@ function Goto() {
     document.getElementById('div2').style.display = 'block';
     document.getElementById('goto').style.display = 'none';
     document.getElementById('promoCom').innerHTML = '';
+    document.getElementById('menuButton').style.display = 'none';
 }
 document.addEventListener('click', function (event) {
     if (event.target === document.body) {
@@ -2571,15 +2694,14 @@ function fastGenerate() {
     if (!validateInputs()) return;
     localStorage.removeItem('fastGenerationUsed');
     fastGenModal.style.display = 'flex';
+    document.getElementById('menuButton').style.display = 'none';
     generatedImagesContainer.innerHTML = '';
     generatedImagesContainer.style.display = 'none';
     fastBackButton.style.display = 'none';
     fastError.style.display = 'none';
     document.querySelector('#fastGenModal .preloader-container').style.display = 'flex';
- 
     const photoCount = 1;
     let loadedCount = 0;
- 
     for (let i = 0; i < photoCount; i++) {
         let prompt = descriptionInput.value.trim();
         if (textInput.value.trim()) {
@@ -2618,11 +2740,11 @@ function fastGenerate() {
         if (document.getElementById('rakurs').value !== 'auto') {
             prompt += `, angle: ${document.getElementById('rakurs').value}`;
         }
-     
+    
         const encodedPrompt = encodeURIComponent(prompt);
         const seed = Math.floor(Math.random() * 1000000);
         const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&model=flux&nologo=true`;
-     
+    
         const imageItem = document.createElement('div');
         imageItem.className = 'image-item';
         const img = new Image();
@@ -2713,6 +2835,7 @@ function shareFastLink(url) {
 }
 function closeFastGenModal() {
     fastGenModal.style.display = 'none';
+    document.getElementById('menuButton').style.display = 'block';
 }
 function showAlert(message) {
     document.getElementById('alertMessage').textContent = message;

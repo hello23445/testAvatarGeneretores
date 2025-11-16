@@ -6,7 +6,6 @@
     <title>Купить Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* Extracted and adapted styles for premium page */
         * {
             margin: 0;
             padding: 0;
@@ -84,7 +83,6 @@
             width: 90%;
             text-align: center;
         }
-        /* Add more styles if needed */
     </style>
 </head>
 <body>
@@ -117,11 +115,11 @@
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
             <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">7.</span>
-            Описание фото увеличевается с 500 до 1000 символов.
+            Описание фото увеличивается с 500 до 1000 символов.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
             <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">8.</span>
-            Текст на фото увеличевается с 250 до 500 символов.
+            Текст на фото увеличивается с 250 до 500 символов.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
             <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">9.</span>
@@ -161,7 +159,7 @@
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
             <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">18.</span>
-            Сохранение до 20 историев генераций.
+            Сохранение до 20 историй генераций.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
             <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">19.</span>
@@ -169,7 +167,7 @@
             </li>
         </ul>
         <button onclick="removePremium()" id="removePremiumButton">Убрать премиум</button>
-        <h4>ℹ️Список со временнем будет пополняться</h4>
+        <h4>ℹ️Список со временем будет пополняться</h4>
         <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
         <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
         <button id="goto" onclick="Goto()">Перейти к покупке</button>
@@ -189,7 +187,8 @@ Premium навсегда - 1 000🌟
         <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
         <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
     </div>
-    <!-- Confirmation Modal for removePremium -->
+
+    <!-- Модалки -->
     <div id="confirmModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p id="confirmMessage"></p>
@@ -197,7 +196,7 @@ Premium навсегда - 1 000🌟
             <button onclick="closeConfirmModal()" style="background-color: red;">Нет</button>
         </div>
     </div>
-    <!-- Prompt Modal for removePremium -->
+
     <div id="promptModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p id="promptMessage"></p>
@@ -206,29 +205,51 @@ Premium навсегда - 1 000🌟
             <button onclick="closePromptModal()" style="background-color: red;">Отмена</button>
         </div>
     </div>
-    <!-- Alert Modal -->
+
     <div id="alertModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p id="alertMessage"></p>
-            <button onclick="closeAlertModal()" style="background-color: red;">Закрыть</button>
+            <button onclick="closeAlertModal()" id="alertCloseBtn" style="background-color: red;">Закрыть</button>
         </div>
     </div>
+
     <script>
         const promoCodes = [
             { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
-            { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяц' },
-            { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяц' },
+            { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяца' },
+            { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяцев' },
             { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
             { promo: 'ULTRACOVER2025', date_for_use: 'none', date: 'none' },
-            // promo:ПРОМОКОД, date_for_use: дата использования(если нужно none), date: срок действия премиума/none
         ];
+
         let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
         let removeStep = 0;
         let removeAnswers = ['', '', ''];
+        let clickCount = 0;
+        let clickTimer;
 
-        function showAlert(message) {
+        // 1. Активация режима админа по 50 кликам в пустое место
+        document.body.addEventListener('click', function(e) {
+            if (e.target === document.body || e.target.tagName === 'BODY') {
+                clickCount++;
+                clearTimeout(clickTimer);
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 5000);
+
+                if (clickCount >= 50) {
+                    const current = localStorage.getItem('admin') === 'true';
+                    localStorage.setItem('admin', (!current).toString());
+                    showAlert(current ? 'Режим администратора отключён' : 'Режим администратора активирован!');
+                    location.reload();
+                }
+            }
+        });
+
+        function showAlert(message, hideClose = false) {
             document.getElementById('alertMessage').textContent = message;
             document.getElementById('alertModal').style.display = 'flex';
+            document.getElementById('alertCloseBtn').style.display = hideClose ? 'none' : 'block';
         }
 
         function closeAlertModal() {
@@ -236,7 +257,7 @@ Premium навсегда - 1 000🌟
         }
 
         function goToMainMenu() {
-            window.location.href = 'index.html';  // Redirect back to main page (adjust if main file name is different)
+            window.location.href = 'index.html';
         }
 
         function Goto() {
@@ -251,11 +272,18 @@ Premium навсегда - 1 000🌟
             document.getElementById('div1').style.display = 'block';
             document.getElementById('goto').style.display = 'block';
             document.getElementById('promoCom').innerHTML = '';
+
             if (localStorage.getItem('premium') === 'true') {
                 document.getElementById('removePremiumButton').style.display = 'block';
             } else {
                 document.getElementById('removePremiumButton').style.display = 'none';
             }
+
+            // Обновляем заголовок
+            document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true' 
+                ? 'Вы в режиме администратора!' 
+                : 'Возможности Premium-версии';
+
             if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
                 document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
                 localStorage.setItem('premiumCongratsShown', 'true');
@@ -263,13 +291,12 @@ Premium навсегда - 1 000🌟
         }
 
         function calculateExpiry(duration) {
-            if (duration === 'none') {
-                return 'none';
-            }
+            if (duration === 'none') return 'none';
             const activation = new Date();
             const parts = duration.split(' ');
             const num = parseInt(parts[0]);
             const unit = parts[1];
+
             let expiryDate;
             if (unit.includes('месяц')) {
                 expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
@@ -278,6 +305,7 @@ Premium навсегда - 1 000🌟
             } else {
                 return 'none';
             }
+
             const day = expiryDate.getDate().toString().padStart(2, '0');
             const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
             const year = expiryDate.getFullYear();
@@ -289,56 +317,64 @@ Premium навсегда - 1 000🌟
                 showAlert('Вы уже купили премиум!');
                 return;
             }
-            const inputPromo = document.getElementById('promoCodeInput2').value;
-            const currentDate = new Date();
+
+            const inputPromo = document.getElementById('promoCodeInput2').value.trim();
+            if (!inputPromo) {
+                showAlert('Промокод не может быть пустым!');
+                return;
+            }
+
             const promo = promoCodes.find(p => p.promo === inputPromo);
-            if (promo) {
-                let valid = true;
-                if (promo.date_for_use !== 'none') {
-                    const [day, month, year] = promo.date_for_use.split('.');
-                    const expiryDate = new Date(year, month - 1, day);
-                    if (currentDate > expiryDate) {
-                        valid = false;
-                    }
-                }
-                if (valid && (localStorage.getItem('admin') === 'true' || !writtenPromos.includes(inputPromo))) {
-                    localStorage.setItem('premium', 'true');
-                    localStorage.setItem('premiumFromPromo', 'true');
-                    localStorage.setItem('premiumActivationDate', new Date().toISOString());
-                    localStorage.setItem('premiumDuration', promo.date);
-                    const expiry = calculateExpiry(promo.date);
-                    localStorage.setItem('premiumExpiry', expiry);
-                    if (localStorage.getItem('admin') !== 'true') {
-                        writtenPromos.push(inputPromo);
-                        localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
-                    }
-                    document.getElementById('promoCodeInput2').style.background = 'green';
-                    document.getElementById('promoCodeInput2').style.borderColor = 'green';
-                    GoBackToPremiumScreen();
-                    setTimeout(() => {
-                        showAlert('Промокод принят!\nВы получили премиум на ' + (expiry === 'none' ? 'навсегда' : promo.date) + '!');
-                        goToMainMenu();  // Redirect back after success
-                    }, 100);
+            const isAdmin = localStorage.getItem('admin') === 'true';
+
+            if (!promo) {
+                showAlert('Неверный промокод');
+                return;
+            }
+
+            if (promo.date_for_use !== 'none') {
+                const [day, month, year] = promo.date_for_use.split('.');
+                const expiryDate = new Date(year, month - 1, day);
+                if (new Date() > expiryDate) {
+                    showAlert('Время действия данного промокода истёк');
                     return;
                 }
             }
-            if (inputPromo === '') {
-                showAlert('Промокод не может быть пустым!');
-                document.getElementById('promoCodeInput2').style.borderColor = 'red';
-            } else {
-                document.getElementById('promoCodeInput2').style.background = 'red';
-                setTimeout(() => {
-                    showAlert('Неверный, истекший или использованный промокод!');
-                }, 0.5);
+
+            if (!isAdmin && writtenPromos.includes(inputPromo)) {
+                showAlert('Вы уже использовали этот промокод');
+                return;
             }
-            document.getElementById('promoCodeInput2').value = '';
+
+            localStorage.setItem('premium', 'true');
+            localStorage.setItem('premiumFromPromo', 'true');
+            localStorage.setItem('premiumActivationDate', new Date().toISOString());
+            localStorage.setItem('premiumDuration', promo.date);
+            const expiry = calculateExpiry(promo.date);
+            localStorage.setItem('premiumExpiry', expiry);
+
+            if (!isAdmin) {
+                writtenPromos.push(inputPromo);
+                localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
+            }
+
+            document.getElementById('promoCodeInput2').style.background = '#d4edda';
+            document.getElementById('promoCodeInput2').style.borderColor = 'green';
+
+            let seconds = 4;
+            showAlert(`Промокод принят!\nВы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!\n\nВы будете перенаправлены через ${seconds} секунд...`, true);
+
+            const countdown = setInterval(() => {
+                seconds--;
+                document.getElementById('alertMessage').innerHTML = `Промокод принят!<br>Вы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!<br><br>Вы будете перенаправлены через ${seconds} секунд...`;
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
         }
 
-        function removePremium() {
-            removeStep = 0;
-            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
-        }
-
+        // ───── ФУНКЦИИ ДЛЯ УДАЛЕНИЯ ПРЕМИУМА (перемещены вверх, чтобы избежать ошибок) ─────
         function showConfirm(message, callbackYes) {
             document.getElementById('confirmMessage').textContent = message;
             document.getElementById('confirmModal').style.display = 'flex';
@@ -358,7 +394,7 @@ Premium навсегда - 1 000🌟
             document.getElementById('promptModal').style.display = 'flex';
             const submitButton = document.getElementById('promptSubmit');
             submitButton.onclick = function() {
-                const input = document.getElementById('promptInput').value;
+                const input = document.getElementById('promptInput').value.trim();
                 closePromptModal();
                 callback(input);
             };
@@ -369,6 +405,11 @@ Premium навсегда - 1 000🌟
             document.getElementById('promptInput').value = '';
         }
 
+        function removePremium() {
+            removeStep = 0;
+            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
+        }
+
         function removePremiumStep1(confirmed) {
             if (!confirmed) return;
             removeStep = 1;
@@ -376,21 +417,25 @@ Premium навсегда - 1 000🌟
         }
 
         function removePremiumStep2(input) {
-            removeAnswers[0] = input;
-            if (removeAnswers[0] !== 'Убрать') return;
+            if (input !== 'Убрать') {
+                showAlert('Неверный ответ. Процесс отменён.');
+                return;
+            }
             removeStep = 2;
             showPrompt('Введите "ПОДТВЕРЖДАЮ"(3/4)', removePremiumStep3);
         }
 
         function removePremiumStep3(input) {
-            removeAnswers[1] = input;
-            if (removeAnswers[1] !== 'ПОДТВЕРЖДАЮ') return;
-            removeStep = 3;
-            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
+            if (input !== 'ПОДТВЕРЖДАЮ') {
+                showAlert('Неверный ответ. Процесс отменён.');
+                return;
+            }
+            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
         }
 
         function removePremiumFinal(confirmed) {
             if (!confirmed) return;
+
             localStorage.removeItem('premium');
             localStorage.setItem('premium', 'false');
             localStorage.removeItem('premiumCongratsShown');
@@ -398,19 +443,25 @@ Premium навсегда - 1 000🌟
             localStorage.removeItem('premiumActivationDate');
             localStorage.removeItem('premiumExpiry');
             localStorage.removeItem('premiumDuration');
+
             showAlert('Премиум успешно убран!');
-            GoBackToPremiumScreen();
-            location.reload();
+            setTimeout(() => location.reload(), 1500);
         }
 
-        // Initial check
-        if (localStorage.getItem('premium') === 'true') {
-            document.getElementById('goto').style.display = 'none';
-            document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
-            document.getElementById('removePremiumButton').style.display = 'block';
-        } else {
-            document.getElementById('removePremiumButton').style.display = 'none';
-        }
+        // Инициализация
+        window.onload = function() {
+            if (localStorage.getItem('premium') === 'true') {
+                document.getElementById('goto').style.display = 'none';
+                document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
+                document.getElementById('removePremiumButton').style.display = 'block';
+            } else {
+                document.getElementById('removePremiumButton').style.display = 'none';
+            }
+
+            document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true' 
+                ? 'Вы в режиме администратора!' 
+                : 'Возможности Premium-версии';
+        };
     </script>
 </body>
 </html>

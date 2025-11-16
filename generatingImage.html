@@ -82,7 +82,7 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
-        /* ---------- PRELOADER ---------- */
+        /* ---------- PRELOADER НОВЫЙ ---------- */
 
         .preloader-container {
             display: flex;
@@ -94,7 +94,7 @@
         }
 
         .preloader {
-            width: 220px;   /* большой размер */
+            width: 220px;
             height: 220px;
             position: relative;
             display: flex;
@@ -105,133 +105,194 @@
         .preloader-bg {
             position: absolute;
             inset: 18px;
-            background: radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
-                        radial-gradient(circle at 80% 100%, rgba(0, 255, 204, 0.25), transparent 65%);
-            filter: blur(8px);
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.16), transparent 55%),
+                radial-gradient(circle at 80% 100%, rgba(77, 140, 255, 0.28), transparent 65%);
+            filter: blur(10px);
             opacity: 0.9;
-            border-radius: 32px;
+            border-radius: 40px;
         }
 
-        .ring {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            mask-image: radial-gradient(circle, transparent 54%, black 56%);
-            -webkit-mask-image: radial-gradient(circle, transparent 54%, black 56%);
-        }
+        /* ядро с карточкой фотографии */
 
-        .ring::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: inherit;
-            border: 3px solid transparent;
-            border-top-color: #00ffcc;
-            border-right-color: #7b5cff;
-            border-bottom-color: #ff86da;
-            border-left-color: transparent;
-            filter: drop-shadow(0 0 14px rgba(0, 255, 204, 0.8));
-            animation: spin 2.4s linear infinite;
-        }
-
-        .ring-inner {
-            position: absolute;
-            inset: 26px;
-            border-radius: 50%;
-            border: 1px dashed rgba(255, 255, 255, 0.28);
-            animation: spinReverse 5s linear infinite;
-        }
-
-        .ring-inner::before,
-        .ring-inner::after {
-            content: "";
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #00ffcc;
-            top: 50%;
-            left: -4px;
-            transform: translateY(-50%);
-            box-shadow: 0 0 16px rgba(0, 255, 204, 0.9);
-        }
-
-        .ring-inner::after {
-            left: auto;
-            right: -4px;
-            background: #ff86da;
-            box-shadow: 0 0 16px rgba(255, 134, 218, 0.9);
-        }
-
-        .orbit {
-            position: absolute;
-            inset: 58px;
-            border-radius: 50%;
-            transform-style: preserve-3d;
-            animation: spin 4.2s linear infinite;
-        }
-
-        .orbit-dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ffffff;
+        .photo-core {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            border-radius: 40px;
+            background: radial-gradient(circle at 20% 0%, #3147a3 0%, #090f29 55%, #040713 100%);
             box-shadow:
-                0 0 12px rgba(255, 255, 255, 0.9),
-                0 0 26px rgba(0, 255, 204, 0.75);
-            transform-origin: 50% 50%;
-        }
-
-        .orbit-dot:nth-child(1) { top: -5px; left: 50%; transform: translateX(-50%); }
-        .orbit-dot:nth-child(2) { top: 50%; right: -5px; transform: translateY(-50%); }
-        .orbit-dot:nth-child(3) { bottom: -5px; left: 50%; transform: translateX(-50%); }
-        .orbit-dot:nth-child(4) { top: 50%; left: -5px; transform: translateY(-50%); }
-
-        .center-core {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 24px;
-            background: radial-gradient(circle at 30% 20%, #ffffff, #b6fff2 45%, #00ffcc 70%, transparent 72%);
-            box-shadow:
-                0 0 25px rgba(0, 255, 204, 0.9),
-                0 0 55px rgba(0, 0, 0, 0.9);
-            animation: corePulse 2.2s ease-in-out infinite;
+                0 0 30px rgba(0, 0, 0, 0.9),
+                0 0 40px rgba(77, 140, 255, 0.65);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: visible;
+            animation: coreFloat 3.2s ease-in-out infinite;
+        }
+
+        .photo-ring {
+            position: absolute;
+            inset: -5px;
+            border-radius: inherit;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-top-color: #4d8cff;
+            border-right-color: #76e4ff;
+            border-bottom-color: #9a7bff;
+            border-left-color: transparent;
+            animation: spin 1.8s linear infinite;
+        }
+
+        .photo-frame {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(77, 140, 255, 0.9));
+            box-shadow:
+                0 0 18px rgba(77, 140, 255, 0.7),
+                0 0 28px rgba(0, 0, 0, 0.8);
+        }
+
+        .photo-frame-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background: radial-gradient(circle at 30% 0%, #497bff 0%, #161d3b 45%, #060916 100%);
+            position: relative;
             overflow: hidden;
         }
 
-        .center-core-icon {
-            font-size: 26px;
-            color: #0a1230;
-            opacity: 0.9;
-            animation: iconPulse 2.2s ease-in-out infinite;
-        }
+        /* условно «реалистичная» сцена внутри карточки */
 
-        .pixel-noise {
+        .photo-sky {
             position: absolute;
-            inset: 16px;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            grid-template-rows: repeat(6, 1fr);
-            opacity: 0.25;
-            pointer-events: none;
+            inset: 0;
+            height: 55%;
+            background: linear-gradient(to bottom, #5da6ff 0%, #283a73 60%, transparent 100%);
         }
 
-        .pixel-noise span {
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.09);
-            animation: pixelBlink 1.3s infinite alternate;
+        .photo-mountain-back {
+            position: absolute;
+            bottom: 10%;
+            left: -10%;
+            width: 120%;
+            height: 60%;
+            background: linear-gradient(to top, #171f3e 0%, #3e63ff 80%);
+            clip-path: polygon(50% 0%, 100% 85%, 0% 85%);
+            opacity: 0.8;
         }
 
-        .pixel-noise span:nth-child(3n)  { animation-delay: 0.1s; }
-        .pixel-noise span:nth-child(4n)  { animation-delay: 0.25s; }
-        .pixel-noise span:nth-child(5n)  { animation-delay: 0.4s; }
-        .pixel-noise span:nth-child(7n)  { animation-delay: 0.6s; }
+        .photo-mountain-front {
+            position: absolute;
+            bottom: -4%;
+            left: -5%;
+            width: 110%;
+            height: 70%;
+            background: linear-gradient(to top, #060a1a 0%, #32f5ff 80%);
+            clip-path: polygon(50% 8%, 100% 100%, 0% 100%);
+        }
+
+        .photo-sun {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            top: 18%;
+            right: 18%;
+            background: radial-gradient(circle, #fffbe0 0%, #ffd66b 40%, rgba(255, 214, 107, 0) 70%);
+            box-shadow: 0 0 12px rgba(255, 230, 160, 0.9);
+        }
+
+        /* сканирующая линия */
+
+        .photo-scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.35) 45%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            mix-blend-mode: screen;
+            animation: scanDown 2.1s linear infinite;
+        }
+
+        /* «пиксели», которые дособираются */
+
+        .photo-pixels {
+            position: absolute;
+            inset: 0;
+        }
+
+        .photo-pixels span {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.18);
+            animation: pixelBlink 1.4s infinite alternate;
+        }
+
+        .photo-pixels span:nth-child(1) { top: 18%; left: 14%; }
+        .photo-pixels span:nth-child(2) { top: 26%; left: 42%; animation-delay: 0.15s; }
+        .photo-pixels span:nth-child(3) { top: 32%; left: 68%; animation-delay: 0.3s; }
+        .photo-pixels span:nth-child(4) { top: 54%; left: 22%; animation-delay: 0.45s; }
+        .photo-pixels span:nth-child(5) { top: 60%; left: 48%; animation-delay: 0.6s; }
+        .photo-pixels span:nth-child(6) { top: 66%; left: 70%; animation-delay: 0.75s; }
+        .photo-pixels span:nth-child(7) { top: 74%; left: 35%; animation-delay: 0.9s; }
+        .photo-pixels span:nth-child(8) { top: 78%; left: 57%; animation-delay: 1.05s; }
+
+        /* маленькие превью под главным кадром */
+
+        .preloader-strip {
+            margin-top: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .preloader-thumb {
+            width: 38px;
+            height: 26px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #243158, #4756a7);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+            opacity: 0.8;
+            animation: thumbPulse 1.8s ease-in-out infinite;
+        }
+
+        .preloader-thumb::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, #12172c 0%, #35e0ff 100%);
+            clip-path: polygon(50% 10%, 100% 100%, 0% 100%);
+            opacity: 0.85;
+        }
+
+        .preloader-thumb::after {
+            content: "";
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            top: 20%;
+            right: 18%;
+            background: #fff4c0;
+        }
+
+        .preloader-thumb:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .preloader-thumb:nth-child(3) {
+            animation-delay: 0.3s;
+        }
 
         .preloader-text {
             font-size: 17px;
@@ -248,53 +309,39 @@
             max-width: 360px;
         }
 
-        /* textPulse — оставляем имя, меняем эффект */
+        /* ---------- АНИМАЦИИ ---------- */
+
         @keyframes textPulse {
-            0% {
-                opacity: 0.45;
-                letter-spacing: 0.3px;
-            }
-            40% {
-                opacity: 1;
-                letter-spacing: 1.2px;
-            }
-            100% {
-                opacity: 0.45;
-                letter-spacing: 0.3px;
-            }
+            0% { opacity: 0.45; letter-spacing: 0.3px; }
+            40% { opacity: 1; letter-spacing: 1.2px; }
+            100% { opacity: 0.45; letter-spacing: 0.3px; }
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        @keyframes spinReverse {
-            to { transform: rotate(-360deg); }
+        @keyframes coreFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
         }
 
-        @keyframes corePulse {
-            0%, 100% {
-                transform: scale(0.96);
-                box-shadow:
-                    0 0 18px rgba(0, 255, 204, 0.75),
-                    0 0 40px rgba(0, 0, 0, 0.85);
-            }
-            50% {
-                transform: scale(1.04);
-                box-shadow:
-                    0 0 26px rgba(0, 255, 204, 1),
-                    0 0 55px rgba(0, 0, 0, 0.9);
-            }
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.08); opacity: 1; }
+        @keyframes scanDown {
+            0%   { transform: translateY(-110%); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(110%); opacity: 0; }
         }
 
         @keyframes pixelBlink {
-            0%   { background: rgba(255, 255, 255, 0.02); }
-            100% { background: rgba(255, 255, 255, 0.25); }
+            0%   { transform: scale(0.6); opacity: 0.15; }
+            50%  { transform: scale(1);   opacity: 1; }
+            100% { transform: scale(0.85); opacity: 0.4; }
+        }
+
+        @keyframes thumbPulse {
+            0%, 100% { opacity: 0.6; transform: translateY(2px); }
+            50%      { opacity: 1;   transform: translateY(0); }
         }
 
         /* ---------- IMAGE & BUTTONS ---------- */
@@ -305,25 +352,50 @@
             margin-bottom: 20px;
             box-shadow: 0 12px 28px rgba(0,0,0,0.65);
             display: none;
+
+            /* стартовое состояние */
             opacity: 0;
-            transform: translateY(20px) scale(0.95);
-            filter: blur(5px);
+            transform: translateY(10px) scale(0.98);
+            filter: blur(3px);
+
+            /* изначально ничего не видно по высоте */
+            clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+
             transition:
-                opacity 1.5s ease-in-out,
-                transform 1.5s ease-in-out,
-                filter 1.5s ease-in-out,
-                box-shadow 1.5s ease-in-out;
+                box-shadow 1.2s ease-out,
+                transform 1.2s ease-out,
+                filter 1.2s ease-out,
+                opacity 0.8s ease-out;
             background-color: #050816;
         }
 
         #generatedImage.loaded {
+            display: block;
             opacity: 1;
             transform: translateY(0) scale(1);
             filter: blur(0);
             box-shadow:
-                0 0 32px rgba(0, 255, 204, 0.7),
+                0 0 32px rgba(77, 140, 255, 0.7),
                 0 18px 42px rgba(0,0,0,0.8);
+
+            /* анимация «проявления» сверху вниз */
+            animation: revealDown 20s cubic-bezier(0.18, 0.8, 0.35, 1) forwards;
         }
+        @keyframes revealDown {
+            0% {
+                /* видно только верхнюю линию */
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+            }
+            55% {
+                /* уже почти вся картинка, но ещё не до конца — движение быстрое */
+                clip-path: polygon(0 0, 100% 0, 100% 90%, 0 90%);
+            }
+            100% {
+                /* полностью видна, движение замедляется к концу */
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+        }
+
 
         #shareButtons {
             display: none;
@@ -441,37 +513,29 @@
             <div class="preloader">
                 <div class="preloader-bg"></div>
 
-                <div class="ring"></div>
-                <div class="ring-inner"></div>
+                <!-- НОВЫЙ ПРЕЛОАДЕР -->
+                <div class="photo-core">
+                    <div class="photo-ring"></div>
 
-                <div class="orbit">
-                    <div class="orbit-dot"></div>
-                    <div class="orbit-dot"></div>
-                    <div class="orbit-dot"></div>
-                    <div class="orbit-dot"></div>
+                    <div class="photo-frame">
+                        <div class="photo-frame-inner">
+                            <div class="photo-sky"></div>
+                            <div class="photo-mountain-back"></div>
+                            <div class="photo-mountain-front"></div>
+                            <div class="photo-sun"></div>
+
+                            <div class="photo-scan-line"></div>
+
+                            <div class="photo-pixels">
+                                <span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="pixel-noise">
-                    <!-- 36 мелких «пикселей» -->
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                </div>
-
-                <div class="center-core">
-                    <i class="fa-solid fa-image center-core-icon" 
-                    style="font-size:26px; opacity:0.85;"></i>
-
-                    <i class="fa-solid fa-sparkles center-core-icon" 
-                    style="position:absolute; bottom:6px; right:6px; font-size:14px; opacity:1;"></i>
-                </div>
-
-
-
             </div>
+
+
 
             <div class="preloader-text">Генерация изображения…</div>
             <div class="preloader-subtext">Генерация изображения может занять некоторое время.</div>
@@ -576,7 +640,6 @@
                         generatedImage.src = imageUrl;
                         generatedImage.style.display = 'block';
 
-                        // небольшая задержка, чтобы CSS-анимация "loaded" отработала плавно
                         requestAnimationFrame(() => {
                             generatedImage.classList.add('loaded');
                         });

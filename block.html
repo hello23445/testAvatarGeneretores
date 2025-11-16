@@ -50,22 +50,27 @@
   </style>
 </head>
 <body>
-  <h3>Вы заблокированы</h3>
+  <h3 style="margin-bottom: 1%;">Вы заблокированы</h3>
+  <p style="margin-bottom: 4%; margin-top: 0.5%; color: rgb(223, 214, 214);">Ваш аккаунт заблокирован за нарушение правил сообщества.<br>Если вы считаете, что это ошибка, пожалуйста, свяжитесь с поддержкой.</p>
   <button onclick="window.location.href='https://t.me/Clickerstart_bot'">
-    Служба поддержки
+    Написать в службу поддержки
   </button>
   <button id="tokenBtn" style="margin-top: 1%;"></button>
-  <script>
+  <script type="module">
+    import { blockedUsers } from './security.js';
+    if (!blockedUsers.includes(localStorage.getItem('user_Token'))) {
+      window.location.href = 'index.html';
+    }
     const tokenBtn = document.getElementById('tokenBtn');
     const token = localStorage.getItem('user_Token');
 
     if (token) {
-      tokenBtn.textContent = `Токен: ${token}`;
+      tokenBtn.textContent = `Ваш токен: ${token} (нажмите, чтобы скопировать)`;
       tokenBtn.onclick = () => {
         navigator.clipboard.writeText(token).then(() => {
           tokenBtn.textContent = 'Скопировано!';
           setTimeout(() => {
-            tokenBtn.textContent = `Токен: ${token}`;
+            tokenBtn.textContent = `Ваш токен: ${token} (нажмите, чтобы скопировать)`;
           }, 2000);
         });
       };

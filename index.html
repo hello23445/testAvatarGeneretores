@@ -1150,6 +1150,10 @@
         // Updated BuyPremium() to redirect to premium.html
         // Kept checkPremium() but removed premium activation logic (now it's just checking localStorage)
         // Removed removePremium() and related modals/functions since premium is handled in premium.html
+        import { blockedUsers } from './security.js';
+        if (blockedUsers.includes(localStorage.getItem('user_Token'))) {
+            window.location.href = 'block.html';
+        }
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
 const SHEET_NAME = 'Sheet1';
 import { badWords } from './security.js';
@@ -2073,13 +2077,6 @@ document.addEventListener('click', function (event) {
         }
     }
 });
-function checkAdmin() {
-    if (localStorage.getItem('admin') === 'true') {
-        document.getElementById('voz').textContent = 'Вы в режиме администратора!';
-    } else {
-        document.getElementById('voz').textContent = 'Возможности Premium-версии';
-    }
-}
 function checkPremium() {
     const premiumExpiry = localStorage.getItem('premiumExpiry');
     if (localStorage.getItem('premium') === 'true' && localStorage.getItem('premiumFromPromo') === 'true' && premiumExpiry && premiumExpiry !== 'none') {
@@ -2495,7 +2492,6 @@ window.proceedToSend = proceedToSend;
 window.goBack = goBack;
 window.copyToken = copyToken;
 window.returnToMainMenu = returnToMainMenu;
-window.checkAdmin = checkAdmin;
 window.checkPremium = checkPremium;
 window.proceedAfterUnlock = proceedAfterUnlock;
 window.fakeCheckSubscription = fakeCheckSubscription;
@@ -2504,7 +2500,6 @@ window.shareFastImage = shareFastImage;
 window.shareFastLink = shareFastLink;
 window.closeFastGenModal = closeFastGenModal;
 window.closeAlertModal = closeAlertModal;
-checkAdmin();
 checkPremium();
     </script>
 </body>

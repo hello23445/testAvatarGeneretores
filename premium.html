@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Купить Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Extracted and adapted styles for premium page */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #74ABE2, #5563DE);
+        }
+        .prices {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: left;
+            color: white;
+            font-size: 1em;
+            white-space: pre-line;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .payment-info {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #45a049;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+        button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        /* Add more styles if needed */
+    </style>
+</head>
+<body>
+    <div id="div1" style="display: block;">
+        <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
+        <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">1.</span>
+            Доступ к высоким разрешениям фото(2560x1440, 3840x2160, 4096x2160, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">2.</span>
+            Больше стилей (аниме, стимпанк, абстрактный, готический, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">3.</span>
+            Уровень детализации (высокий, ультра).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">4.</span>
+            Тон цвета (пастельный, сепия, неоновый, и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">5.</span>
+            Возможность писать в закрытых полях.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">6.</span>
+            Доступ к высоким качествам (2160p60(4K), 4320p(8K)).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">7.</span>
+            Описание фото увеличевается с 500 до 1000 символов.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">8.</span>
+            Текст на фото увеличевается с 250 до 500 символов.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">9.</span>
+            Возможность выбирать ИИ (Grok 4, ChatGPT 5 и другие).
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">10.</span>
+            Возможность выбирать другие фоны фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">11.</span>
+            Возможность выбирать другие соотношения сторон.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">12.</span>
+            Возможность получить фото по WhatsApp и Telegram.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">13.</span>
+            Возможность выбирать другие рамки для фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">14.</span>
+            Возможность выбирать другие ракурсы для фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">15.</span>
+            Возможность загружать до 6-ти фотографий.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">16.</span>
+            Возможность получить сгенерированное фото прямо в приложении.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">17.</span>
+            Доступ к быстрой генерации фото.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">18.</span>
+            Сохранение до 20 историев генераций.
+            </li>
+            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
+            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">19.</span>
+            Бесконечное количество генераций в день.
+            </li>
+        </ul>
+        <button onclick="removePremium()" id="removePremiumButton">Убрать премиум</button>
+        <h4>ℹ️Список со временнем будет пополняться</h4>
+        <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
+        <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
+        <button id="goto" onclick="Goto()">Перейти к покупке</button>
+        <button onclick="goToMainMenu()" style="margin-top: 1%;">Главное меню</button>
+    </div>
+    <div id="div2" style="display: none;">
+        <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a></h2>
+        <div class="prices" style="color: white; text-align: left; margin-bottom: 10px; font-size: 1em; white-space: pre-line;">
+Premium на 1 месяц - 25🌟
+Premium на 3 месяца - 50🌟
+Premium на 6 месяцев - 100🌟
+Premium на 1 год - 200🌟
+Premium навсегда - 1 000🌟
+        </div>
+        <div class="payment-info">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</div>
+        <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
+        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
+        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
+    </div>
+    <!-- Confirmation Modal for removePremium -->
+    <div id="confirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p id="confirmMessage"></p>
+            <button id="confirmYes">Да</button>
+            <button onclick="closeConfirmModal()" style="background-color: red;">Нет</button>
+        </div>
+    </div>
+    <!-- Prompt Modal for removePremium -->
+    <div id="promptModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p id="promptMessage"></p>
+            <input type="text" id="promptInput">
+            <button id="promptSubmit">Отправить</button>
+            <button onclick="closePromptModal()" style="background-color: red;">Отмена</button>
+        </div>
+    </div>
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p id="alertMessage"></p>
+            <button onclick="closeAlertModal()" style="background-color: red;">Закрыть</button>
+        </div>
+    </div>
+    <script>
+        const promoCodes = [
+            { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
+            { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяц' },
+            { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяц' },
+            { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
+            { promo: 'ULTRACOVER2025', date_for_use: 'none', date: 'none' },
+            // promo:ПРОМОКОД, date_for_use: дата использования(если нужно none), date: срок действия премиума/none
+        ];
+        let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
+        let removeStep = 0;
+        let removeAnswers = ['', '', ''];
+
+        function showAlert(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+
+        function goToMainMenu() {
+            window.location.href = 'index.html';  // Redirect back to main page (adjust if main file name is different)
+        }
+
+        function Goto() {
+            document.getElementById('div1').style.display = 'none';
+            document.getElementById('div2').style.display = 'block';
+            document.getElementById('goto').style.display = 'none';
+            document.getElementById('promoCom').innerHTML = '';
+        }
+
+        function GoBackToPremiumScreen() {
+            document.getElementById('div2').style.display = 'none';
+            document.getElementById('div1').style.display = 'block';
+            document.getElementById('goto').style.display = 'block';
+            document.getElementById('promoCom').innerHTML = '';
+            if (localStorage.getItem('premium') === 'true') {
+                document.getElementById('removePremiumButton').style.display = 'block';
+            } else {
+                document.getElementById('removePremiumButton').style.display = 'none';
+            }
+            if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
+                document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
+                localStorage.setItem('premiumCongratsShown', 'true');
+            }
+        }
+
+        function calculateExpiry(duration) {
+            if (duration === 'none') {
+                return 'none';
+            }
+            const activation = new Date();
+            const parts = duration.split(' ');
+            const num = parseInt(parts[0]);
+            const unit = parts[1];
+            let expiryDate;
+            if (unit.includes('месяц')) {
+                expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
+            } else if (unit === 'год') {
+                expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
+            } else {
+                return 'none';
+            }
+            const day = expiryDate.getDate().toString().padStart(2, '0');
+            const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = expiryDate.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+
+        function CheckPromoCodeToPremium() {
+            if (localStorage.getItem('premium') === 'true') {
+                showAlert('Вы уже купили премиум!');
+                return;
+            }
+            const inputPromo = document.getElementById('promoCodeInput2').value;
+            const currentDate = new Date();
+            const promo = promoCodes.find(p => p.promo === inputPromo);
+            if (promo) {
+                let valid = true;
+                if (promo.date_for_use !== 'none') {
+                    const [day, month, year] = promo.date_for_use.split('.');
+                    const expiryDate = new Date(year, month - 1, day);
+                    if (currentDate > expiryDate) {
+                        valid = false;
+                    }
+                }
+                if (valid && (localStorage.getItem('admin') === 'true' || !writtenPromos.includes(inputPromo))) {
+                    localStorage.setItem('premium', 'true');
+                    localStorage.setItem('premiumFromPromo', 'true');
+                    localStorage.setItem('premiumActivationDate', new Date().toISOString());
+                    localStorage.setItem('premiumDuration', promo.date);
+                    const expiry = calculateExpiry(promo.date);
+                    localStorage.setItem('premiumExpiry', expiry);
+                    if (localStorage.getItem('admin') !== 'true') {
+                        writtenPromos.push(inputPromo);
+                        localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
+                    }
+                    document.getElementById('promoCodeInput2').style.background = 'green';
+                    document.getElementById('promoCodeInput2').style.borderColor = 'green';
+                    GoBackToPremiumScreen();
+                    setTimeout(() => {
+                        showAlert('Промокод принят!\nВы получили премиум на ' + (expiry === 'none' ? 'навсегда' : promo.date) + '!');
+                        goToMainMenu();  // Redirect back after success
+                    }, 100);
+                    return;
+                }
+            }
+            if (inputPromo === '') {
+                showAlert('Промокод не может быть пустым!');
+                document.getElementById('promoCodeInput2').style.borderColor = 'red';
+            } else {
+                document.getElementById('promoCodeInput2').style.background = 'red';
+                setTimeout(() => {
+                    showAlert('Неверный, истекший или использованный промокод!');
+                }, 0.5);
+            }
+            document.getElementById('promoCodeInput2').value = '';
+        }
+
+        function removePremium() {
+            removeStep = 0;
+            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
+        }
+
+        function showConfirm(message, callbackYes) {
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmModal').style.display = 'flex';
+            const yesButton = document.getElementById('confirmYes');
+            yesButton.onclick = function() {
+                closeConfirmModal();
+                callbackYes(true);
+            };
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function showPrompt(message, callback) {
+            document.getElementById('promptMessage').textContent = message;
+            document.getElementById('promptModal').style.display = 'flex';
+            const submitButton = document.getElementById('promptSubmit');
+            submitButton.onclick = function() {
+                const input = document.getElementById('promptInput').value;
+                closePromptModal();
+                callback(input);
+            };
+        }
+
+        function closePromptModal() {
+            document.getElementById('promptModal').style.display = 'none';
+            document.getElementById('promptInput').value = '';
+        }
+
+        function removePremiumStep1(confirmed) {
+            if (!confirmed) return;
+            removeStep = 1;
+            showPrompt('Введите "Убрать"(2/4)', removePremiumStep2);
+        }
+
+        function removePremiumStep2(input) {
+            removeAnswers[0] = input;
+            if (removeAnswers[0] !== 'Убрать') return;
+            removeStep = 2;
+            showPrompt('Введите "ПОДТВЕРЖДАЮ"(3/4)', removePremiumStep3);
+        }
+
+        function removePremiumStep3(input) {
+            removeAnswers[1] = input;
+            if (removeAnswers[1] !== 'ПОДТВЕРЖДАЮ') return;
+            removeStep = 3;
+            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
+        }
+
+        function removePremiumFinal(confirmed) {
+            if (!confirmed) return;
+            localStorage.removeItem('premium');
+            localStorage.setItem('premium', 'false');
+            localStorage.removeItem('premiumCongratsShown');
+            localStorage.removeItem('premiumFromPromo');
+            localStorage.removeItem('premiumActivationDate');
+            localStorage.removeItem('premiumExpiry');
+            localStorage.removeItem('premiumDuration');
+            showAlert('Премиум успешно убран!');
+            GoBackToPremiumScreen();
+            location.reload();
+        }
+
+        // Initial check
+        if (localStorage.getItem('premium') === 'true') {
+            document.getElementById('goto').style.display = 'none';
+            document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
+            document.getElementById('removePremiumButton').style.display = 'block';
+        } else {
+            document.getElementById('removePremiumButton').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

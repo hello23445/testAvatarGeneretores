@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация изображения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            background: radial-gradient(circle at top, #8fd3ff 0%, #5563DE 40%, #1b1b3a 100%);
+            color: white;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        #requestScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            max-width: 650px;
+            width: 100%;
+            background: rgba(10, 15, 40, 0.78);
+            border-radius: 24px;
+            box-shadow:
+                0 18px 45px rgba(0, 0, 0, 0.55),
+                0 0 0 1px rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+        }
+
+        #requestDetails {
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 14px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            width: 100%;
+            max-height: 220px;
+            overflow: auto;
+            line-height: 1.4;
+        }
+
+        #userToken {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #tokenButton {
+            background: linear-gradient(135deg, #35c66b, #27a052);
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        #tokenButton:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+            opacity: 0.96;
+        }
+
+        #tokenButton:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ---------- PRELOADER ---------- */
+
+        .preloader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 24px 0;
+            position: relative;
+            gap: 10px;
+        }
+
+        .preloader {
+            width: 220px;   /* большой размер */
+            height: 220px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preloader-bg {
+            position: absolute;
+            inset: 18px;
+            background: radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
+                        radial-gradient(circle at 80% 100%, rgba(0, 255, 204, 0.25), transparent 65%);
+            filter: blur(8px);
+            opacity: 0.9;
+            border-radius: 32px;
+        }
+
+        .ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            mask-image: radial-gradient(circle, transparent 54%, black 56%);
+            -webkit-mask-image: radial-gradient(circle, transparent 54%, black 56%);
+        }
+
+        .ring::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            border: 3px solid transparent;
+            border-top-color: #00ffcc;
+            border-right-color: #7b5cff;
+            border-bottom-color: #ff86da;
+            border-left-color: transparent;
+            filter: drop-shadow(0 0 14px rgba(0, 255, 204, 0.8));
+            animation: spin 2.4s linear infinite;
+        }
+
+        .ring-inner {
+            position: absolute;
+            inset: 26px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.28);
+            animation: spinReverse 5s linear infinite;
+        }
+
+        .ring-inner::before,
+        .ring-inner::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ffcc;
+            top: 50%;
+            left: -4px;
+            transform: translateY(-50%);
+            box-shadow: 0 0 16px rgba(0, 255, 204, 0.9);
+        }
+
+        .ring-inner::after {
+            left: auto;
+            right: -4px;
+            background: #ff86da;
+            box-shadow: 0 0 16px rgba(255, 134, 218, 0.9);
+        }
+
+        .orbit {
+            position: absolute;
+            inset: 58px;
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            animation: spin 4.2s linear infinite;
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow:
+                0 0 12px rgba(255, 255, 255, 0.9),
+                0 0 26px rgba(0, 255, 204, 0.75);
+            transform-origin: 50% 50%;
+        }
+
+        .orbit-dot:nth-child(1) { top: -5px; left: 50%; transform: translateX(-50%); }
+        .orbit-dot:nth-child(2) { top: 50%; right: -5px; transform: translateY(-50%); }
+        .orbit-dot:nth-child(3) { bottom: -5px; left: 50%; transform: translateX(-50%); }
+        .orbit-dot:nth-child(4) { top: 50%; left: -5px; transform: translateY(-50%); }
+
+        .center-core {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 24px;
+            background: radial-gradient(circle at 30% 20%, #ffffff, #b6fff2 45%, #00ffcc 70%, transparent 72%);
+            box-shadow:
+                0 0 25px rgba(0, 255, 204, 0.9),
+                0 0 55px rgba(0, 0, 0, 0.9);
+            animation: corePulse 2.2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .center-core-icon {
+            font-size: 26px;
+            color: #0a1230;
+            opacity: 0.9;
+            animation: iconPulse 2.2s ease-in-out infinite;
+        }
+
+        .pixel-noise {
+            position: absolute;
+            inset: 16px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .pixel-noise span {
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.09);
+            animation: pixelBlink 1.3s infinite alternate;
+        }
+
+        .pixel-noise span:nth-child(3n)  { animation-delay: 0.1s; }
+        .pixel-noise span:nth-child(4n)  { animation-delay: 0.25s; }
+        .pixel-noise span:nth-child(5n)  { animation-delay: 0.4s; }
+        .pixel-noise span:nth-child(7n)  { animation-delay: 0.6s; }
+
+        .preloader-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+            animation: textPulse 1.8s ease-in-out infinite;
+        }
+
+        .preloader-subtext {
+            margin-top: 4px;
+            font-size: 13px;
+            color: rgba(235, 235, 245, 0.85);
+            max-width: 360px;
+        }
+
+        /* textPulse — оставляем имя, меняем эффект */
+        @keyframes textPulse {
+            0% {
+                opacity: 0.45;
+                letter-spacing: 0.3px;
+            }
+            40% {
+                opacity: 1;
+                letter-spacing: 1.2px;
+            }
+            100% {
+                opacity: 0.45;
+                letter-spacing: 0.3px;
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spinReverse {
+            to { transform: rotate(-360deg); }
+        }
+
+        @keyframes corePulse {
+            0%, 100% {
+                transform: scale(0.96);
+                box-shadow:
+                    0 0 18px rgba(0, 255, 204, 0.75),
+                    0 0 40px rgba(0, 0, 0, 0.85);
+            }
+            50% {
+                transform: scale(1.04);
+                box-shadow:
+                    0 0 26px rgba(0, 255, 204, 1),
+                    0 0 55px rgba(0, 0, 0, 0.9);
+            }
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        @keyframes pixelBlink {
+            0%   { background: rgba(255, 255, 255, 0.02); }
+            100% { background: rgba(255, 255, 255, 0.25); }
+        }
+
+        /* ---------- IMAGE & BUTTONS ---------- */
+
+        #generatedImage {
+            max-width: 100%;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.65);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            filter: blur(5px);
+            transition:
+                opacity 1.5s ease-in-out,
+                transform 1.5s ease-in-out,
+                filter 1.5s ease-in-out,
+                box-shadow 1.5s ease-in-out;
+            background-color: #050816;
+        }
+
+        #generatedImage.loaded {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+            box-shadow:
+                0 0 32px rgba(0, 255, 204, 0.7),
+                0 18px 42px rgba(0,0,0,0.8);
+        }
+
+        #shareButtons {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #shareButtons button {
+            background: linear-gradient(135deg, #4CAF50, #3c9241);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+        #shareButtons button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.55);
+            opacity: 0.97;
+        }
+
+        #backToMenu,
+        .btn {
+            background: linear-gradient(135deg, #5563DE, #3b46a8);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+        #backToMenu:hover,
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.6);
+            opacity: 0.97;
+        }
+
+        /* ---------- MODALS ---------- */
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 20;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 6, 26, 0.82);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 22px;
+            border-radius: 18px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+        }
+
+        @media (max-width: 768px) {
+            #requestScreen {
+                padding: 14px;
+            }
+            #requestDetails {
+                font-size: 12px;
+                max-height: 180px;
+            }
+            .preloader {
+                width: 190px;
+                height: 190px;
+            }
+        }
+
+        h2 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .modal-content h2 {
+            color: #111827;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="requestScreen">
+        <h2>Ваш запрос:</h2>
+        
+        <div id="requestDetails"></div>
+
+        <div id="userToken">
+            <button id="tokenButton" onclick="copyToken()">Токен: Скопировать</button>
+        </div>
+
+        <div class="preloader-container">
+            <div class="preloader">
+                <div class="preloader-bg"></div>
+
+                <div class="ring"></div>
+                <div class="ring-inner"></div>
+
+                <div class="orbit">
+                    <div class="orbit-dot"></div>
+                    <div class="orbit-dot"></div>
+                    <div class="orbit-dot"></div>
+                    <div class="orbit-dot"></div>
+                </div>
+
+                <div class="pixel-noise">
+                    <!-- 36 мелких «пикселей» -->
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+
+                <div class="center-core">
+                    <i class="fa-solid fa-image center-core-icon" 
+                    style="font-size:26px; opacity:0.85;"></i>
+
+                    <i class="fa-solid fa-sparkles center-core-icon" 
+                    style="position:absolute; bottom:6px; right:6px; font-size:14px; opacity:1;"></i>
+                </div>
+
+
+
+            </div>
+
+            <div class="preloader-text">Генерация изображения…</div>
+            <div class="preloader-subtext">Генерация изображения может занять некоторое время.</div>
+        </div>
+
+        <img id="generatedImage" style="display: none;">
+
+        <div id="shareButtons" style="display: none;">
+            <button onclick="shareImage()">Поделиться фото</button>
+            <button onclick="shareLink()">Поделиться ссылкой на фото</button>
+        </div>
+
+        <button id="backToMenu" onclick="returnToMainMenu()">Вернуться в главное меню</button>
+    </div>
+
+    <!-- Violation Modal -->
+    <div id="violationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Запрос нарушает наши <a href="https://t.me/GeneratorPhotosBot/rules" target="_blank">правила конфиденциальности</a>.</h2>
+            <button onclick="returnToMainMenu()" style="margin-top: 14px;" class="btn">Вернуться в главное меню</button>
+        </div>
+    </div>
+
+    <!-- Block Modal -->
+    <div id="blockModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Вы заблокированы в приложении.</h2>
+            <button onclick="copyToken()" class="btn" style="margin-top: 12px; margin-bottom: 10px;">Скопировать токен</button>
+            <a href="https://t.me/Clickerstart_bot" target="_blank">
+                <button class="btn">Служба поддержки</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p id="alertMessage" style="color: black; font-weight: 600; font-size: 16px; margin-bottom: 16px;"></p>
+            <button onclick="closeAlertModal()" class="btn">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
+        let pendingRequest = JSON.parse(localStorage.getItem('pendingRequest')) || null;
+
+        const requestDetails = document.getElementById('requestDetails');
+        const preloaderContainer = document.querySelector('.preloader-container');
+        const generatedImage = document.getElementById('generatedImage');
+        const shareButtons = document.getElementById('shareButtons');
+        const backToMenu = document.getElementById('backToMenu');
+        const tokenButton = document.getElementById('tokenButton');
+        const violationModal = document.getElementById('violationModal');
+        const blockModal = document.getElementById('blockModal');
+
+        if (pendingRequest) {
+            requestDetails.textContent = pendingRequest.params;
+            tokenButton.textContent = `Токен: ${pendingRequest.token} (Скопировать)`;
+            preloaderContainer.style.display = 'flex';
+            generatedImage.style.display = 'none';
+            shareButtons.style.display = 'none';
+            backToMenu.style.display = 'none';
+
+            setInterval(checkStatus, 30000);
+            checkStatus();
+        } else {
+            window.location.href = 'index.html'; // или главная страница
+        }
+
+        function checkStatus() {
+            if (!pendingRequest) return;
+
+            const data = {
+                action: 'read',
+                token: pendingRequest.token
+            };
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    const rowData = result.data;
+
+                    if (rowData.Y === 'Заблокировать') {
+                        showBlockModal();
+                    } else if (rowData.X === 'Запрос нарушает наши правила') {
+                        violationModal.style.display = 'flex';
+                        backToMenu.style.display = 'block';
+                    } else if (rowData.W) {
+                        let imageUrl = rowData.W;
+
+                        if (imageUrl.includes('drive.google.com/file/d/')) {
+                            const fileId = imageUrl.match(/\/d\/(.*?)\//)[1];
+                            imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                        }
+
+                        preloaderContainer.style.display = 'none';
+
+                        generatedImage.src = imageUrl;
+                        generatedImage.style.display = 'block';
+
+                        // небольшая задержка, чтобы CSS-анимация "loaded" отработала плавно
+                        requestAnimationFrame(() => {
+                            generatedImage.classList.add('loaded');
+                        });
+
+                        const sizeMatch = pendingRequest.params.match(/6\. Размер: (\d+x\d+)/);
+                        if (sizeMatch) {
+                            const [width, height] = sizeMatch[1].split('x').map(Number);
+                            generatedImage.style.width = width + 'px';
+                            generatedImage.style.height = height + 'px';
+                        }
+
+                        shareButtons.style.display = 'flex';
+                        backToMenu.style.display = 'block';
+                    }
+                }
+            })
+            .catch(() => {
+                // можно вывести алерт при ошибке, если нужно
+            });
+        }
+
+        function returnToMainMenu() {
+            localStorage.removeItem('pendingRequest');
+            pendingRequest = null;
+            window.location.href = 'index.html'; // или главная страница
+        }
+
+        function shareImage() {
+            fetch(generatedImage.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], 'image.png', {type: blob.type});
+                    if (navigator.share) {
+                        navigator.share({
+                            files: [file]
+                        });
+                    } else {
+                        showAlert('Sharing not supported');
+                    }
+                });
+        }
+
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Generated Image Link',
+                    url: generatedImage.src
+                });
+            } else {
+                showAlert('Sharing not supported');
+            }
+        }
+
+        function copyToken() {
+            navigator.clipboard.writeText(pendingRequest ? pendingRequest.token : '').then(() => {
+                showAlert('Токен скопирован!');
+            });
+        }
+
+        function showBlockModal() {
+            document.getElementById('requestScreen').style.display = 'none';
+            blockModal.style.display = 'flex';
+        }
+
+        function showAlert(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

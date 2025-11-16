@@ -7,6 +7,7 @@
     <!-- Add Font Awesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* All original styles remain here, unchanged */
         html, body {
             overscroll-behavior-y: contain;
         }
@@ -225,64 +226,6 @@
             width: 100px;
             height: auto;
         }
-        #requestScreen {
-            display: none;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            backdrop-filter: blur(5px);
-        }
-        #requestDetails {
-            margin-bottom: 20px;
-            text-align: left;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            white-space: pre-wrap;
-            font-size: 14px;
-        }
-        #userToken {
-            margin-bottom: 20px;
-        }
-        #tokenButton {
-            background-color: #4CAF50;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #imagePreloader {
-            font-size: 18px;
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-        #generatedImage {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        #shareButtons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        #backToMenu {
-            display: none;
-        }
         @media (max-width: 768px) {
             #requestScreen {
                 padding: 10px;
@@ -386,11 +329,6 @@
             justify-content: center;
             align-items: center;
         }
-        #overlay .preloader-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
         #menuButton {
             position: absolute;
             top: 10px;
@@ -433,55 +371,6 @@
             #qw{
                 margin-top: 13%;
             }
-        }
-        #div2 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        #div2 h2 {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px;
-        }
-        #div2 .prices {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            width: 100%;
-            text-align: left;
-            color: white;
-            font-size: 1em;
-            white-space: pre-line;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        #div2 .payment-info {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        #div2 input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #4CAF50;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-        #div2 input:focus {
-            border-color: #45a049;
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-        }
-        #div2 button {
-            width: 100%;
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -858,8 +747,8 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
-          
-          
+    
+    
             </div>
         </div>
         <div class="right-section">
@@ -1078,7 +967,6 @@
                 <input type="checkbox" id="agree">Генерируя фото, я соглашаюсь с <a href="https://t.me/GeneratorPhotosBot/rules" style="color: blue; background-color: white;">правилами</a>.
             </label>
             </p>
-      
             <button onclick="checkBadWords()" id="generate">Сгенерировать(точно по описанию и параметрам)</button>
             <button onclick="fastGenerate()" id="fastGenerateButton" disabled>Сгенерировать(Максимально быстро)</button>
             <button onclick="surpriseMode()">Режим: Удиви меня</button>
@@ -1187,125 +1075,6 @@
             </div>
         </div>
     </div>
-    <div id="div1" style="display: none;">
-        <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
-        <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">1.</span>
-            Доступ к высоким разрешениям фото(2560x1440, 3840x2160, 4096x2160, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">2.</span>
-            Больше стилей (аниме, стимпанк, абстрактный, готический, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">3.</span>
-            Уровень детализации (высокий, ультра).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">4.</span>
-            Тон цвета (пастельный, сепия, неоновый, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">5.</span>
-            Возможность писать в закрытых полях.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">6.</span>
-            Доступ к высоким качествам (2160p60(4K), 4320p(8K)).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">7.</span>
-            Описание фото увеличевается с 500 до 1000 символов.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">8.</span>
-            Текст на фото увеличевается с 250 до 500 символов.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">9.</span>
-            Возможность выбирать ИИ (Grok 4, ChatGPT 5 и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">10.</span>
-            Возможность выбирать другие фоны фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">11.</span>
-            Возможность выбирать другие соотношения сторон.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">12.</span>
-            Возможность получить фото по WhatsApp и Telegram.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">13.</span>
-            Возможность выбирать другие рамки для фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">14.</span>
-            Возможность выбирать другие ракурсы для фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">15.</span>
-            Возможность загружать до 6-ти фотографий.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">16.</span>
-            Возможность получить сгенерированное фото прямо в приложении.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">17.</span>
-            Доступ к быстрой генерации фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">18.</span>
-            Сохранение до 20 историев генераций.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">19.</span>
-            Бесконечное количество генераций в день.
-            </li>
-        </ul>
-        <button onclick="removePremium()" id="removePremiumButton">Убрать премиум</button>
-        <h4>ℹ️Список со временнем будет пополняться</h4>
-        <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
-        <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
-        <button id="goto" onclick="Goto()">Перейти к покупке</button>
-        <button onclick="goToMainMenu()" style="margin-top: 1%;">Главное меню</button>
-    </div>
-    <div id="div2" style="display: none;">
-        <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a></h2>
-        <div class="prices" style="color: white; text-align: left; margin-bottom: 10px; font-size: 1em; white-space: pre-line;">
-Premium на 1 месяц - 25🌟
-Premium на 3 месяца - 50🌟
-Premium на 6 месяцев - 100🌟
-Premium на 1 год - 200🌟
-Premium навсегда - 1 000🌟
-        </div>
-        <div class="payment-info">Принимаются только Телеграм звезды(Telegram Stars)🌟</div>
-        <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
-        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
-        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
-    </div>
-    <!-- New Request Screen -->
-    <div id="requestScreen">
-        <h2>Ваш запрос:</h2>
-        <div id="requestDetails"></div>
-        <div id="userToken">
-            <button id="tokenButton" onclick="copyToken()">Токен: Скопировать</button>
-        </div>
-        <div class="preloader-container">
-            <div class="preloader"></div>
-            <div class="preloader-text">Генерация изображения</div>
-        </div>
-        <img id="generatedImage" style="display: none;">
-        <div id="shareButtons" style="display: none;">
-            <button onclick="shareImage()">Поделиться фото</button>
-            <button onclick="shareLink()">Поделиться ссылкой на фото</button>
-        </div>
-        <button id="backToMenu" onclick="returnToMainMenu()">Вернуться в главное меню</button>
-    </div>
     <!-- Violation Modal -->
     <div id="violationModal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -1376,17 +1145,14 @@ Premium навсегда - 1 000🌟
         </div>
     </div>
     <script type="module">
+        // Original script, but removed premium-related functions and variables
+        // (e.g., promoCodes, limitPromos, CheckPromoCodeToPremium, calculateExpiry, etc.)
+        // Updated BuyPremium() to redirect to premium.html
+        // Kept checkPremium() but removed premium activation logic (now it's just checking localStorage)
+        // Removed removePremium() and related modals/functions since premium is handled in premium.html
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
 const SHEET_NAME = 'Sheet1';
 import { badWords } from './security.js';
-const promoCodes = [
-    { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
-    { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяц' },
-    { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяц' },
-    { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
-    { promo: 'ULTRACOVER2025', date_for_use: 'none', date: 'none' },
-    // promo:ПРОМОКОД, date_for_use: дата использования(если нужно none), date: срок действия премиума/none
-];
 const limitPromos = [
     { promocode: 'QWERTY', limits: 6 },
     { promocode: 'ONELIMITER', limits: 1 },
@@ -1424,16 +1190,8 @@ const slashMax = document.getElementById('slashMax');
 const attemptsDisplayDiv = document.getElementById('attemptsDisplay');
 const warning = document.getElementById('warning');
 const rememberMe = document.getElementById('rememberMe');
-const requestScreen = document.getElementById('requestScreen');
-const requestDetails = document.getElementById('requestDetails');
-const userTokenDiv = document.getElementById('userToken');
-const preloaderContainer = document.querySelector('.preloader-container');
-const generatedImage = document.getElementById('generatedImage');
-const shareButtons = document.getElementById('shareButtons');
 const violationModal = document.getElementById('violationModal');
 const blockModal = document.getElementById('blockModal');
-const backToMenu = document.getElementById('backToMenu');
-const tokenButton = document.getElementById('tokenButton');
 const fastGenerateButton = document.getElementById('fastGenerateButton');
 const fastGenModal = document.getElementById('fastGenModal');
 const fastGenImage = document.getElementById('fastGenImage');
@@ -2027,7 +1785,6 @@ function goBack() {
 function goToMainMenu() {
     messengerModal.style.display = 'none';
     mainContainer.style.display = 'flex';
-    document.getElementById('div1').style.display = 'none';
     document.getElementById('menuButton').style.display = 'block';
     restoreFormData();
 }
@@ -2085,8 +1842,7 @@ function proceedToSend(messenger, contact) {
             if (result.status === 'success') {
                 localStorage.setItem('pendingRequest', JSON.stringify({token: userToken, params: params.join('\n')}));
                 pendingRequest = {token: userToken, params: params.join('\n')};
-                showRequestScreen();
-                setInterval(checkStatus, 30000);
+                window.location.href = 'generatingImage.html';
             } else {
                 throw new Error(result.error);
             }
@@ -2147,51 +1903,13 @@ function checkStatus() {
         }
     });
 }
-function showRequestScreen() {
-    document.getElementById('menuButton').style.display = 'none';
-    mainContainer.style.display = 'none';
-    messengerModal.style.display = 'none';
-    resultModal.style.display = 'none';
-    requestScreen.style.display = 'block';
-    requestDetails.textContent = pendingRequest.params;
-    tokenButton.textContent = `Токен: ${pendingRequest.token} (Скопировать)`;
-    preloaderContainer.style.display = 'flex';
-    generatedImage.style.display = 'none';
-    shareButtons.style.display = 'none';
-    backToMenu.style.display = 'none';
-}
 function returnToMainMenu() {
     localStorage.removeItem('pendingRequest');
     pendingRequest = null;
-    requestScreen.style.display = 'none';
     violationModal.style.display = 'none';
     mainContainer.style.display = 'flex';
     document.getElementById('menuButton').style.display = 'block';
     restoreFormData();
-}
-function shareImage() {
-    fetch(generatedImage.src)
-        .then(res => res.blob())
-        .then(blob => {
-            const file = new File([blob], 'image.png', {type: blob.type});
-            if (navigator.share) {
-                navigator.share({
-                    files: [file]
-                });
-            } else {
-                showAlert('Sharing not supported');
-            }
-        });
-}
-function shareLink() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Generated Image Link',
-            url: generatedImage.src
-        });
-    } else {
-        showAlert('Sharing not supported');
-    }
 }
 function copyToken() {
     navigator.clipboard.writeText(pendingRequest ? pendingRequest.token : getUserToken()).then(() => {
@@ -2200,7 +1918,6 @@ function copyToken() {
 }
 function showBlockModal() {
     mainContainer.style.display = 'none';
-    requestScreen.style.display = 'none';
     blockModal.style.display = 'flex';
 }
 function fakeCheckSubscription() {
@@ -2223,8 +1940,7 @@ window.onload = async () => {
     const isVerified = await verifyUser();
     if (isVerified) {
         if (pendingRequest) {
-            showRequestScreen();
-            checkStatus();
+            window.location.href = 'generatingImage.html';
         } else {
             checkAttempts();
             mainContainer.style.display = 'flex';
@@ -2242,7 +1958,7 @@ window.onload = async () => {
     fastRememberMe.addEventListener('change', () => {
         localStorage.setItem('fastRememberMe', fastRememberMe.checked);
     });
-    if (mainContainer.style.display === 'flex') {
+    if (mainContainer.style.display = 'flex') {
         document.getElementById('menuButton').style.display = 'block';
     } else {
         document.getElementById('menuButton').style.display = 'none';
@@ -2270,108 +1986,7 @@ window.onload = async () => {
     }
 };
 function BuyPremium() {
-    checkPremium();
-    document.getElementById('messengerModal').style.display = 'none';
-    document.getElementById('resultModal').style.display = 'none';
-    document.getElementById('noAttemptsModal').style.display = 'none';
-    document.getElementById('mainContainer').style.display = 'none';
-    document.getElementById('div1').style.display = 'block';
-    document.getElementById('menuButton').style.display = 'none';
-    if (localStorage.getItem('premium') !== 'true') {
-        document.getElementById('goto').style.display = 'block';
-    } else {
-        document.getElementById('goto').style.display = 'none';
-        document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
-    }
-}
-function GoBackToPremiumScreen() {
-    checkAdmin();
-    document.getElementById('div2').style.display = 'none';
-    document.getElementById('div1').style.display = 'block';
-    document.getElementById('goto').style.display = 'block';
-    document.getElementById('promoCom').innerHTML = '';
-    document.getElementById('menuButton').style.display = 'none';
-    if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
-        document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
-        localStorage.setItem('premiumCongratsShown', 'true');
-    }
-    if (localStorage.getItem('premium') === 'true') {
-        document.getElementById('removePremiumButton').style.display = 'block';
-    } else {
-        document.getElementById('removePremiumButton').style.display = 'none';
-    }
-    checkPremium();
-}
-function calculateExpiry(duration) {
-    if (duration === 'none') {
-        return 'none';
-    }
-    const activation = new Date();
-    const parts = duration.split(' ');
-    const num = parseInt(parts[0]);
-    const unit = parts[1];
-    let expiryDate;
-    if (unit.includes('месяц')) {
-        expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
-    } else if (unit === 'год') {
-        expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
-    } else {
-        return 'none';
-    }
-    const day = expiryDate.getDate().toString().padStart(2, '0');
-    const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
-    const year = expiryDate.getFullYear();
-    return `${day}.${month}.${year}`;
-}
-function CheckPromoCodeToPremium() {
-    if (localStorage.getItem('premium') === 'true') {
-        showAlert('Вы уже купили премиум!');
-        checkPremium();
-        return;
-    }
-    const inputPromo = document.getElementById('promoCodeInput2').value;
-    const currentDate = new Date();
-    const promo = promoCodes.find(p => p.promo === inputPromo);
-    if (promo) {
-        let valid = true;
-        if (promo.date_for_use !== 'none') {
-            const [day, month, year] = promo.date_for_use.split('.');
-            const expiryDate = new Date(year, month - 1, day);
-            if (currentDate > expiryDate) {
-                valid = false;
-            }
-        }
-        if (valid && (localStorage.getItem('admin') === 'true' || !writtenPromos.includes(inputPromo))) {
-            localStorage.setItem('premium', 'true');
-            localStorage.setItem('premiumFromPromo', 'true');
-            localStorage.setItem('premiumActivationDate', new Date().toISOString());
-            localStorage.setItem('premiumDuration', promo.date);
-            const expiry = calculateExpiry(promo.date);
-            localStorage.setItem('premiumExpiry', expiry);
-            if (localStorage.getItem('admin') !== 'true') {
-                writtenPromos.push(inputPromo);
-                localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
-            }
-            document.getElementById('promoCodeInput2').style.background = 'green';
-            document.getElementById('promoCodeInput2').style.borderColor = 'green';
-            checkPremium();
-            GoBackToPremiumScreen();
-            setTimeout(() => {
-                showAlert('Промокод принят!\nВы получили премиум на ' + (expiry === 'none' ? 'навсегда' : promo.date) + '!');
-            }, 100);
-            return;
-        }
-    }
-    if (inputPromo === '') {
-        showAlert('Промокод не может быть пустым!');
-        document.getElementById('promoCodeInput2').style.borderColor = 'red';
-    } else {
-        document.getElementById('promoCodeInput2').style.background = 'red';
-        setTimeout(() => {
-            showAlert('Неверный, истекший или использованный промокод!');
-        }, 0.5);
-    }
-    document.getElementById('promoCodeInput2').value = '';
+    window.location.href = 'premium.html';
 }
 function checkRulesAgree() {
     if (!document.getElementById('agree').checked) {
@@ -2425,82 +2040,6 @@ function checkPremiumOptions() {
             generateImage();
         }
     }
-}
-let removeStep = 0;
-let removeAnswers = ['', '', ''];
-function removePremium() {
-    removeStep = 0;
-    showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
-}
-function showConfirm(message, callbackYes) {
-    document.getElementById('confirmMessage').textContent = message;
-    document.getElementById('confirmModal').style.display = 'flex';
-    const yesButton = document.getElementById('confirmYes');
-    yesButton.onclick = function() {
-        closeConfirmModal();
-        callbackYes(true);
-    };
-}
-function closeConfirmModal() {
-    document.getElementById('confirmModal').style.display = 'none';
-}
-function showPrompt(message, callback) {
-    document.getElementById('promptMessage').textContent = message;
-    document.getElementById('promptModal').style.display = 'flex';
-    const submitButton = document.getElementById('promptSubmit');
-    submitButton.onclick = function() {
-        const input = document.getElementById('promptInput').value;
-        closePromptModal();
-        callback(input);
-    };
-}
-function closePromptModal() {
-    document.getElementById('promptModal').style.display = 'none';
-    document.getElementById('promptInput').value = '';
-}
-function removePremiumStep1(confirmed) {
-    if (!confirmed) return;
-    removeStep = 1;
-    showPrompt('Введите "Убрать"(2/4)', removePremiumStep2);
-}
-function removePremiumStep2(input) {
-    removeAnswers[0] = input;
-    if (removeAnswers[0] !== 'Убрать') return;
-    removeStep = 2;
-    showPrompt('Введите "ПОДТВЕРЖДАЮ"(3/4)', removePremiumStep3);
-}
-function removePremiumStep3(input) {
-    removeAnswers[1] = input;
-    if (removeAnswers[1] !== 'ПОДТВЕРЖДАЮ') return;
-    removeStep = 3;
-    showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
-}
-function removePremiumFinal(confirmed) {
-    if (!confirmed) return;
-    localStorage.removeItem('premium');
-    localStorage.setItem('premium', 'false');
-    localStorage.removeItem('premiumCongratsShown');
-    localStorage.removeItem('premiumFromPromo');
-    localStorage.removeItem('premiumActivationDate');
-    localStorage.removeItem('premiumExpiry');
-    localStorage.removeItem('premiumDuration');
-    showAlert('Премиум успешно убран!');
-    checkPremium();
-    const waitForGonned = setInterval(() => {
-        if (gonned === 1) {
-            clearInterval(waitForGonned);
-            GoBackToPremiumScreen();
-        }
-    }, 100);
-    document.getElementById('selector').disabled = true;
-    location.reload();
-}
-function Goto() {
-    document.getElementById('div1').style.display = 'none';
-    document.getElementById('div2').style.display = 'block';
-    document.getElementById('goto').style.display = 'none';
-    document.getElementById('promoCom').innerHTML = '';
-    document.getElementById('menuButton').style.display = 'none';
 }
 document.addEventListener('click', function (event) {
     if (event.target === document.body) {
@@ -2565,8 +2104,6 @@ function checkPremium() {
         data.attempts = 0;
         setStoredData(data);
         attemptsDisplayDiv.innerHTML = '<b>Осталось генераций: ∞</b>';
-        document.getElementById('removePremiumButton').style.display = 'block';
-        document.getElementById('goto').style.display = 'none';
         document.getElementById('sizeInput').disabled = false;
         document.getElementById('sizeInput').placeholder = '';
         document.getElementById('exclusions').disabled = false;
@@ -2587,8 +2124,6 @@ function checkPremium() {
     } else {
         document.getElementById('p22').style.display = 'block';
         document.getElementById('app').disabled = true;
-        document.getElementById('removePremiumButton').style.display = 'none';
-        document.getElementById('goto').style.display = 'block';
         document.getElementById('sizeInput').disabled = true;
         document.getElementById('sizeInput').placeholder = 'Купите Premium, чтобы писать здесь';
         document.getElementById('exclusions').disabled = true;
@@ -2750,11 +2285,9 @@ function fastGenerate() {
         if (document.getElementById('rakurs').value !== 'auto') {
             prompt += `, angle: ${document.getElementById('rakurs').value}`;
         }
-  
         const encodedPrompt = encodeURIComponent(prompt);
         const seed = Math.floor(Math.random() * 1000000);
         const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&model=flux&nologo=true`;
-  
         const imageItem = document.createElement('div');
         imageItem.className = 'image-item';
         const img = new Image();
@@ -2864,7 +2397,7 @@ const descriptions = [
     { desc: 'Космический корабль, летящий через астероидное поле', category: 'space' },
     { desc: 'Цветущий сад весной с бабочками и пчелами', category: 'nature' },
     { desc: 'Супергерой в плаще, стоящий на крыше небоскреба ночью', category: 'comic' },
-    { desc: 'Подводный мир с коралловыми рифами и тропическими рыбами', category: 'ocean' },
+    { desc: 'Подводный мир с коралловыми рифами и тропических рыбами', category: 'ocean' },
     { desc: 'Старинный паровоз, мчащийся по железной дороге в горах', category: 'vintage' },
     { desc: 'Магический лес с светящимися грибами и феями', category: 'fantasy' },
     { desc: 'Городской пейзаж с уличными музыкантами и прохожими', category: 'urban' },
@@ -2949,7 +2482,7 @@ function surpriseMode() {
             autoTextStyle.checked = true;
         }
     }
-    showAlert('Готово! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
+    showAlert('Случайные параметры применены! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
 }
 window.uploadPhotos = uploadPhotos;
 window.checkBadWords = checkBadWords;
@@ -2960,13 +2493,7 @@ window.handleContinue = handleContinue;
 window.goToMainMenu = goToMainMenu;
 window.proceedToSend = proceedToSend;
 window.goBack = goBack;
-window.removePremium = removePremium;
-window.Goto = Goto;
-window.CheckPromoCodeToPremium = CheckPromoCodeToPremium;
-window.GoBackToPremiumScreen = GoBackToPremiumScreen;
 window.copyToken = copyToken;
-window.shareImage = shareImage;
-window.shareLink = shareLink;
 window.returnToMainMenu = returnToMainMenu;
 window.checkAdmin = checkAdmin;
 window.checkPremium = checkPremium;

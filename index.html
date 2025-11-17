@@ -372,6 +372,9 @@
                 margin-top: 13%;
             }
         }
+        h5{
+            font-weight: bolder;
+        }
     </style>
 </head>
 <body>
@@ -407,6 +410,7 @@
                     <option value="2160p60" disabled>(Premium)2160p60 (4K)</option>
                     <option value="4320p" disabled>(Premium)4320p (8K)</option>
                 </select>
+                <h5>Выберите какого качества должно быть фото.</h5>
             </div>
             <div class="input-group">
                 <label for="size">Размер фото (в пикселях)</label>
@@ -446,6 +450,7 @@
                     <option value="20480x11520" disabled>(Premium)20480x11520 (20K)</option>
                     <option value="23040x12960" disabled>(Premium)23040x12960 (23K)</option>
                 </select>
+                <h5>Выберите какого размера должно быть фото.</h5>
             </div>
             <div class="input-group">
                 <label for="style">Стиль фото</label>
@@ -534,6 +539,7 @@
                     <option value="horror" disabled>(Premium)Хоррор</option>
                     <option value="ethereal" disabled>(Premium)Эфирный</option>
                 </select>
+                <h5>Стиль фото — это художественная обработка или визуальная подача, в которой будет создано изображение.</h5>
             </div>
             <div class="input-group">
                 <label for="color-tone">Тон цвета фотографии</label>
@@ -562,6 +568,7 @@
                     <option value="vintage-sepia" disabled>(Premium)Винтажная сепия</option>
                     <option value="deep-purple" disabled>(Premium)Глубокий фиолетовый</option>
                 </select>
+                <h5>Тон цвета фотографии — это общее цветовое настроение снимка.</h5>
             </div>
             <div class="input-group">
                 <label for="detail-level">Уровень детализации фотографии</label>
@@ -572,10 +579,11 @@
                     <option value="high" disabled>(Premium)Высокий</option>
                     <option value="ultra" disabled>(Premium)Ультра</option>
                 </select>
+                <h5>Уровень детализации фотографии — это то, насколько много мелких деталей ИИ будет прорисовывать в изображении.</h5>
             </div>
             <div class="input-group">
                 <label for="selector" style="margin-bottom: 0%;">Выберите ИИ, который будет генерировать для вас фотографию</label>
-                <select id="selector" style="margin-top: 0%; margin-block-end: 2%;">
+                <select id="selector" style="margin-top: 0%;">
                     <optgroup label="По-умолчанию">
                         <option value="CrN PhotoAI" selected>CrN PhotoAI</option>
                     </optgroup>
@@ -657,6 +665,7 @@
                         <option value="Groq" disabled>(Premium)Groq</option>
                     </optgroup>
                 </select>
+                <h5 style="margin-bottom: 2%;">Выбор ИИ повышает точность генерации фото.<br>Рекомендуем выбрать CrN PhotoAI</h5>
                 <div>
                 <label for="photo_theme" style="margin-bottom: 0%;">Выберите фон фото</label><br>
                 <select id="photo_theme" style="margin-top: 0%; width: 100%;">
@@ -738,11 +747,13 @@
                         <input type="checkbox" id="razmitiyPHON">
                         Размытие фона
                     </label>
+                <h5>Фон может сделать фото красивее.<br>Размытие фона делает фото еще круче</h5>
                 </div>
                 <div style="margin-top: 4%;">
                     <label for="fileInput" id="fileInputTextLabel">Вы можете загрузить фото для примера и так далее...</label><br>
                     <input type="file" id="fileInput" multiple accept="image/*">
                     <button id="uploadButton" onclick="uploadPhotos()">Загрузить</button>
+                    <h5>Бесплатно можно загружать до 3-х фотографий.<br>А с премиумом можно загружать до 6-ти фотографий.</h5>
                 </div>
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
@@ -768,6 +779,24 @@
                     <option value="9:4">9:4 (Баннер / Обложка)</option>
                     <option value="27:40" disabled>(Premium)27:40 (Постер / Афиша)</option>
                 </select>
+                <h5>Соотношение сторон (aspect ratio) — это форма фотографии, то есть пропорции её ширины и высоты.</h5>
+            </div>
+            <div>
+                <label for="osvecheniye">Выберите освещение фото</label>
+                <select id="osvecheniye" style="width: 100%;">
+                    <option value="Автоматический выбор" selected>Автоматический выбор освещения</option>
+                    <option value="Естественное освещение">Естественное освещение</option>
+                    <option value="Студийное освещение">Студийное освещение</option>
+                    <option value="Теплый свет">Теплый свет</option>
+                    <option value="Холодный свет">Холодный свет</option>
+                    <option value="Кино-свет">Кино-свет</option>
+                    <option value="HDR">HDR</option>
+                    <option value="Контровой свет">Контровой свет</option>
+                    <option value="Мягкие тени" disabled>(Premium)Мягкие тени</option>
+                    <option value="Жесткие тени" disabled>(Premium)Жесткие тени</option>
+                    <option value="Низкое освещение" disabled>(Premium)Низкое освещение</option>
+                </select>
+                <h5>Освещение фотографии — это то, как падает свет на объекты в кадре и какая атмосфера создаётся благодаря свету.</h5>
             </div>
             <div>
                 <label for="ram">Выберите рамку для фото</label>
@@ -858,6 +887,7 @@
                         <option value="vortex" disabled>(Premium)Вихрь</option>
                     </optgroup>
                 </select>
+                <h5>Рамка (frame) — это декоративная обводка вокруг фотографии.</h5>
             </div>
             <div>
                 <label for="rakurs">Выберите ракурс фото</label>
@@ -906,11 +936,12 @@
                 <option value="90deg" disabled>(Premium) 90° ракурс</option>
                 <option value="panoramic" disabled>(Premium) Панорамный вид</option>
                 </select>
+                <h5>Ракурс (camera angle) — это с какого положения камера «смотрит» на объект.</h5>
             </div>
             <div class="input-group">
                 <label for="text">Текст на фото(необязательно)</label>
                 <input type="text" id="text" maxlength="30" oninput="updateTextLimit()">
-                <div id="textCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/30</div>
+                <div id="textCounter" style="font-size: 0.95em; color: white; margin-top: 3px; margin-bottom: -4%;">0/30</div>
                 <script>
                     function updateTextLimit() {
                         const textInput = document.getElementById('text');
@@ -923,10 +954,11 @@
                     document.getElementById('text').addEventListener('input', updateTextLimit);
                 </script>
             </div>
-            <div class="input-group">
+            <div class="input-group" title="Попросить искуственного интеллекта самому выбрать стиль текста">
                 <label for="autoTextStyle" class="disabled-label" id="autoTextStyleLabel">
-                    <input type="checkbox" id="autoTextStyle" disabled> Автоматический выбор стиля текста
+                    <input type="checkbox" id="autoTextStyle" disabled> Автоматический выбор стиля текста.
                 </label>
+                <h5>Вы можете ввести текст, который будет на фотографии.<br>Автоматический выбор стиля текста позволяет ИИ самому выбрать стиль текста.</h5>
             </div>
             <div class="input-group">
                 <label for="exclusions">Чего на фото не должно быть?</label>
@@ -943,6 +975,7 @@
                     window.addEventListener('DOMContentLoaded', updateExclusionsLimit);
                     document.getElementById('exclusions').addEventListener('input', updateExclusionsLimit);
                 </script>
+                <h5>Напишите чего не должно быть на фото.<br>Например: Людей, посторонних, животных, и так далее.</h5>
             </div>
             <div class="input-group">
                 <label for="description">Описание фото (обязательно)</label>
@@ -959,6 +992,7 @@
                     window.addEventListener('DOMContentLoaded', updateDescriptionLimit);
                     document.getElementById('description').addEventListener('input', updateDescriptionLimit);
                 </script>
+                <h5 style="margin-bottom: 2%;">Опишите желаемое фото.<br>Бесплатно вы можете вводить до 500 символов, а с премиумом до 1 000.</h5>
                 <label for="mean">Поделитесь мнением — чего не хватает в этом боте?(максимум 400 символов)</label>
                 <textarea id="mean" maxlength="400" placeholder="Необязательно"></textarea>
             </div>
@@ -1413,7 +1447,8 @@ function getFormData() {
         { id: 'ram', type: 'select' },
         { id: 'rakurs', type: 'select' },
         { id: 'mean', type: 'textarea' },
-        { id: 'selector', type: 'select' }
+        { id: 'selector', type: 'select' },
+        { id: 'osvecheniye', type: 'select' }
         // Добавляйте новые параметры здесь в формате { id: 'elementId', type: 'input|select|textarea|checkbox' }
     ];
     let saveDatas = {};
@@ -1497,7 +1532,8 @@ function restoreFormData() {
         { id: 'ram', type: 'select' },
         { id: 'rakurs', type: 'select' },
         { id: 'mean', type: 'textarea' },
-        { id: 'selector', type: 'select' }
+        { id: 'selector', type: 'select' },
+        { id: 'osvecheniye', type: 'select' }
         // Добавляйте новые параметры здесь в формате { id: 'elementId', type: 'input|select|textarea|checkbox' }
     ];
     parameters.forEach(param => {
@@ -1811,10 +1847,11 @@ function proceedToSend(messenger, contact) {
         `13. Соотношение сторон фото: ${document.getElementById('soot').value}`,
         `14. Выбранная рамка: ${document.getElementById('ram').value}`,
         `15. Выбранный ракурс: ${document.getElementById('rakurs').value}`,
-        `16. Выбранные фотографии: ${localStorage.getItem('downloaded_photos') || 'Не загружено'}`,
-        `17. Мнение пользователя: ${document.getElementById('mean').value || 'Не указано'}`,
-        `18. Токен пользователя: ${localStorage.getItem('user_Token')}`,
-        `19. Контакт: ${messenger} (${contact || 'app'})`
+        `16. Выбранное освещение: ${document.getElementById('osvecheniye').value}`,
+        `17. Выбранные фотографии: ${localStorage.getItem('downloaded_photos') || 'Не загружено'}`,
+        `18. Мнение пользователя: ${document.getElementById('mean').value || 'Не указано'}`,
+        `19. Токен пользователя: ${localStorage.getItem('user_Token')}`,
+        `20. Контакт: ${messenger} (${contact || 'app'})`
     ];
     incrementAttempts();
     handleDailyPremium(true);
@@ -2338,10 +2375,11 @@ function sendFastMessage() {
         `13. Соотношение сторон фото: ${document.getElementById('soot').value}`,
         `14. Выбранная рамка: ${document.getElementById('ram').value}`,
         `15. Выбранный ракурс: ${document.getElementById('rakurs').value}`,
-        `16. Выбранные фотографии: ${localStorage.getItem('downloaded_photos') || 'Не загружено'}`,
-        `17. Мнение пользователя: ${document.getElementById('mean').value || 'Не указано'}`,
-        `18. Токен пользователя: ${localStorage.getItem('user_Token')}`,
-        `19. Контакт: Максимально быстро`
+        `16. Выбранное освещение фото: ${document.getElementById('osvecheniye').value}`,
+        `17. Выбранные фотографии: ${localStorage.getItem('downloaded_photos') || 'Не загружено'}`,
+        `18. Мнение пользователя: ${document.getElementById('mean').value || 'Не указано'}`,
+        `19. Токен пользователя: ${localStorage.getItem('user_Token')}`,
+        `20. Контакт: Максимально быстро`
     ];
     const message = params.join('\n');
     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}`)

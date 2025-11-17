@@ -578,7 +578,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         import { blockedUsers } from './security.js';
         if (blockedUsers.includes(localStorage.getItem('user_Token'))) {
             window.location.href = 'block.html';

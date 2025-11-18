@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CrN PhotoAI API Test</title>
+</head>
+<body>
+  <h1>CrN PhotoAI API Test</h1>
+
+  <button id="sendRequest">Отправить запрос</button>
+
+  <h2>Ответ сервера:</h2>
+  <pre id="responseOutput"></pre>
+
+  <h2>Сгенерированное изображение:</h2>
+  <img id="resultImage" alt="Здесь появится изображение" />
+
+  <script>
+    document.getElementById('sendRequest').addEventListener('click', function () {
+      const output = document.getElementById('responseOutput');
+      const img = document.getElementById('resultImage');
+
+      output.textContent = 'Отправка запроса...';
+      img.removeAttribute('src');
+
+      fetch('https://script.google.com/macros/s/AKfycbyPkqHhHjM4Ub4Fp2f2XRxWipau1zwXUJv6XoSzTbrgpJa80UspoVZjJy67GX_nGVjueg/exec', {
+        method: 'POST',
+        body: new URLSearchParams({
+          api_key: 'WjuxNwUKgBhemKn95z2rOXg9QQl2kn',
+          photo_description: 'Girl with blue eyes and long hair, fantasy art, detailed, intricate, digital painting',
+          width: '1024',
+          height: '768'
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Показать JSON-ответ
+          output.textContent = JSON.stringify(data, null, 2);
+
+          // Если пришла картинка в Base64 — показать её
+          if (data.status === 'success' && data.data && data.mime && data.mime.indexOf('image/') === 0) {
+            img.src = 'data:' + data.mime + ';base64,' + data.data;
+          }
+        })
+        .catch(error => {
+          output.textContent = 'Ошибка: ' + error;
+        });
+    });
+  </script>
+</body>
+</html>

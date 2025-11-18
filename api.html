@@ -5,161 +5,483 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>О API - Image Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --glass-bg: rgba(6, 11, 40, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-muted: rgba(255, 255, 255, 0.75);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
-            background: linear-gradient(135deg, #74ABE2, #5563DE); 
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+            margin: 0; 
+            padding: 16px; 
+            background: linear-gradient(135deg, #74ABE2, #5563DE); /* НЕ ТРОГАЛ */
             color: #fff; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
         }
-        h1, h2 { color: #fff; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; word-wrap: break-word; }
-        th { background-color: #f2f2f2; color: #333; }
-        pre { 
-            background: #f4f4f4; 
-            padding: 10px; 
-            border-radius: 5px; 
-            overflow: auto; 
-            color: #333; 
-            position: relative; 
-            white-space: pre-wrap;
-            word-wrap: break-word;
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 900px;
         }
+
+        .card {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+            padding: 16px 16px 20px;
+            backdrop-filter: blur(14px);
+            margin-top: 12px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .title-block h1 {
+            margin: 0 0 4px;
+            font-size: clamp(18px, 4.5vw, 24px);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .title-block p {
+            margin: 0;
+            font-size: clamp(11px, 3.3vw, 13px);
+            color: var(--text-muted);
+        }
+
         button { 
-            padding: 10px 20px; 
-            background-color: #4CAF50; 
+            padding: 8px 16px; 
+            background-color: #4CAF50; /* НЕ ТРОГАЛ */
             color: white; 
             border: none; 
             cursor: pointer; 
-            border-radius: 5px; 
+            border-radius: 999px; 
+            font-size: clamp(12px, 3.3vw, 14px);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            white-space: nowrap;
         }
-        #apiInfo { display: none; }
-        #createButton { display: none; }
-        #status { margin-top: 10px; color: #fff; }
-        #error { margin-top: 10px; color: red; }
+
+        /* hover убран по твоей просьбе */
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .back-btn {
+            font-size: clamp(11px, 3vw, 13px);
+            padding-inline: 14px;
+            margin-bottom: 10px;
+        }
+
+        .back-btn i {
+            font-size: 11px;
+        }
+
+        h1, h2 { 
+            color: #fff; 
+        }
+
+        h2 {
+            display: flex; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 8px;
+            margin-top: 16px;
+            margin-bottom: 6px;
+            font-size: clamp(14px, 3.8vw, 18px);
+        }
+
+        h2 small {
+            font-size: clamp(10px, 3vw, 12px);
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-bottom: 12px; 
+            font-size: clamp(11px, 3.2vw, 13px);
+            overflow: hidden;
+            border-radius: 10px;
+            background: rgba(10, 13, 45, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        th, td { 
+            padding: 6px 8px; 
+            text-align: left; 
+            word-wrap: break-word;
+        }
+
+        th { 
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #222; 
+            font-weight: 600;
+            font-size: clamp(11px, 3.1vw, 13px);
+        }
+
+        td {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        pre { 
+            background: rgba(4, 6, 30, 0.92); 
+            padding: 10px 10px; 
+            border-radius: 10px; 
+            overflow: auto; 
+            color: #f4f4f4; 
+            position: relative; 
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: break-word;
+            font-family: "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: clamp(10px, 2.7vw, 12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            max-height: 260px;
+        }
+
         .copy-btn { 
-            background: #4CAF50; 
+            background-color: #4CAF50; /* НЕ ТРОГАЛ */
             border: none; 
             cursor: pointer; 
-            font-size: 16px; 
-            margin-left: 10px; 
+            font-size: clamp(11px, 3vw, 13px); 
+            margin-left: auto; 
             color: #fff; 
             white-space: nowrap;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
+
+        .copy-btn i {
+            font-size: 12px;
+        }
+
+        #apiInfo > p {
+            font-size: clamp(11px, 3vw, 13px);
+            color: var(--text-muted);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        #apiInfo strong {
+            color: #fff;
+        }
+
+        #status { 
+            margin-top: 6px; 
+            color: #c8ffe0; 
+            font-size: clamp(11px, 3vw, 13px);
+        }
+
+        #error { 
+            margin-top: 6px; 
+            color: #ffb3c1; 
+            font-size: clamp(11px, 3vw, 13px);
+        }
+
+        #createButton {
+            margin-top: 6px;
+        }
+
+        #apiCreation {
+            margin: 8px 0 14px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.18);
+        }
+
+        #apiInfo {
+            display: none; /* по умолчанию скрываем, пока не проверим ключ */
+        }
+
         #loader { 
             display: none; 
             position: fixed; 
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            border: 16px solid #f3f3f3; 
-            border-top: 16px solid #3498db; 
+            border: 10px solid #f3f3f3; 
+            border-top: 10px solid #3498db; 
             border-radius: 50%; 
-            width: 60px; 
-            height: 60px; 
-            animation: spin 2s linear infinite; 
+            width: 48px; 
+            height: 48px; 
+            animation: spin 1s linear infinite; 
+            z-index: 999;
         }
+
         #notification {
             display: none;
             position: fixed;
-            top: 10px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            background: #4CAF50;
+            background: #4CAF50; /* НЕ ТРОГАЛ */
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 999px;
             z-index: 1000;
             text-align: center;
+            font-size: clamp(11px, 3vw, 13px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
         }
+
         @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
+            0% { transform: translate(-50%, -50%) rotate(0deg); } 
+            100% { transform: translate(-50%, -50%) rotate(360deg); } 
         }
-        @media (max-width: 600px) { 
-            body { margin: 10px; font-size: 14px; } 
-            h1 { font-size: 20px; }
-            h2 { font-size: 16px; }
-            table { font-size: 12px; }
-            th, td { padding: 4px; }
-            pre { font-size: 10px; padding: 5px; }
-            button { padding: 8px 16px; font-size: 14px; }
-            .copy-btn { font-size: 14px; margin-left: 5px; padding: 4px 8px; }
+
+        .limits-text {
+            margin-top: 6px;
+            font-size: clamp(11px, 3vw, 13px);
+            color: var(--text-muted);
+            line-height: 1.4;
         }
-        h2 { display: flex; align-items: center; flex-wrap: wrap; }
+
+        .limits-text span#currentLimit {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Дополнительные оптимизации для маленьких экранов */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .page-wrapper {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 12px 10px 16px;
+                border-radius: 14px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+            }
+
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            button {
+                max-width: 100%;
+            }
+
+            pre {
+                max-height: 220px;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            th, td {
+                padding: 5px 6px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .card {
+                padding: 10px 8px 14px;
+            }
+
+            pre {
+                max-height: 200px;
+            }
+
+            .copy-btn {
+                padding: 4px 8px;
+            }
+
+            h2 {
+                margin-top: 14px;
+            }
+        }
     </style>
 </head>
 <body>
-    <button onclick="window.location.href='index.html'">Вернуться назад</button>
-
-    <h1 style="color: black;">Информация об CrN PhotoAI API</h1>
-
     <div id="loader"></div>
     <div id="notification"></div>
 
-    <div id="apiCreation">
-        <p id="createButton"><button id="createApiBtn">Создать мой API</button></p>
-        <p id="status"></p>
-        <p id="error"></p>
-    </div>
+    <div class="page-wrapper">
+        <!-- Кнопка сверху всех -->
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-arrow-left"></i>
+            Вернуться назад
+        </button>
 
-    <div id="apiInfo">
-        <h2>Ваш API ключ<button class="copy-btn" onclick="copyToClipboard('apiKeyPre')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="apiKeyPre"><span class="code-text"></span></pre>
+        <div class="card">
+            <div class="card-header">
+                <div class="title-block">
+                    <h1>CrN PhotoAI API</h1>
+                    <p>Подключите генерацию изображений к своим сайтам, ботам и приложениям.</p>
+                </div>
+            </div>
 
-        <h2>URL-Адрес запроса<button class="copy-btn" onclick="copyToClipboard('requestUrl')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="requestUrl"><span class="code-text">https://script.google.com/macros/s/AKfycbyPkqHhHjM4Ub4Fp2f2XRxWipau1zwXUJv6XoSzTbrgpJa80UspoVZjJy67GX_nGVjueg/exec</span></pre>
+            <div id="apiCreation">
+                <p id="createButton">
+                    <button id="createApiBtn">
+                        <i class="fa-solid fa-key"></i>
+                        Создать мой API ключ
+                    </button>
+                </p>
+                <p id="status"></p>
+                <p id="error"></p>
+            </div>
 
-        <h2>Параметры запроса</h2>
-        <table>
-            <tr><th>Поле</th><th>Описание</th><th>Тип</th></tr>
-            <tr><td>api_key</td><td>Ваш API ключ.</td><td>Обязательный.</td></tr>
-            <tr><td>photo_description</td><td>Описание фото.</td><td>Обязательный.</td></tr>
-            <tr><td>width</td><td>Ширина фото<br>По-умолчанию 512px(пикселей).</td><td>Необязательный.</td></tr>
-            <tr><td>height</td><td>Длина фото<br>По-умолчанию 512px(пикселей).</td><td>Необязательный.</td></tr>
-        </table>
+            <div id="apiInfo">
+                <h2>
+                    Ваш API ключ
+                    <button class="copy-btn" onclick="copyToClipboard('apiKeyPre')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="apiKeyPre"><span class="code-text"></span></pre>
 
-        <h2>Готовый запрос для вас<button class="copy-btn" onclick="copyToClipboard('readyRequest')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="readyRequest"><span class="code-text"></span></pre>
+                <h2>
+                    URL-адрес запроса
+                    <button class="copy-btn" onclick="copyToClipboard('requestUrl')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="requestUrl"><span class="code-text">https://script.google.com/macros/s/AKfycbyPkqHhHjM4Ub4Fp2f2XRxWipau1zwXUJv6XoSzTbrgpJa80UspoVZjJy67GX_nGVjueg/exec</span></pre>
 
-        <h2>Готовый fetch-запрос для вас<button class="copy-btn" onclick="copyToClipboard('fetchRequest')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="fetchRequest"><span class="code-text"></span></pre>
+                <h2>Параметры запроса <small>(HTTP-метод)</small></h2>
+                <table>
+                    <tr><th>Метод</th><th>Описание</th><th>Тип</th></tr>
+                    <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
+                </table>
 
-        <h2>Пример успешного ответа<button class="copy-btn" onclick="copyToClipboard('successExample')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="successExample"><span class="code-text">{
+                <h2>Тело запроса</h2>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th></tr>
+                    <tr><td>api_key</td><td>Ваш API ключ.</td><td>Обязательный.</td></tr>
+                    <tr><td>photo_description</td><td>Описание фото.</td><td>Обязательный.</td></tr>
+                    <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Необязательный.</td></tr>
+                    <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Необязательный.</td></tr>
+                </table>
+
+                <h2>
+                    Готовый curl-запрос
+                    <button class="copy-btn" onclick="copyToClipboard('readyRequest')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="readyRequest"><span class="code-text"></span></pre>
+
+                <h2>
+                    Готовый fetch-запрос
+                    <button class="copy-btn" onclick="copyToClipboard('fetchRequest')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="fetchRequest"><span class="code-text"></span></pre>
+
+                <h2>
+                    Пример успешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('successExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="successExample"><span class="code-text">{
   "status": "success",
   "data": "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+QLEg4bJ... (длинная Base64-строка)",
   "mime": "image/png"
 }</span></pre>
 
-        <h2>Пример неуспешного ответа<button class="copy-btn" onclick="copyToClipboard('errorExample')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="errorExample"><span class="code-text">{
+                <h2>
+                    Пример неуспешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('errorExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="errorExample"><span class="code-text">{
   "status": "error",
-  "message": "Invalid api_key"
+  "message": "Internal server error"
 }</span></pre>
 
-        <h2>Когда поле photo_description или api_key не заполнено<button class="copy-btn" onclick="copyToClipboard('missingParamsExample')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="missingParamsExample"><span class="code-text">{
+                <h2>
+                    Когда поле <code>photo_description</code> или <code>api_key</code> не заполнено
+                    <button class="copy-btn" onclick="copyToClipboard('missingParamsExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="missingParamsExample"><span class="code-text">{
   "status": "error",
   "message": "Missing required parameters: api_key and photo_description"
 }</span></pre>
 
-        <h2>Когда api_key неверный<button class="copy-btn" onclick="copyToClipboard('invalidKeyExample')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="invalidKeyExample"><span class="code-text">{
+                <h2>
+                    Когда <code>api_key</code> неверный
+                    <button class="copy-btn" onclick="copyToClipboard('invalidKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="invalidKeyExample"><span class="code-text">{
   "status": "error",
   "message": "Invalid api_key"
 }</span></pre>
 
-        <h2>Когда дневные лимиты закончились<button class="copy-btn" onclick="copyToClipboard('limitExample')" title="Нажмите чтобы скопировать."><i class="fa-solid fa-copy"></i> Скопировать</button></h2>
-        <pre id="limitExample"><span class="code-text">{
+                <h2>
+                    Когда дневные лимиты закончились
+                    <button class="copy-btn" onclick="copyToClipboard('limitExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="limitExample"><span class="code-text">{
   "status": "error",
   "message": "No limit available"
 }</span></pre>
 
-        <p>Ваш текущий лимит: <span id="currentLimit"></span><br>Лимиты обновляются каждый день.<br>Вы бесплатно получаете 20 лимитов в сутки, а с Premium — 50 лимитов в сутки.</p>
+                <p class="limits-text">
+                    Ваш текущий лимит: <span id="currentLimit">проверяем...</span><br>
+                    Лимиты обновляются каждый день.<br>
+                    Вы бесплатно получаете <strong>20</strong> лимитов в сутки, а с <strong>Premium</strong> — <strong>50</strong> лимитов в сутки.
+                </p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -189,41 +511,67 @@
 
         function copyToClipboard(elementId) {
             const pre = document.getElementById(elementId);
-            const text = pre.querySelector('.code-text').textContent;
+            const span = pre.querySelector('.code-text');
+            const text = span ? span.textContent : pre.textContent;
             const btn = document.querySelector(`[onclick="copyToClipboard('${elementId}')"]`);
             const originalContent = btn.innerHTML;
 
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(text.trim()).then(() => {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Скопировано!';
                 setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
             }).catch(err => {
-                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Произошла ошибка при копировании.';
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Ошибка копирования';
                 setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
                 console.error('Ошибка копирования: ', err);
             });
         }
 
         async function checkApiKey() {
-            const hasApi = localStorage.getItem('hasApi');
+            const hasApiFlag = (localStorage.getItem('hasApi') === 'true') || (localStorage.getItem('hasAPI') === 'true');
             const token = localStorage.getItem('user_Token');
-            if (hasApi !== 'true' || !token) {
+
+            if (!hasApiFlag || !token) {
                 createButtonDiv.style.display = 'block';
+                apiInfo.style.display = 'none';
                 return;
             }
 
+            createButtonDiv.style.display = 'none';
+
             apiKeyPre.querySelector('.code-text').textContent = token;
-            readyRequest.querySelector('.code-text').textContent = `curl -X POST '${gasUrl}' \\\n     -d 'api_key=${token}' \\\n     -d 'photo_description=A beautiful sunset over the mountains' \\\n     -d 'width=1024' \\\n     -d 'height=768'`;
-            fetchRequest.querySelector('.code-text').textContent = `fetch('${gasUrl}', {\n  method: 'POST',\n  body: new URLSearchParams({\n    api_key: '${token}',\n    photo_description: 'A beautiful sunset over the mountains',\n    width: '1024',\n    height: '768'\n  })\n}).then(response => response.json()).then(data => console.log(data));`;
+
+            readyRequest.querySelector('.code-text').textContent =
+`curl -X POST '${gasUrl}' \\
+  -d 'api_key=${token}' \\
+  -d 'photo_description=A beautiful sunset over the mountains' \\
+  -d 'width=1024' \\
+  -d 'height=768'`;
+
+            fetchRequest.querySelector('.code-text').textContent =
+`fetch('${gasUrl}', {
+  method: 'POST',
+  body: new URLSearchParams({
+    api_key: '${token}',
+    photo_description: 'A beautiful sunset over the mountains',
+    width: '1024',
+    height: '768'
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));`;
 
             apiInfo.style.display = 'block';
 
-            // Fetch limit without initial loader if hasApi
             const params = new URLSearchParams({ action: 'check', api_key: token });
             try {
                 const response = await fetch(gasUrl, { method: 'POST', body: params });
                 const data = await response.json();
                 if (data.status === 'success') {
                     currentLimitSpan.textContent = data.limit;
+                    if (data.limit <= 5) {
+                        currentLimitSpan.style.color = 'red'; // светло-красный
+                    }
+
                 } else {
                     errorP.textContent = 'Ошибка получения лимита: ' + data.message;
                 }
@@ -234,6 +582,9 @@
 
         createBtn.addEventListener('click', async () => {
             showLoader(true);
+            statusP.textContent = '';
+            errorP.textContent = '';
+
             let token = localStorage.getItem('user_Token');
             if (!token) {
                 token = crypto.randomUUID();
@@ -247,14 +598,18 @@
                 const data = await response.json();
                 if (data.status === 'success') {
                     localStorage.setItem('hasApi', 'true');
+                    localStorage.setItem('hasAPI', 'true');
                     statusP.textContent = 'API ключ создан успешно!';
+                    showNotification('API ключ создан успешно!');
                     createButtonDiv.style.display = 'none';
-                    checkApiKey(); // Refresh info
+                    await checkApiKey();
                 } else {
                     errorP.textContent = 'Ошибка создания: ' + data.message;
+                    showNotification('Ошибка создания API', '#e74c3c');
                 }
             } catch (err) {
                 errorP.textContent = 'Ошибка: ' + err.message;
+                showNotification('Сетевая ошибка при создании API', '#e74c3c');
             } finally {
                 showLoader(false);
             }

@@ -352,6 +352,7 @@
             </div>
 
             <div id="apiCreation">
+                <h2 style="color: rgb(255, 0, 0); display: none;" id="h2">Вы исчерпали все свои дневные лимиты!<br>Лимиты обновятся завтра!</h2>
                 <p id="createButton">
                     <button id="createApiBtn">
                         <i class="fa-solid fa-key"></i>
@@ -561,15 +562,19 @@
   .then(data => console.log(data));`;
 
             apiInfo.style.display = 'block';
-
+            document.getElementById('h2').style.display = 'none';
             const params = new URLSearchParams({ action: 'check', api_key: token });
             try {
                 const response = await fetch(gasUrl, { method: 'POST', body: params });
                 const data = await response.json();
                 if (data.status === 'success') {
                     currentLimitSpan.textContent = data.limit;
-                    if (data.limit <= 5) {
+                    if (data.limit <= 5 && data.limit > 0) {
                         currentLimitSpan.style.color = 'red'; // светло-красный
+                    }
+                    else if (data.limit === 0){
+                        document.getElementById('h2').style.display = 'block';
+                        currentLimitSpan.style.color = 'red';
                     }
 
                 } else {

@@ -120,29 +120,21 @@
             color: var(--text-muted);
         }
 
-        .table-wrapper {
-            overflow-x: auto;
-            width: 100%;
-            margin-bottom: 12px;
-        }
-
         table { 
             border-collapse: collapse; 
             width: 100%; 
+            margin-bottom: 12px; 
             font-size: clamp(11px, 3.2vw, 13px);
             overflow: hidden;
             border-radius: 10px;
             background: rgba(10, 13, 45, 0.72);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            table-layout: auto;
         }
 
         th, td { 
             padding: 6px 8px; 
             text-align: left; 
             word-wrap: break-word;
-            word-break: break-word;
-            min-width: 80px; /* Минимальная ширина для колонок */
         }
 
         th { 
@@ -292,7 +284,7 @@
         /* Дополнительные оптимизации для маленьких экранов */
         @media (max-width: 600px) {
             body {
-                padding: 8px; /* Уменьшен padding для мобильных */
+                padding: 10px;
             }
 
             .page-wrapper {
@@ -300,7 +292,7 @@
             }
 
             .card {
-                padding: 10px 8px 14px; /* Уменьшен padding */
+                padding: 12px 10px 16px;
                 border-radius: 14px;
                 box-shadow: 0 10px 20px rgba(0,0,0,0.35);
             }
@@ -308,100 +300,60 @@
             .back-btn {
                 width: 100%;
                 justify-content: center;
-                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт */
             }
 
             button {
                 max-width: 100%;
-                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт кнопок */
-                padding: 6px 12px; /* Уменьшен padding кнопок */
             }
 
             pre {
-                max-height: 200px; /* Уменьшена высота для мобильных */
+                max-height: 220px;
                 margin-bottom: 24px; /* Увеличен отступ между кодами */
-                font-size: clamp(9px, 2.5vw, 11px); /* Уменьшен шрифт кода */
-            }
-
-            .table-wrapper {
-                overflow-x: auto; /* Прокрутка для таблиц */
-                margin-bottom: 20px;
             }
 
             table {
-                font-size: clamp(9px, 2.8vw, 11px); /* Уменьшен шрифт таблиц */
-                min-width: 100%; /* Таблицы на всю ширину */
+                font-size: 11px;
+                margin-bottom: 20px; /* Увеличен отступ между таблицами */
             }
 
             th, td {
-                padding: 4px 6px; /* Уменьшен padding в таблицах */
-                min-width: 60px; /* Уменьшена минимальная ширина колонок */
+                padding: 5px 6px;
             }
 
             h2 {
-                margin-top: 20px; /* Увеличен отступ сверху для заголовков */
-                font-size: clamp(12px, 3.5vw, 16px); /* Уменьшен шрифт заголовков */
+                margin-top: 24px; /* Увеличен отступ сверху для заголовков */
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 12px;
             }
 
             h2 .copy-btn,
             h2 .reset-btn {
                 margin-left: 0;
                 width: auto;
-                font-size: clamp(10px, 3vw, 12px);
             }
 
             .reset-btn {
                 margin-left: 0 !important; /* Чтобы сброс был ниже копирования */
             }
-
-            .limits-text {
-                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт текста лимитов */
-            }
-
-            #apiInfo > p {
-                font-size: clamp(10px, 3vw, 12px);
-            }
         }
 
         @media (max-width: 400px) {
-            body {
-                padding: 6px;
-            }
-
             .card {
-                padding: 8px 6px 12px;
+                padding: 10px 8px 14px;
             }
 
             pre {
-                max-height: 180px;
+                max-height: 200px;
                 margin-bottom: 24px;
-                font-size: clamp(8px, 2.3vw, 10px);
-            }
-
-            table {
-                font-size: clamp(8px, 2.5vw, 10px);
-            }
-
-            th, td {
-                padding: 3px 4px;
-                min-width: 50px;
-            }
-
-            h2 {
-                margin-top: 18px;
-                font-size: clamp(11px, 3.2vw, 14px);
-            }
-
-            button {
-                padding: 5px 10px;
-                font-size: clamp(9px, 2.8vw, 11px);
             }
 
             .copy-btn {
-                padding: 3px 6px;
+                padding: 4px 8px;
+            }
+
+            h2 {
+                margin-top: 24px;
             }
         }
 
@@ -579,23 +531,19 @@
                 <pre id="requestUrl"><span class="code-text">https://script.google.com/macros/s/AKfycbxJcX6JYiTmUVy5nIZwvegsmYpZdBGbz6PHjXVm64nlO4P-v11-MTa-a3k6FmZDctETTg/exec</span></pre>
 
                 <h2>Параметры запроса <small>(HTTP-метод)</small></h2>
-                <div class="table-wrapper">
-                    <table>
-                        <tr><th>Метод</th><th>Описание</th><th>Статус</th></tr>
-                        <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
-                    </table>
-                </div>
+                <table>
+                    <tr><th>Метод</th><th>Описание</th><th>Статус</th></tr>
+                    <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
+                </table>
 
                 <h2>Тело запроса</h2>
-                <div class="table-wrapper">
-                    <table>
-                        <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
-                        <tr><td>api_key</td><td>Ваш API ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
-                        <tr><td>photo_description</td><td>Описание фото.</td><td>Строка.</td><td>Обязательный.</td></tr>
-                        <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
-                        <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
-                    </table>
-                </div>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                    <tr><td>api_key</td><td>Ваш API ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td>photo_description</td><td>Описание фото.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
+                    <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
+                </table>
 
                 <h2>
                     Готовый curl-запрос

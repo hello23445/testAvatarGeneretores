@@ -120,21 +120,29 @@
             color: var(--text-muted);
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
         table { 
             border-collapse: collapse; 
             width: 100%; 
-            margin-bottom: 12px; 
             font-size: clamp(11px, 3.2vw, 13px);
             overflow: hidden;
             border-radius: 10px;
             background: rgba(10, 13, 45, 0.72);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            table-layout: auto;
         }
 
         th, td { 
             padding: 6px 8px; 
             text-align: left; 
             word-wrap: break-word;
+            word-break: break-word;
+            min-width: 80px; /* Минимальная ширина для колонок */
         }
 
         th { 
@@ -166,6 +174,7 @@
             font-size: clamp(10px, 2.7vw, 12px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             max-height: 260px;
+            margin-bottom: 16px; /* Добавлен отступ снизу для кодов */
         }
 
         .copy-btn { 
@@ -182,6 +191,11 @@
             align-items: center;
             gap: 5px;
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .reset-btn {
+            background-color: #e74c3c; /* Красный для сброса */
+            margin-left: 8px;
         }
 
         .copy-btn i {
@@ -278,7 +292,7 @@
         /* Дополнительные оптимизации для маленьких экранов */
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 8px; /* Уменьшен padding для мобильных */
             }
 
             .page-wrapper {
@@ -286,7 +300,7 @@
             }
 
             .card {
-                padding: 12px 10px 16px;
+                padding: 10px 8px 14px; /* Уменьшен padding */
                 border-radius: 14px;
                 box-shadow: 0 10px 20px rgba(0,0,0,0.35);
             }
@@ -294,41 +308,184 @@
             .back-btn {
                 width: 100%;
                 justify-content: center;
+                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт */
             }
 
             button {
                 max-width: 100%;
+                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт кнопок */
+                padding: 6px 12px; /* Уменьшен padding кнопок */
             }
 
             pre {
-                max-height: 220px;
+                max-height: 200px; /* Уменьшена высота для мобильных */
+                margin-bottom: 24px; /* Увеличен отступ между кодами */
+                font-size: clamp(9px, 2.5vw, 11px); /* Уменьшен шрифт кода */
+            }
+
+            .table-wrapper {
+                overflow-x: auto; /* Прокрутка для таблиц */
+                margin-bottom: 20px;
             }
 
             table {
-                font-size: 11px;
+                font-size: clamp(9px, 2.8vw, 11px); /* Уменьшен шрифт таблиц */
+                min-width: 100%; /* Таблицы на всю ширину */
             }
 
             th, td {
-                padding: 5px 6px;
+                padding: 4px 6px; /* Уменьшен padding в таблицах */
+                min-width: 60px; /* Уменьшена минимальная ширина колонок */
+            }
+
+            h2 {
+                margin-top: 20px; /* Увеличен отступ сверху для заголовков */
+                font-size: clamp(12px, 3.5vw, 16px); /* Уменьшен шрифт заголовков */
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            h2 .copy-btn,
+            h2 .reset-btn {
+                margin-left: 0;
+                width: auto;
+                font-size: clamp(10px, 3vw, 12px);
+            }
+
+            .reset-btn {
+                margin-left: 0 !important; /* Чтобы сброс был ниже копирования */
+            }
+
+            .limits-text {
+                font-size: clamp(10px, 3vw, 12px); /* Уменьшен шрифт текста лимитов */
+            }
+
+            #apiInfo > p {
+                font-size: clamp(10px, 3vw, 12px);
             }
         }
 
         @media (max-width: 400px) {
+            body {
+                padding: 6px;
+            }
+
             .card {
-                padding: 10px 8px 14px;
+                padding: 8px 6px 12px;
             }
 
             pre {
-                max-height: 200px;
+                max-height: 180px;
+                margin-bottom: 24px;
+                font-size: clamp(8px, 2.3vw, 10px);
             }
 
-            .copy-btn {
-                padding: 4px 8px;
+            table {
+                font-size: clamp(8px, 2.5vw, 10px);
+            }
+
+            th, td {
+                padding: 3px 4px;
+                min-width: 50px;
             }
 
             h2 {
-                margin-top: 14px;
+                margin-top: 18px;
+                font-size: clamp(11px, 3.2vw, 14px);
             }
+
+            button {
+                padding: 5px 10px;
+                font-size: clamp(9px, 2.8vw, 11px);
+            }
+
+            .copy-btn {
+                padding: 3px 6px;
+            }
+        }
+
+        /* Стили для модальных окон */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--glass-bg);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            width: 80%;
+            max-width: 400px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .modal-content p {
+            margin-bottom: 16px;
+        }
+
+        .modal-btn {
+            margin: 8px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        /* Для прелоадера в модалке */
+        .modal-loader {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-loader .spinner {
+            border: 10px solid #f3f3f3;
+            border-top: 10px solid #3498db;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Кнопки сверху */
+        .top-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .update-btn {
+            background-color: #3498db;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
         }
     </style>
 </head>
@@ -336,12 +493,46 @@
     <div id="loader"></div>
     <div id="notification"></div>
 
+    <!-- Модальное окно для подтверждения удаления -->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <p>Вы уверены что хотите удалить свой API-ключ?</p>
+            <button class="modal-btn" onclick="showConfirmInputModal()">Да</button>
+            <button class="modal-btn" onclick="closeModal('confirmDeleteModal')">Нет</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для ввода подтверждения -->
+    <div id="confirmInputModal" class="modal">
+        <div class="modal-content">
+            <p>Введите 'ПОДТВЕРЖДАЮ'</p>
+            <input type="text" id="confirmInput" class="modal-input" placeholder="ПОДТВЕРЖДАЮ">
+            <button class="modal-btn" onclick="confirmDelete()">Подтвердить</button>
+            <button class="modal-btn" onclick="closeModal('confirmInputModal')">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно с прелоадером -->
+    <div id="modalLoader" class="modal-loader">
+        <div class="spinner"></div>
+    </div>
+
     <div class="page-wrapper">
-        <!-- Кнопка сверху всех -->
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-arrow-left"></i>
-            Вернуться назад
-        </button>
+        <!-- Кнопки сверху -->
+        <div class="top-buttons">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-arrow-left"></i>
+                Вернуться назад
+            </button>
+            <button id="updateApiBtn" class="back-btn update-btn" style="display: none;" onclick="updateApiData()">
+                <i class="fa-solid fa-sync"></i>
+                Обновить мои API-данные
+            </button>
+            <button id="deleteApiBtn" class="back-btn delete-btn" style="display: none;" onclick="showConfirmDeleteModal()">
+                <i class="fa-solid fa-trash"></i>
+                Удалить мой API-ключ
+            </button>
+        </div>
 
         <div class="card">
             <div class="card-header">
@@ -353,6 +544,7 @@
 
             <div id="apiCreation">
                 <h2 style="color: rgb(255, 0, 0); display: none;" id="h2">Вы исчерпали все свои дневные лимиты!<br>Лимиты обновятся завтра!</h2>
+                <h2 id="h22"></h2>
                 <p id="createButton">
                     <button id="createApiBtn">
                         <i class="fa-solid fa-key"></i>
@@ -370,6 +562,10 @@
                         <i class="fa-solid fa-copy"></i>
                         Скопировать
                     </button>
+                    <button class="copy-btn reset-btn" onclick="resetApiKey()" title="Нажмите чтобы сбросить.">
+                        <i class="fa-solid fa-sync"></i>
+                        Сбросить мой API-ключ
+                    </button>
                 </h2>
                 <pre id="apiKeyPre"><span class="code-text"></span></pre>
 
@@ -380,22 +576,26 @@
                         Скопировать
                     </button>
                 </h2>
-                <pre id="requestUrl"><span class="code-text">https://script.google.com/macros/s/AKfycbyPkqHhHjM4Ub4Fp2f2XRxWipau1zwXUJv6XoSzTbrgpJa80UspoVZjJy67GX_nGVjueg/exec</span></pre>
+                <pre id="requestUrl"><span class="code-text">https://script.google.com/macros/s/AKfycbxJcX6JYiTmUVy5nIZwvegsmYpZdBGbz6PHjXVm64nlO4P-v11-MTa-a3k6FmZDctETTg/exec</span></pre>
 
                 <h2>Параметры запроса <small>(HTTP-метод)</small></h2>
-                <table>
-                    <tr><th>Метод</th><th>Описание</th><th>Тип</th></tr>
-                    <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
-                </table>
+                <div class="table-wrapper">
+                    <table>
+                        <tr><th>Метод</th><th>Описание</th><th>Статус</th></tr>
+                        <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
+                    </table>
+                </div>
 
                 <h2>Тело запроса</h2>
-                <table>
-                    <tr><th>Поле</th><th>Описание</th><th>Тип</th></tr>
-                    <tr><td>api_key</td><td>Ваш API ключ.</td><td>Обязательный.</td></tr>
-                    <tr><td>photo_description</td><td>Описание фото.</td><td>Обязательный.</td></tr>
-                    <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Необязательный.</td></tr>
-                    <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Необязательный.</td></tr>
-                </table>
+                <div class="table-wrapper">
+                    <table>
+                        <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                        <tr><td>api_key</td><td>Ваш API ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                        <tr><td>photo_description</td><td>Описание фото.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                        <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
+                        <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
+                    </table>
+                </div>
 
                 <h2>
                     Готовый curl-запрос
@@ -486,7 +686,7 @@
     </div>
 
     <script>
-        const gasUrl = 'https://script.google.com/macros/s/AKfycbyPkqHhHjM4Ub4Fp2f2XRxWipau1zwXUJv6XoSzTbrgpJa80UspoVZjJy67GX_nGVjueg/exec';
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbxJcX6JYiTmUVy5nIZwvegsmYpZdBGbz6PHjXVm64nlO4P-v11-MTa-a3k6FmZDctETTg/exec';
         const createBtn = document.getElementById('createApiBtn');
         const apiInfo = document.getElementById('apiInfo');
         const createButtonDiv = document.getElementById('createButton');
@@ -498,6 +698,8 @@
         const apiKeyPre = document.getElementById('apiKeyPre');
         const loader = document.getElementById('loader');
         const notification = document.getElementById('notification');
+        const updateApiBtn = document.getElementById('updateApiBtn');
+        const deleteApiBtn = document.getElementById('deleteApiBtn');
 
         function showLoader(show) {
             loader.style.display = show ? 'block' : 'none';
@@ -527,6 +729,37 @@
             });
         }
 
+        function showModalLoader(show) {
+            document.getElementById('modalLoader').style.display = show ? 'flex' : 'none';
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showConfirmDeleteModal() {
+            showModal('confirmDeleteModal');
+        }
+
+        function showConfirmInputModal() {
+            closeModal('confirmDeleteModal');
+            showModal('confirmInputModal');
+        }
+
+        async function confirmDelete() {
+            const input = document.getElementById('confirmInput').value.trim();
+            if (input !== 'ПОДТВЕРЖДАЮ') {
+                showNotification('Неверное подтверждение', '#e74c3c');
+                return;
+            }
+            closeModal('confirmInputModal');
+            await deleteApiKey();
+        }
+
         async function checkApiKey() {
             const hasApiFlag = (localStorage.getItem('hasApi') === 'true') || (localStorage.getItem('hasAPI') === 'true');
             const token = localStorage.getItem('user_Token');
@@ -534,6 +767,8 @@
             if (!hasApiFlag || !token) {
                 createButtonDiv.style.display = 'block';
                 apiInfo.style.display = 'none';
+                updateApiBtn.style.display = 'none';
+                deleteApiBtn.style.display = 'none';
                 return;
             }
 
@@ -563,6 +798,7 @@
 
             apiInfo.style.display = 'block';
             document.getElementById('h2').style.display = 'none';
+
             const params = new URLSearchParams({ action: 'check', api_key: token });
             try {
                 const response = await fetch(gasUrl, { method: 'POST', body: params });
@@ -570,13 +806,27 @@
                 if (data.status === 'success') {
                     currentLimitSpan.textContent = data.limit;
                     if (data.limit <= 5 && data.limit > 0) {
-                        currentLimitSpan.style.color = 'red'; // светло-красный
-                    }
-                    else if (data.limit === 0){
+                        currentLimitSpan.style.color = 'red';
+                    } else if (data.limit === 0) {
                         document.getElementById('h2').style.display = 'block';
                         currentLimitSpan.style.color = 'red';
                     }
 
+                    // Показ кнопки обновления, если premium в localStorage true и в данных не Premium
+                    if (localStorage.getItem('premium') === 'true' && !data.premium) {
+                        updateApiBtn.style.display = 'inline-flex';
+                        document.getElementById('h22').textContent = 'Ваш статус Premium изменился! Нажмите "Обновить мои API-данные", чтобы получить дополнительные лимиты!';
+                    } else {
+                        updateApiBtn.style.display = 'none';
+                        document.getElementById('h22').style.display = 'none';
+                    }
+
+                    // Показ кнопки удаления, если admin true
+                    if (localStorage.getItem('admin') === 'true') {
+                        deleteApiBtn.style.display = 'inline-flex';
+                    } else {
+                        deleteApiBtn.style.display = 'none';
+                    }
                 } else {
                     errorP.textContent = 'Ошибка получения лимита: ' + data.message;
                 }
@@ -619,6 +869,90 @@
                 showLoader(false);
             }
         });
+
+        async function resetApiKey() {
+            showModalLoader(true);
+            const oldToken = localStorage.getItem('user_Token');
+            if (!oldToken) {
+                showNotification('Нет API-ключа для сброса', '#e74c3c');
+                showModalLoader(false);
+                return;
+            }
+
+            const newToken = crypto.randomUUID();
+            const params = new URLSearchParams({ action: 'reset', old_api_key: oldToken, new_api_key: newToken });
+            try {
+                const response = await fetch(gasUrl, { method: 'POST', body: params });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    localStorage.setItem('user_Token', newToken);
+                    showNotification('API-ключ успешно сброшен!');
+                    await checkApiKey();
+                } else {
+                    showNotification('Ошибка сброса: ' + data.message, '#e74c3c');
+                }
+            } catch (err) {
+                showNotification('Сетевая ошибка при сбросе', '#e74c3c');
+            } finally {
+                showModalLoader(false);
+            }
+        }
+
+        async function updateApiData() {
+            showModalLoader(true);
+            const token = localStorage.getItem('user_Token');
+            if (!token || localStorage.getItem('premium') !== 'true') {
+                showNotification('Нет прав для обновления', '#e74c3c');
+                showModalLoader(false);
+                return;
+            }
+
+            const params = new URLSearchParams({ action: 'update_premium', api_key: token });
+            try {
+                const response = await fetch(gasUrl, { method: 'POST', body: params });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showNotification('API-данные обновлены!');
+                    updateApiBtn.style.display = 'none';
+                    await checkApiKey();
+                } else {
+                    showNotification('Ошибка обновления: ' + data.message, '#e74c3c');
+                }
+            } catch (err) {
+                showNotification('Сетевая ошибка при обновлении', '#e74c3c');
+            } finally {
+                showModalLoader(false);
+            }
+        }
+
+        async function deleteApiKey() {
+            showModalLoader(true);
+            const token = localStorage.getItem('user_Token');
+            if (!token) {
+                showNotification('Нет API-ключа для удаления', '#e74c3c');
+                showModalLoader(false);
+                return;
+            }
+
+            const params = new URLSearchParams({ action: 'delete', api_key: token });
+            try {
+                const response = await fetch(gasUrl, { method: 'POST', body: params });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    localStorage.removeItem('hasApi');
+                    localStorage.removeItem('hasAPI');
+                    localStorage.removeItem('user_Token');
+                    showNotification('API-ключ удалён!');
+                    window.location.reload();
+                } else {
+                    showNotification('Ошибка удаления: ' + data.message, '#e74c3c');
+                }
+            } catch (err) {
+                showNotification('Сетевая ошибка при удалении', '#e74c3c');
+            } finally {
+                showModalLoader(false);
+            }
+        }
 
         checkApiKey();
     </script>

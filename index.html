@@ -414,8 +414,8 @@
             </div>
             <div class="input-group">
                 <label for="size">Размер фото (в пикселях)</label>
-                <input type="text" id="sizeInput" placeholder="Buy Premium to type here" disabled>
-                <select id="sizeSelect">
+                <input type="text" id="sizeInput" placeholder="Buy Premium to type here" disabled oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
+                <select id="sizeSelect" onchange="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
                     <option value="">Выберите размер</option>
                     <option value="640x480">640x480</option>
                     <option value="1280x720">1280x720</option>
@@ -669,79 +669,122 @@
                 <div>
                 <label for="photo_theme" style="margin-bottom: 0%;">Выберите фон фото</label><br>
                 <select id="photo_theme" style="margin-top: 0%; width: 100%;">
-                    <!-- Бесплатные -->
-                    <option value="Автоматический выбор фона" selected>Автоматический выбор фона</option>
-                    <option value="Прозрачный">Прозрачный</option>
-                    <option value="Разноцветный">Разноцветный</option>
-                    <option value="Темный">Темный</option>
-                    <option value="Заливка цветом">Заливка цветом</option>
-                    <option value="Статуя свободы">Статуя свободы</option>
-                    <option value="Горы">Горы</option>
-                    <option value="Пляж">Пляж</option>
-                    <option value="Космос">Космос</option>
-                    <option value="Закат">Закат</option>
-                    <option value="Лес">Лес</option>
-                    <option value="Озеро">Озеро</option>
-                    <option value="Снег">Снег</option>
-                    <option value="Пустыня">Пустыня</option>
-                    <option value="Футбольное поле">Футбольное поле</option>
-                    <option value="Абстракция">Абстракция</option>
-                    <option value="Акварель">Акварель</option>
-                    <option value="Мозаика">Мозаика</option>
-                    <option value="Ретро">Ретро</option>
-                    <option value="Минимализм">Минимализм</option>
-                    <option value="Киберпанк">Киберпанк</option>
-                    <option value="Эйфелева башня">Эйфелева башня</option>
-                    <option value="Случайный фон">Случайный фон</option>
-                    <option value="Фон с случайным городом">Фон с случайным городом</option>
-                    <option value="Северное сияние">Северное сияние</option>
-                    <option value="Городской пейзаж">Городской пейзаж</option>
-                    <option value="Ночной город">Ночной город</option>
-                    <option value="Летний сад">Летний сад</option>
-                    <option value="Осенний лес">Осенний лес</option>
-                    <option value="Зимний пейзаж">Зимний пейзаж</option>
-                    <option value="Весенние цветы">Весенние цветы</option>
-                    <option value="Океанский вид">Океанский вид</option>
-                    <option value="Горный хребет">Горный хребет</option>
-                    <option value="Пустынные дюны">Пустынные дюны</option>
-                    <option value="Лунный свет">Лунный свет</option>
-                    <option value="Звездное небо">Звездное небо</option>
-                    <option value="Речной берег">Речной берег</option>
-                    <option value="Лесная тропа">Лесная тропа</option>
-                    <option value="Поле цветов">Поле цветов</option>
-                    <!-- Новые бесплатные фоны -->
-                    <option value="Вулкан">Вулкан</option>
-                    <option value="Джунгли">Джунгли</option>
-                    <option value="Водопад">Водопад</option>
-                    <option value="Полярный лед">Полярный лед</option>
-                    <option value="Дождливый лес">Дождливый лес</option>
-                    <!-- Премиум -->
-                    <option value="Город" disabled>(Premium) Город</option>
-                    <option value="Градиент" disabled>(Premium) Градиент</option>
-                    <option value="Тадж-Махал" disabled>(Premium) Тадж-Махал</option>
-                    <option value="Колизей" disabled>(Premium) Колизей</option>
-                    <option value="Великая китайская стена" disabled>(Premium) Великая китайская стена</option>
-                    <option value="Огни мегаполиса" disabled>(Premium) Огни мегаполиса</option>
-                    <option value="Фантастический мир" disabled>(Premium) Фантастический мир</option>
-                    <option value="Неон" disabled>(Premium) Неон</option>
-                    <option value="Океанские глубины" disabled>(Premium) Океанские глубины</option>
-                    <option value="Пещера кристаллов" disabled>(Premium) Пещера кристаллов</option>
-                    <option value="Галактика" disabled>(Premium) Галактика</option>
-                    <option value="Замок (устройство)" disabled>(Premium) 🔒 Замок (устройство для запирания)</option>
-                    <option value="Замок (здание)" disabled>(Premium) 🏰 Замок (здание)</option>
-                    <option value="Футуризм" disabled>(Premium) Футуризм</option>
-                    <option value="Райский остров" disabled>(Premium) Райский остров</option>
-                    <option value="Подводный город" disabled>(Premium) Подводный город</option>
-                    <option value="Космическая станция" disabled>(Premium) Космическая станция</option>
-                    <option value="Древний храм" disabled>(Premium) Древний храм</option>
-                    <option value="Волшебный лес" disabled>(Premium) Волшебный лес</option>
-                    <option value="Неоновый мегаполис" disabled>(Premium) Неоновый мегаполис</option>
-                    <!-- Новые премиум фоны -->
-                    <option value="Лунная поверхность" disabled>(Premium) Лунная поверхность</option>
-                    <option value="Парящие острова" disabled>(Premium) Парящие острова</option>
-                    <option value="Подземный мир" disabled>(Premium) Подземный мир</option>
-                    <option value="Северный полюс" disabled>(Premium) Северный полюс</option>
-                    <option value="Космический шторм" disabled>(Premium) Космический шторм</option>
+
+                    <!-- Автоматические -->
+                    <optgroup label="Автоматические варианты">
+                        <option value="Автоматический выбор фона" selected>Автоматический выбор фона</option>
+                        <option value="Случайный фон">Случайный фон</option>
+                        <option value="Фон с случайным городом">Фон с случайным городом</option>
+                    </optgroup>
+
+                    <!-- Универсальные -->
+                    <optgroup label="Базовые фоны">
+                        <option value="Прозрачный">Прозрачный</option>
+                        <option value="Разноцветный">Разноцветный</option>
+                        <option value="Темный">Темный</option>
+                        <option value="Заливка цветом">Заливка цветом</option>
+                        <option value="Градиент" disabled>(Premium) Градиент</option>
+                    </optgroup>
+
+                    <!-- Природа -->
+                    <optgroup label="Природа">
+                        <option value="Летний сад">Летний сад</option>
+                        <option value="Весенние цветы">Весенние цветы</option>
+                        <option value="Поле цветов">Поле цветов</option>
+                        <option value="Лесная тропа">Лесная тропа</option>
+                        <option value="Озеро">Озеро</option>
+                        <option value="Речной берег">Речной берег</option>
+                        <option value="Джунгли">Джунгли</option>
+                        <option value="Водопад">Водопад</option>
+                    </optgroup>
+
+                    <!-- Лес -->
+                    <optgroup label="Лес / растения">
+                        <option value="Лес">Лес</option>
+                        <option value="Осенний лес">Осенний лес</option>
+                        <option value="Дождливый лес">Дождливый лес</option>
+                        <option value="Волшебный лес" disabled>(Premium) Волшебный лес</option>
+                    </optgroup>
+
+                    <!-- Погода и время суток -->
+                    <optgroup label="Погода и время суток">
+                        <option value="Закат">Закат</option>
+                        <option value="Лунный свет">Лунный свет</option>
+                        <option value="Ночной город">Ночной город</option>
+                        <option value="Северное сияние">Северное сияние</option>
+                        <option value="Космический шторм" disabled>(Premium) Космический шторм</option>
+                    </optgroup>
+
+                    <!-- Вода -->
+                    <optgroup label="Океаны и вода">
+                        <option value="Океанский вид">Океанский вид</option>
+                        <option value="Пляж">Пляж</option>
+                        <option value="Океанские глубины" disabled>(Premium) Океанские глубины</option>
+                        <option value="Подводный город" disabled>(Premium) Подводный город</option>
+                    </optgroup>
+
+                    <!-- Горные / холод -->
+                    <optgroup label="Горы • Снег • Холод">
+                        <option value="Горы">Горы</option>
+                        <option value="Горный хребет">Горный хребет</option>
+                        <option value="Снег">Снег</option>
+                        <option value="Зимний пейзаж">Зимний пейзаж</option>
+                        <option value="Полярный лед">Полярный лед</option>
+                        <option value="Северный полюс" disabled>(Premium) Северный полюс</option>
+                        <option value="Вулкан">Вулкан</option>
+                        <option value="Парящие острова" disabled>(Premium) Парящие острова</option>
+                        <option value="Лунная поверхность" disabled>(Premium) Лунная поверхность</option>
+                    </optgroup>
+
+                    <!-- Пустыня -->
+                    <optgroup label="Пустыня • Жаркий климат">
+                        <option value="Пустыня">Пустыня</option>
+                        <option value="Пустынные дюны">Пустынные дюны</option>
+                    </optgroup>
+
+                    <!-- Город / Архитектура -->
+                    <optgroup label="Города и архитектура">
+                        <option value="Городской пейзаж">Городской пейзаж</option>
+                        <option value="Ночной город">Ночной город</option>
+                        <option value="Статуя свободы">Статуя свободы</option>
+                        <option value="Эйфелева башня">Эйфелева башня</option>
+                        <option value="Футбольное поле">Футбольное поле</option>
+
+                        <option value="Город" disabled>(Premium) Город</option>
+                        <option value="Огни мегаполиса" disabled>(Premium) Огни мегаполиса</option>
+                        <option value="Неоновый мегаполис" disabled>(Premium) Неоновый мегаполис</option>
+                        <option value="Райский остров" disabled>(Premium) Райский остров</option>
+
+                        <option value="Тадж-Махал" disabled>(Premium) Тадж-Махал</option>
+                        <option value="Колизей" disabled>(Premium) Колизей</option>
+                        <option value="Великая китайская стена" disabled>(Premium) Великая китайская стена</option>
+                        <option value="Древний храм" disabled>(Premium) Древний храм</option>
+                        <option value="Замок (здание)" disabled>(Premium) 🏰 Замок (здание)</option>
+                        <option value="Замок (устройство)" disabled>(Premium) 🔒 Замок (устройство)</option>
+                    </optgroup>
+
+                    <!-- Космос -->
+                    <optgroup label="Космос • Фантастика • Sci-Fi">
+                        <option value="Космос">Космос</option>
+                        <option value="Звездное небо">Звездное небо</option>
+                        <option value="Галактика" disabled>(Premium) Галактика</option>
+                        <option value="Космическая станция" disabled>(Premium) Космическая станция</option>
+                        <option value="Фантастический мир" disabled>(Premium) Фантастический мир</option>
+                        <option value="Футуризм" disabled>(Premium) Футуризм</option>
+                        <option value="Подземный мир" disabled>(Premium) Подземный мир</option>
+                    </optgroup>
+
+                    <!-- Художественные -->
+                    <optgroup label="Художественные стили">
+                        <option value="Акварель">Акварель</option>
+                        <option value="Мозаика">Мозаика</option>
+                        <option value="Ретро">Ретро</option>
+                        <option value="Минимализм">Минимализм</option>
+                        <option value="Киберпанк">Киберпанк</option>
+                        <option value="Абстракция">Абстракция</option>
+                        <option value="Неон" disabled>(Premium) Неон</option>
+                    </optgroup>
+
                 </select>
                     <label for="razmitiyPHON" style="user-select: none;">
                         <input type="checkbox" id="razmitiyPHON">
@@ -765,19 +808,24 @@
         <div class="right-section">
             <div>
                 <label for="soot">Соотношение сторон</label>
-                <select id="soot" style="margin-top:1%;width: 100%;">
-                    <option value="1:1">1:1 (Квадрат)</option>
-                    <option value="3:2">3:2 (Классика фото)</option>
-                    <option value="4:3" disabled>(Premium) 4:3 (Фотоаппарат)</option>
-                    <option value="5:4">5:4 (Полароид)</option>
-                    <option value="9:16" selected>9:16 (Вертикаль / Сторис)</option>
-                    <option value="16:9" disabled>(Premium) 16:9 (Горизонталь / Видео)</option>
-                    <option value="2:3">2:3 (Портрет)</option>
-                    <option value="4:5">4:5 (Instagram-пост)</option>
-                    <option value="21:9" disabled>(Premium) 21:9 (Панорама / Кино)</option>
-                    <option value="32:9" disabled>(Premium) 32:9 (Ультраширокая панорама)</option>
-                    <option value="9:4">9:4 (Баннер / Обложка)</option>
-                    <option value="27:40" disabled>(Premium)27:40 (Постер / Афиша)</option>
+                <select id="soot" style="margin-top:1%;width: 100%;" onchange="if (document.getElementById('soot').value !== '9:16'){document.getElementById('sizeSelect').disabled = true;sizeInput.disabled = true}else{document.getElementById('sizeSelect').disabled = false;sizeInput.disabled = false;}">
+                    <optgroup label="По-умолчанию">
+                        <option value="9:16" selected>9:16 (Вертикаль / Сторис)</option>
+                    </optgroup>
+                    <optgroup label="Другие">
+                        <option value="1:1">1:1 (Квадрат)</option>
+                        <option value="3:2">3:2 (Классика фото)</option>
+                        <option value="4:3" disabled>(Premium) 4:3 (Фотоаппарат)</option>
+                        <option value="5:4">5:4 (Полароид)</option>
+                        <option value="9:16">9:16 (Вертикаль / Сторис)</option>
+                        <option value="16:9" disabled>(Premium) 16:9 (Горизонталь / Видео)</option>
+                        <option value="2:3">2:3 (Портрет)</option>
+                        <option value="4:5">4:5 (Instagram-пост)</option>
+                        <option value="21:9" disabled>(Premium) 21:9 (Панорама / Кино)</option>
+                        <option value="32:9" disabled>(Premium) 32:9 (Ультраширокая панорама)</option>
+                        <option value="9:4">9:4 (Баннер / Обложка)</option>
+                        <option value="27:40" disabled>(Premium)27:40 (Постер / Афиша)</option>
+                    </optgroup>
                 </select>
                 <h5>Соотношение сторон (aspect ratio) — это форма фотографии, то есть пропорции её ширины и высоты.</h5>
             </div>
@@ -993,8 +1041,9 @@
                     document.getElementById('description').addEventListener('input', updateDescriptionLimit);
                 </script>
                 <h5 style="margin-bottom: 2%;">Опишите желаемое фото.<br>Бесплатно вы можете вводить до 500 символов, а с премиумом до 1 000.</h5>
-                <label for="mean">Поделитесь мнением — чего не хватает в этом боте?(максимум 400 символов)</label>
+                <label for="mean">Поделитесь своим мнением — чего не хватает в этом приложении?(максимум 400 символов)</label>
                 <textarea id="mean" maxlength="400" placeholder="Необязательно"></textarea>
+                <h5>Нам очень важно ваше мнение и ваши предложения по улучшению этого приложения.</h5>
             </div>
             <p>
             <label id="agreeLabel" style="user-select: none;">
@@ -1821,13 +1870,11 @@ function goBack() {
     resultModal.style.display = 'none';
     mainContainer.style.display = 'flex';
     document.getElementById('menuButton').style.display = 'block';
-    restoreFormData();
 }
 function goToMainMenu() {
     messengerModal.style.display = 'none';
     mainContainer.style.display = 'flex';
     document.getElementById('menuButton').style.display = 'block';
-    restoreFormData();
 }
 function proceedToSend(messenger, contact) {
     const AI_selected = document.getElementById('selector').value;

@@ -669,14 +669,12 @@
                 <div>
                 <label for="photo_theme" style="margin-bottom: 0%;">Выберите фон фото</label><br>
                 <select id="photo_theme" style="margin-top: 0%; width: 100%;">
-
                     <!-- Автоматические -->
                     <optgroup label="Автоматические варианты">
                         <option value="Автоматический выбор фона" selected>Автоматический выбор фона</option>
                         <option value="Случайный фон">Случайный фон</option>
                         <option value="Фон с случайным городом">Фон с случайным городом</option>
                     </optgroup>
-
                     <!-- Универсальные -->
                     <optgroup label="Базовые фоны">
                         <option value="Прозрачный">Прозрачный</option>
@@ -685,7 +683,6 @@
                         <option value="Заливка цветом">Заливка цветом</option>
                         <option value="Градиент" disabled>(Premium) Градиент</option>
                     </optgroup>
-
                     <!-- Природа -->
                     <optgroup label="Природа">
                         <option value="Летний сад">Летний сад</option>
@@ -697,7 +694,6 @@
                         <option value="Джунгли">Джунгли</option>
                         <option value="Водопад">Водопад</option>
                     </optgroup>
-
                     <!-- Лес -->
                     <optgroup label="Лес / растения">
                         <option value="Лес">Лес</option>
@@ -705,7 +701,6 @@
                         <option value="Дождливый лес">Дождливый лес</option>
                         <option value="Волшебный лес" disabled>(Premium) Волшебный лес</option>
                     </optgroup>
-
                     <!-- Погода и время суток -->
                     <optgroup label="Погода и время суток">
                         <option value="Закат">Закат</option>
@@ -714,7 +709,6 @@
                         <option value="Северное сияние">Северное сияние</option>
                         <option value="Космический шторм" disabled>(Premium) Космический шторм</option>
                     </optgroup>
-
                     <!-- Вода -->
                     <optgroup label="Океаны и вода">
                         <option value="Океанский вид">Океанский вид</option>
@@ -722,7 +716,6 @@
                         <option value="Океанские глубины" disabled>(Premium) Океанские глубины</option>
                         <option value="Подводный город" disabled>(Premium) Подводный город</option>
                     </optgroup>
-
                     <!-- Горные / холод -->
                     <optgroup label="Горы • Снег • Холод">
                         <option value="Горы">Горы</option>
@@ -735,13 +728,11 @@
                         <option value="Парящие острова" disabled>(Premium) Парящие острова</option>
                         <option value="Лунная поверхность" disabled>(Premium) Лунная поверхность</option>
                     </optgroup>
-
                     <!-- Пустыня -->
                     <optgroup label="Пустыня • Жаркий климат">
                         <option value="Пустыня">Пустыня</option>
                         <option value="Пустынные дюны">Пустынные дюны</option>
                     </optgroup>
-
                     <!-- Город / Архитектура -->
                     <optgroup label="Города и архитектура">
                         <option value="Городской пейзаж">Городской пейзаж</option>
@@ -749,12 +740,10 @@
                         <option value="Статуя свободы">Статуя свободы</option>
                         <option value="Эйфелева башня">Эйфелева башня</option>
                         <option value="Футбольное поле">Футбольное поле</option>
-
                         <option value="Город" disabled>(Premium) Город</option>
                         <option value="Огни мегаполиса" disabled>(Premium) Огни мегаполиса</option>
                         <option value="Неоновый мегаполис" disabled>(Premium) Неоновый мегаполис</option>
                         <option value="Райский остров" disabled>(Premium) Райский остров</option>
-
                         <option value="Тадж-Махал" disabled>(Premium) Тадж-Махал</option>
                         <option value="Колизей" disabled>(Premium) Колизей</option>
                         <option value="Великая китайская стена" disabled>(Premium) Великая китайская стена</option>
@@ -762,7 +751,6 @@
                         <option value="Замок (здание)" disabled>(Premium) 🏰 Замок (здание)</option>
                         <option value="Замок (устройство)" disabled>(Premium) 🔒 Замок (устройство)</option>
                     </optgroup>
-
                     <!-- Космос -->
                     <optgroup label="Космос • Фантастика • Sci-Fi">
                         <option value="Космос">Космос</option>
@@ -773,7 +761,6 @@
                         <option value="Футуризм" disabled>(Premium) Футуризм</option>
                         <option value="Подземный мир" disabled>(Premium) Подземный мир</option>
                     </optgroup>
-
                     <!-- Художественные -->
                     <optgroup label="Художественные стили">
                         <option value="Акварель">Акварель</option>
@@ -784,7 +771,6 @@
                         <option value="Абстракция">Абстракция</option>
                         <option value="Неон" disabled>(Premium) Неон</option>
                     </optgroup>
-
                 </select>
                     <label for="razmitiyPHON" style="user-select: none;">
                         <input type="checkbox" id="razmitiyPHON">
@@ -801,14 +787,14 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
-    
-    
+   
+   
             </div>
         </div>
         <div class="right-section">
             <div>
                 <label for="soot">Соотношение сторон</label>
-                <select id="soot" style="margin-top:1%;width: 100%;" onchange="if (document.getElementById('soot').value !== '9:16'){document.getElementById('sizeSelect').disabled = true;sizeInput.disabled = true}else{document.getElementById('sizeSelect').disabled = false;sizeInput.disabled = false;}">
+                <select id="soot" style="margin-top:1%;width: 100%;" onchange="if (document.getElementById('soot').value !== '9:16'){document.getElementById('sizeSelect').disabled = true; localStorage.getItem('premium') === 'true' ? sizeInput.disabled = true : ''}else{document.getElementById('sizeSelect').disabled = false ; localStorage.getItem('premium') === 'true' ? sizeInput.disabled = false : '';}">
                     <optgroup label="По-умолчанию">
                         <option value="9:16" selected>9:16 (Вертикаль / Сторис)</option>
                     </optgroup>
@@ -1063,10 +1049,11 @@
             <h2>Попытки закончились</h2>
             <p>У вас нет доступных генераций на сегодня. Загляните завтра!</p>
             <div class="input-group">
-                <label for="promoCode">Введите промокод</label>
+                <label for="promoCode">Введите промокод чтобы получить дополнительные лимиты.</label>
                 <input type="text" id="promoCode">
             </div>
             <button onclick="checkPromoCode()">Отправить</button>
+            <button onclick="window.location.href='ad.html'">Посмотреть рекламу</button>
         </div>
     </div>
     <div id="messengerModal" class="modal" style="display: none;">
@@ -1620,6 +1607,16 @@ function checkAttempts() {
         data.dailyPremiumUsed = false;
         setStoredData(data);
     }
+    // НОВАЯ ЛОГИКА: Проверка и добавление attemptsFromAd
+    const attemptsFromAd = localStorage.getItem('attemptsFromAd');
+    if (attemptsFromAd && !isNaN(parseInt(attemptsFromAd))) {
+        const addValue = parseInt(attemptsFromAd);
+        data.maxAttempts = (data.maxAttempts || MAX_DAILY_ATTEMPTS) + addValue;
+        localStorage.removeItem('attemptsFromAd');  // Очистка после добавления
+        setStoredData(data);
+    }
+    // Конец новой логики
+
     let attemptsLeft;
     if (data.attempts < 0) {
         data.attempts = 0;
@@ -1685,7 +1682,7 @@ sizeSelect.addEventListener('change', () => {
 });
 function validateInputs() {
     let isValid = true;
-    [descriptionInput, sizeInput].forEach(input => {
+    [descriptionInput].forEach(input => {
         input.classList.remove('error');
         if (!input.value.trim()) {
             input.classList.add('error');
@@ -1704,6 +1701,7 @@ function validateInputs() {
 function generateImage() {
     if (localStorage.getItem('downloaded_confirming') === '1') {
         showAlert('ВНИМАНИЕ!\nВы забыли нажать на кнопку "ЗАГРУЗИТЬ" (фото)\n(Это требуется даже после удаления фото)');
+        return
     }
     if (!validateInputs()) return;
     if (!checkAttempts()) {
@@ -1885,7 +1883,7 @@ function proceedToSend(messenger, contact) {
         `3. Текст на фото: ${textInput.value || 'Not Specified'}`,
         `4. Исключения: ${exclusionsInput.value || 'Not Specified'}`,
         `5. Качество: ${qualitySelect.value}`,
-        `6. Размер: ${sizeInput.value || sizeSelect.value}`,
+        `6. Размер: ${sizeInput.value || sizeSelect.value || 'Не указано'}`,
         `7. Стиль: ${styleSelect.value}`,
         `8. Тон цвета: ${colorToneSelect.value}`,
         `9. Уровень детализации: ${detailLevelInput.value || 'normal'}`,

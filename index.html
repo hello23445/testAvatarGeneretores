@@ -787,8 +787,8 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
-   
-   
+ 
+ 
             </div>
         </div>
         <div class="right-section">
@@ -1347,7 +1347,7 @@ function displayPreviews() {
     });
 }
 function uploadPhotos() {
-    console.log('Starting upload process. gasUrl:', gasUrl);
+    console.log('Starting upload process process. gasUrl:', gasUrl);
     console.log('Current origin:', window.location.origin);
     if (selectedFiles.length === 0) {
         console.error('No files selected');
@@ -1611,12 +1611,11 @@ function checkAttempts() {
     const attemptsFromAd = localStorage.getItem('attemptsFromAd');
     if (attemptsFromAd && !isNaN(parseInt(attemptsFromAd))) {
         const addValue = parseInt(attemptsFromAd);
-        data.maxAttempts = (data.maxAttempts || MAX_DAILY_ATTEMPTS) + addValue;
-        localStorage.removeItem('attemptsFromAd');  // Очистка после добавления
+        data.attempts = Math.max(0, (data.attempts || 0) - addValue);
+        localStorage.removeItem('attemptsFromAd'); // Очистка после добавления
         setStoredData(data);
     }
     // Конец новой логики
-
     let attemptsLeft;
     if (data.attempts < 0) {
         data.attempts = 0;
@@ -1795,7 +1794,7 @@ function handleContinue() {
     }
     const selectedMessenger = document.querySelector('input[name="messenger"]:checked');
     if (!selectedMessenger) {
-        warning.textContent = 'Выберите способ отправки';
+        warning.textContent = 'Неверный способ отправки';
         warning.style.display = 'block';
         return;
     }
@@ -1996,7 +1995,6 @@ function returnToMainMenu() {
     violationModal.style.display = 'none';
     mainContainer.style.display = 'flex';
     document.getElementById('menuButton').style.display = 'block';
-    restoreFormData();
 }
 function copyToken() {
     navigator.clipboard.writeText(pendingRequest ? pendingRequest.token : getUserToken()).then(() => {
@@ -2109,7 +2107,7 @@ function checkPremiumOptions() {
             }
         }
     } else if (document.getElementById('quality').value === 'none') {
-        showAlert('Пожалуйста выберите качество фото.');
+        showAlert('Пожалуйста, пожалуйста выберите качество фото.');
         document.getElementById('quality').style.borderColor = 'red';
     } else if (descriptionInput.value.length > 500 && localStorage.getItem('premium') !== 'true') {
         showAlert('Описание не может превышать 500 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 1000 символов.');

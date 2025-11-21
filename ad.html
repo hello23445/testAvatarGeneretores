@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр Рекламы</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #74ABE2, #5563DE);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            max-height: 450px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #000; /* черный фон пока видео не загрузилось */
+        }
+        .ad-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .ad-text a {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            background: green;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .modal-content {
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        /* Loader */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #5563DE;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast-уведомления */
+        #toastContainer {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            min-width: 260px;
+            max-width: 90vw;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success {
+            background: rgba(76, 175, 80, 0.95);
+        }
+        .toast.error {
+            background: rgba(244, 67, 54, 0.95);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            video {
+                max-height: 300px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1000px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- контейнер для уведомлений -->
+    <div id="toastContainer"></div>
+
+    <div class="container">
+        <video id="adVideo" controls autoplay></video>
+        <div id="adText" class="ad-text"></div>
+        <div class="buttons">
+            <button id="commentBtn" style="display: none; background-color: darkblue;">Написать комментарий</button>
+            <button id="complainBtn" style="background-color: rgb(239, 22, 22);">Пожаловаться</button>
+            <button id="continueBtn" disabled>Продолжить(…)</button>
+        </div>
+    </div>
+
+    <!-- Complain Modal -->
+    <div id="complainModal" class="modal">
+        <div class="modal-content">
+            <h3>Пожаловаться на рекламу</h3>
+            <select id="complainSelect">
+                <option value="">Выберите причину</option>
+                <option value="Спам">Спам</option>
+                <option value="Обман">Обман</option>
+                <option value="Неприемлемый контент">Неприемлемый контент</option>
+                <option value="Другое">Другое</option>
+            </select>
+            <input id="complainInput" type="text" placeholder="Опишите причину (если Другое)" style="display: none;">
+            <div class="modal-buttons">
+                <button id="sendComplain" style="background-color: green;">Отправить</button>
+                <button id="cancelComplain" style="background-color: red;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <h3>Написать комментарий</h3>
+            <input id="commentInput" type="text" placeholder="Введите свой комментарий">
+            <p>Ваш комментарий анонимный.</p>
+            <div class="modal-buttons">
+                <button id="sendComment" style="background-color: green;">Отправить</button>
+                <button id="cancelComment" style="background-color: red;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <h3>Загрузка данных...</h3>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <script>
+        // Переменные для Telegram Bot (укажите свои значения)
+        const BOT_TOKEN = '7633424551:AAH8JptpFazBaf7FlfCVrDjhquI1JYxf3RM';
+        const ADMIN_CHAT_ID = '6434781065';
+
+        // URL вашего Google Apps Script Web App
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLcpDBOrDoyk3i39auoJR7yPoWR1YnKRwmOlfLZdHExPkOK-RshKe-ON2EkRkHfbCN/exec';
+
+        let adsData = [];
+        let currentAdIndex = parseInt(localStorage.getItem('currentAdIndex')) || 1;
+        let currentAd = null;
+
+        const video = document.getElementById('adVideo');
+        const adText = document.getElementById('adText');
+        const continueBtn = document.getElementById('continueBtn');
+        const commentBtn = document.getElementById('commentBtn');
+        const complainBtn = document.getElementById('complainBtn');
+
+        const complainModal = document.getElementById('complainModal');
+        const complainSelect = document.getElementById('complainSelect');
+        const complainInput = document.getElementById('complainInput');
+        const sendComplain = document.getElementById('sendComplain');
+        const cancelComplain = document.getElementById('cancelComplain');
+
+        const commentModal = document.getElementById('commentModal');
+        const commentInput = document.getElementById('commentInput');
+        const sendComment = document.getElementById('sendComment');
+        const cancelComment = document.getElementById('cancelComment');
+
+        const loadingModal = document.getElementById('loadingModal');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Toast
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            // небольшая задержка, чтобы сработала анимация
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Экранирование HTML
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Линковка
+        function linkify(text) {
+            const escaped = escapeHtml(text);
+            const regex = /(^|\s)(@[\w_]+|https?:\/\/[^\s<]+|t\.me\/[\w_]+)/g;
+
+            return escaped.replace(regex, (match, before, link) => {
+                let href = '';
+
+                if (link.startsWith('@')) {
+                    href = 'https://t.me/' + link.slice(1);
+                } else if (link.startsWith('t.me/')) {
+                    href = 'https://' + link;
+                } else {
+                    href = link;
+                }
+
+                return `${before}<a href="${href}" target="_blank" rel="noopener noreferrer">${link}</a>`;
+            });
+        }
+
+        function showLoader() {
+            loadingModal.style.display = 'flex';
+        }
+        function hideLoader() {
+            loadingModal.style.display = 'none';
+        }
+
+        // Получение данных из Google Sheets через GAS
+        async function fetchAdsData() {
+            showLoader();
+            try {
+                const response = await fetch(GAS_URL);
+                adsData = await response.json();
+                loadNextAd();
+            } catch (error) {
+                console.error('Error fetching ads:', error);
+                adText.innerHTML = 'Ошибка загрузки рекламы.';
+                hideLoader();
+            }
+        }
+
+        // Поиск следующей валидной рекламы
+        function findNextValidAd(startIndex) {
+            for (let i = startIndex; i < adsData.length; i++) {
+                const row = adsData[i];
+                const where = (row[2] || '').toLowerCase();
+                if (['не важно', 'does not matter', "мини-приложение 'сгенерировать фото'"].includes(where)) {
+                    return { index: i, ad: row };
+                }
+            }
+            for (let i = 1; i < startIndex; i++) {
+                const row = adsData[i];
+                const where = (row[2] || '').toLowerCase();
+                if (['не важно', 'does not matter', "мини-приложение 'сгенерировать фото'"].includes(where)) {
+                    return { index: i, ad: row };
+                }
+            }
+            return null;
+        }
+
+        // Загрузка следующей рекламы
+        function loadNextAd() {
+            const next = findNextValidAd(currentAdIndex);
+            if (!next) {
+                adText.innerHTML = 'Нет доступной рекламы.';
+                hideLoader();
+                return;
+            }
+
+            currentAdIndex = next.index;
+            currentAd = next.ad;
+            localStorage.setItem('currentAdIndex', (currentAdIndex + 1) % adsData.length || 1);
+
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Продолжить(…)';
+
+            showLoader();
+
+            video.onloadedmetadata = null;
+            video.onerror = null;
+
+            video.src = currentAd[1];
+            video.load();
+
+            video.onloadedmetadata = () => {
+                const duration = video.duration;
+
+                if (!isFinite(duration) || duration <= 0) {
+                    console.warn('Некорректная длительность видео, пробуем следующую рекламу');
+                    loadNextAd();
+                    return;
+                }
+
+                hideLoader();
+                video.play();
+                updateTimer();
+
+                const rawText = currentAd[0] || '';
+                adText.innerHTML = linkify(rawText);
+
+                if (currentAd[4] == 1) {
+                    commentBtn.style.display = 'block';
+                } else {
+                    commentBtn.style.display = 'none';
+                }
+            };
+
+            video.onerror = () => {
+                console.error('Ошибка загрузки видео, пробуем следующую рекламу');
+                loadNextAd();
+            };
+        }
+
+        // Обновление таймера
+        function updateTimer() {
+            const duration = video.duration;
+            const current = video.currentTime;
+
+            if (!isFinite(duration) || duration <= 0) {
+                continueBtn.textContent = 'Продолжить(…)';
+                continueBtn.disabled = true;
+                return;
+            }
+
+            const remaining = Math.ceil(duration - current);
+
+            if (video.ended || remaining <= 0) {
+                continueBtn.textContent = 'Продолжить';
+                continueBtn.disabled = false;
+            } else {
+                continueBtn.textContent = `Продолжить(${remaining})`;
+                continueBtn.disabled = true;
+            }
+        }
+
+        // События видео
+        video.addEventListener('timeupdate', updateTimer);
+        video.addEventListener('ended', () => {
+            updateTimer();
+        });
+        // прелоадер при буферизации
+        video.addEventListener('waiting', showLoader);
+        video.addEventListener('playing', hideLoader);
+        video.addEventListener('canplay', hideLoader);
+
+        // Пауза при смене вкладки
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                video.pause();
+            } else {
+                if (!video.ended) {
+                    video.play();
+                }
+            }
+        });
+
+        // Продолжить
+        continueBtn.addEventListener('click', () => {
+            const dur = video.duration;
+            let attempts = 3;
+            if (dur < 5) attempts = 1;
+            else if (dur < 10) attempts = 2;
+            localStorage.setItem('attemptsFromAd', attempts);
+            window.location.href = 'index.html';
+        });
+
+        // Модалка жалобы
+        complainBtn.addEventListener('click', () => {
+            complainModal.style.display = 'flex';
+            complainInput.style.display = 'none';
+        });
+        complainSelect.addEventListener('change', () => {
+            if (complainSelect.value === 'Другое') {
+                complainInput.style.display = 'block';
+            } else {
+                complainInput.style.display = 'none';
+            }
+        });
+        cancelComplain.addEventListener('click', () => {
+            complainModal.style.display = 'none';
+            complainSelect.value = '';
+            complainInput.value = '';
+        });
+        sendComplain.addEventListener('click', async () => {
+            // нельзя отправить без причины
+            if (!complainSelect.value) {
+                showToast('Пожалуйста, выберите причину жалобы.', 'error');
+                return;
+            }
+            if (complainSelect.value === 'Другое' && !complainInput.value.trim()) {
+                showToast('Пожалуйста, опишите причину жалобы.', 'error');
+                return;
+            }
+
+            const userID = localStorage.getItem('userID') || '';
+            const userToken = localStorage.getItem('user_Token') || '';
+            const from = userID ? `${userID}${userToken}` : '';
+            const reasonSelect = complainSelect.value;
+            const reasonInput = complainInput.value.trim() || '-';
+
+            const message = `ЖАЛОБА ОТ:\n${from}\n\nНА:\nТекст рекламы: ${currentAd[0]}\nСсылка на видео-рекламу: ${currentAd[1]}\nНазвание рекламы: ${currentAd[3]}\nID, имя: ${currentAd[5]}, ${currentAd[6]}\nПричина жалобы из инпута: ${reasonInput}\nПричина жалобы из select: ${reasonSelect}`;
+
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: message })
+            });
+            complainModal.style.display = 'none';
+            complainSelect.value = '';
+            complainInput.value = '';
+            showToast('Жалоба отправлена.', 'success');
+        });
+
+        // Модалка комментария
+        commentBtn.addEventListener('click', () => {
+            commentModal.style.display = 'flex';
+        });
+        cancelComment.addEventListener('click', () => {
+            commentModal.style.display = 'none';
+            commentInput.value = '';
+        });
+        sendComment.addEventListener('click', async () => {
+            const comment = commentInput.value.trim();
+            if (!comment) {
+                showToast('Введите текст комментария.', 'error');
+                return;
+            }
+            const advertiserID = currentAd[5]; // F
+
+            const textForAdvertiser =
+                `Название рекламы: ${currentAd[3]}\n` +
+                `Комментарий от анонима:\n` +
+                `${comment}` +
+                `\n\nAd name: ${currentAd[3]}\nComment from anonimous:\n${comment}`;
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: advertiserID, text: textForAdvertiser })
+            });
+            commentModal.style.display = 'none';
+            commentInput.value = '';
+            showToast('Комментарий отправлен.', 'success');
+        });
+
+        // Запуск
+        fetchAdsData();
+    </script>
+</body>
+</html>

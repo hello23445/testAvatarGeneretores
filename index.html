@@ -425,7 +425,7 @@
             </div>
             <div class="input-group">
                 <label for="size">Размер фото (в пикселях)</label>
-                <input type="text" id="sizeInput" onfocus="document.getElementById('sizeInput').blur()" oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
+                <input type="text" id="sizeInput" oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
                 <select id="sizeSelect" onchange="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
                     <option value="">Выберите размер</option>
                     <option value="640x480">640x480</option>
@@ -983,7 +983,7 @@
             </div>
             <div class="input-group">
                 <label for="text">Текст на фото(необязательно)</label>
-                <input type="text" id="text" maxlength="30" oninput="updateTextLimit();" onfocus="document.getElementById('text').blur()">
+                <input type="text" id="text" maxlength="30" oninput="updateTextLimit()">
                 <div id="textCounter" style="font-size: 0.95em; color: white; margin-top: 3px; margin-bottom: -4%;">0/30</div>
                 <script>
                     function updateTextLimit() {
@@ -1005,7 +1005,7 @@
             </div>
             <div class="input-group">
                 <label for="exclusions">Чего на фото не должно быть?</label>
-                <input type="text" id="exclusions" disabled placeholder="Buy Premium to type here" maxlength="250" onfocus="document.getElementById('exclusions').blur();" oninput="if(this.value.length>250)this.value=this.value.slice(0,250);">
+                <input type="text" id="exclusions" disabled placeholder="Buy Premium to type here" maxlength="250" oninput="if(this.value.length>250)this.value=this.value.slice(0,250);">
                 <div id="exclusionsCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/250</div>
                 <script>
                     function updateExclusionsLimit() {
@@ -1022,7 +1022,7 @@
             </div>
             <div class="input-group">
                 <label for="description">Описание фото (обязательно)</label>
-                <textarea id="description" rows="4" required maxlength="500" oninput="updateDescriptionLimit()" onfocus="document.getElementById('description').blur()" placeholder="Пример: город будущего в неоне." style="height: 45vh;"></textarea>
+                <textarea id="description" rows="4" required maxlength="500" oninput="updateDescriptionLimit()" placeholder="Пример: город будущего в неоне." style="height: 45vh;"></textarea>
                 <div id="descriptionCounter" style="font-size: 0.95em; color: white; margin-top: 3px;">0/500</div>
                 <script>
                     function updateDescriptionLimit() {
@@ -1037,7 +1037,7 @@
                 </script>
                 <h5 style="margin-bottom: 2%;">Опишите желаемое фото.<br>Бесплатно вы можете вводить до 500 символов, а с премиумом до 1 000.</h5>
                 <label for="mean">Поделитесь своим мнением — чего не хватает в этом приложении?(максимум 400 символов)</label>
-                <textarea id="mean" maxlength="400" placeholder="Необязательно" onfocus="document.getElementById('mean').blur()"></textarea>
+                <textarea id="mean" maxlength="400" placeholder="Необязательно"></textarea>
                 <h5>Нам очень важно ваше мнение и ваши предложения по улучшению этого приложения.</h5>
             </div>
             <p>
@@ -2643,10 +2643,16 @@ function openEditModal(fieldId) {
     document.getElementById('editCounter').style.display = 'block';
   }
 
-  document.getElementById('editDesc').innerHTML = data.desc;
+document.getElementById('editDesc').innerHTML = data.desc;
 
-  document.getElementById('editModal').style.display = 'flex';
-  textarea.focus();
+const modal = document.getElementById('editModal');
+modal.style.display = 'flex';
+
+// Дождаться пока элемент реально появится в DOM и перерисуется
+requestAnimationFrame(() => {
+textarea.focus();
+});
+
 
   // Auto expand
   const autoExpand = () => {

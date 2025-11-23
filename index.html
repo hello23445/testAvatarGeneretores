@@ -2585,8 +2585,10 @@ window.shareFastLink = shareFastLink;
 window.closeFastGenModal = closeFastGenModal;
 window.closeAlertModal = closeAlertModal;
 checkPremium();
+
 // New code for modal editing
 let currentEditFieldId = null;
+
 const fieldData = {
   'mean': {
     title: 'Поделитесь своим мнением — чего не хватает в этом приложении?(максимум 400 символов)',
@@ -2614,6 +2616,7 @@ const fieldData = {
     desc: 'Выберите какого размера должно быть фото.'
   }
 };
+
 ['mean', 'description', 'exclusions', 'text', 'sizeInput'].forEach(id => {
   const el = document.getElementById(id);
   if (el) {
@@ -2622,11 +2625,14 @@ const fieldData = {
     el.addEventListener('click', () => openEditModal(id));
   }
 });
+
 function openEditModal(fieldId) {
   currentEditFieldId = fieldId;
   const data = fieldData[fieldId];
   if (!data) return;
+
   document.getElementById('editTitle').textContent = data.title;
+
   const textarea = document.getElementById('editTextarea');
   textarea.value = document.getElementById(fieldId).value;
   const maxLen = typeof data.max === 'function' ? data.max() : data.max;
@@ -2636,11 +2642,12 @@ function openEditModal(fieldId) {
   } else {
     document.getElementById('editCounter').style.display = 'block';
   }
+
   document.getElementById('editDesc').innerHTML = data.desc;
+
   document.getElementById('editModal').style.display = 'flex';
-  setTimeout(() => {
-    textarea.focus();
-  }, 0);
+  textarea.focus();
+
   // Auto expand
   const autoExpand = () => {
     textarea.style.height = 'auto';
@@ -2649,6 +2656,7 @@ function openEditModal(fieldId) {
   };
   textarea.addEventListener('input', autoExpand);
   autoExpand();
+
   // Save
   document.getElementById('saveEdit').onclick = () => {
     const originalEl = document.getElementById(fieldId);
@@ -2660,17 +2668,20 @@ function openEditModal(fieldId) {
     closeEditModal();
     textarea.removeEventListener('input', autoExpand);
   };
+
   // Cancel
   document.getElementById('cancelEdit').onclick = () => {
     closeEditModal();
     textarea.removeEventListener('input', autoExpand);
   };
+
   // Clear
   document.getElementById('clearEdit').onclick = () => {
     textarea.value = '';
     autoExpand();
   };
 }
+
 function updateEditCounter() {
   const textarea = document.getElementById('editTextarea');
   const max = textarea.maxLength;
@@ -2678,10 +2689,12 @@ function updateEditCounter() {
     document.getElementById('editCounter').textContent = `${textarea.value.length}/${max}`;
   }
 }
+
 function closeEditModal() {
   document.getElementById('editModal').style.display = 'none';
   currentEditFieldId = null;
 }
+
     </script>
 </body>
 </html>

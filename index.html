@@ -375,6 +375,17 @@
         h5{
             font-weight: bolder;
         }
+        #editTextarea {
+            resize: none;
+            overflow: hidden;
+            min-height: 50px;
+            text-align: left;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -414,7 +425,7 @@
             </div>
             <div class="input-group">
                 <label for="size">Размер фото (в пикселях)</label>
-                <input type="text" id="sizeInput" placeholder="Buy Premium to type here" disabled oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
+                <input type="text" id="sizeInput" oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
                 <select id="sizeSelect" onchange="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}">
                     <option value="">Выберите размер</option>
                     <option value="640x480">640x480</option>
@@ -787,8 +798,6 @@
                 <div id="previews"></div>
                 <div id="preloader">Загрузка...</div>
                 <div id="result"></div>
- 
- 
             </div>
         </div>
         <div class="right-section">
@@ -1191,28 +1200,25 @@
             <button onclick="closeAlertModal()">Закрыть</button>
         </div>
     </div>
-    <!-- Confirmation Modal for removePremium -->
-    <div id="confirmModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p id="confirmMessage"></p>
-            <button id="confirmYes">Да</button>
-            <button onclick="closeConfirmModal()">Нет</button>
-        </div>
-    </div>
-    <!-- Prompt Modal for removePremium -->
-    <div id="promptModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p id="promptMessage"></p>
-            <input type="text" id="promptInput">
-            <button id="promptSubmit">Отправить</button>
-            <button onclick="closePromptModal()">Отмена</button>
-        </div>
-    </div>
     <!-- Overlay for blocking interaction during upload -->
     <div id="overlay">
         <div class="preloader-container">
             <div class="preloader"></div>
             <div class="preloader-text">Загрузка фото...</div>
+        </div>
+    </div>
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="editTitle"></h2>
+            <textarea id="editTextarea" style="width: 100%;"></textarea>
+            <div id="editCounter" style="font-size: 0.95em; color: #333; margin-top: 3px;"></div>
+            <h5 id="editDesc"></h5>
+            <div class="modal-buttons">
+                <button id="saveEdit">Сохранить</button>
+                <button id="cancelEdit">Отмена</button>
+                <button id="clearEdit">Очистить поле</button>
+            </div>
         </div>
     </div>
     <script type="module">
@@ -2182,8 +2188,6 @@ function checkPremium() {
         data.attempts = 0;
         setStoredData(data);
         attemptsDisplayDiv.innerHTML = '<b>Осталось генераций: ∞</b>';
-        document.getElementById('sizeInput').disabled = false;
-        document.getElementById('sizeInput').placeholder = '';
         document.getElementById('exclusions').disabled = false;
         document.getElementById('exclusions').placeholder = '';
         document.getElementById('autoTextStyle').disabled = false;
@@ -2202,8 +2206,6 @@ function checkPremium() {
     } else {
         document.getElementById('p22').style.display = 'block';
         document.getElementById('app').disabled = true;
-        document.getElementById('sizeInput').disabled = true;
-        document.getElementById('sizeInput').placeholder = 'Купите Premium, чтобы писать здесь';
         document.getElementById('exclusions').disabled = true;
         document.getElementById('exclusions').placeholder = 'Купите Premium, чтобы писать здесь';
         document.getElementById('autoTextStyle').disabled = true;
@@ -2583,6 +2585,116 @@ window.shareFastLink = shareFastLink;
 window.closeFastGenModal = closeFastGenModal;
 window.closeAlertModal = closeAlertModal;
 checkPremium();
+
+// New code for modal editing
+let currentEditFieldId = null;
+
+const fieldData = {
+  'mean': {
+    title: 'Поделитесь своим мнением — чего не хватает в этом приложении?(максимум 400 символов)',
+    max: 400,
+    desc: 'Нам очень важно ваше мнение и ваши предложения по улучшению этого приложения.'
+  },
+  'description': {
+    title: 'Описание фото (обязательно)',
+    max: () => localStorage.getItem('premium') === 'true' ? 1000 : 500,
+    desc: 'Опишите желаемое фото.<br>Бесплатно вы можете вводить до 500 символов, а с премиумом до 1 000.'
+  },
+  'exclusions': {
+    title: 'Чего на фото не должно быть?',
+    max: 250,
+    desc: 'Напишите чего не должно быть на фото.<br>Например: Людей, посторонних, животных, и так далее.'
+  },
+  'text': {
+    title: 'Текст на фото(необязательно)',
+    max: () => localStorage.getItem('premium') === 'true' ? 500 : 30,
+    desc: 'Вы можете ввести текст, который будет на фотографии.<br>Автоматический выбор стиля текста позволяет ИИ самому выбрать стиль текста.'
+  },
+  'sizeInput': {
+    title: 'Размер фото (в пикселях)',
+    max: null, // No limit
+    desc: 'Выберите какого размера должно быть фото.'
+  }
+};
+
+['mean', 'description', 'exclusions', 'text', 'sizeInput'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.readOnly = true;
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => openEditModal(id));
+  }
+});
+
+function openEditModal(fieldId) {
+  currentEditFieldId = fieldId;
+  const data = fieldData[fieldId];
+  if (!data) return;
+
+  document.getElementById('editTitle').textContent = data.title;
+
+  const textarea = document.getElementById('editTextarea');
+  textarea.value = document.getElementById(fieldId).value;
+  const maxLen = typeof data.max === 'function' ? data.max() : data.max;
+  textarea.maxLength = maxLen || '';
+  if (!maxLen) {
+    document.getElementById('editCounter').style.display = 'none';
+  } else {
+    document.getElementById('editCounter').style.display = 'block';
+  }
+
+  document.getElementById('editDesc').innerHTML = data.desc;
+
+  document.getElementById('editModal').style.display = 'flex';
+  textarea.focus();
+
+  // Auto expand
+  const autoExpand = () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+    updateEditCounter();
+  };
+  textarea.addEventListener('input', autoExpand);
+  autoExpand();
+
+  // Save
+  document.getElementById('saveEdit').onclick = () => {
+    const originalEl = document.getElementById(fieldId);
+    originalEl.value = textarea.value;
+    // Trigger original updates
+    if (fieldId === 'text') updateTextLimit();
+    if (fieldId === 'exclusions') updateExclusionsLimit();
+    if (fieldId === 'description') updateDescriptionLimit();
+    closeEditModal();
+    textarea.removeEventListener('input', autoExpand);
+  };
+
+  // Cancel
+  document.getElementById('cancelEdit').onclick = () => {
+    closeEditModal();
+    textarea.removeEventListener('input', autoExpand);
+  };
+
+  // Clear
+  document.getElementById('clearEdit').onclick = () => {
+    textarea.value = '';
+    autoExpand();
+  };
+}
+
+function updateEditCounter() {
+  const textarea = document.getElementById('editTextarea');
+  const max = textarea.maxLength;
+  if (max) {
+    document.getElementById('editCounter').textContent = `${textarea.value.length}/${max}`;
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  currentEditFieldId = null;
+}
+
     </script>
 </body>
 </html>

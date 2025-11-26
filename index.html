@@ -595,8 +595,9 @@
             <div class="input-group">
                 <label for="selector" style="margin-bottom: 0%;">Выберите ИИ, который будет генерировать для вас фотографию</label>
                 <select id="selector" style="margin-top: 0%;">
-                    <optgroup label="По-умолчанию">
+                    <optgroup label="По-умолчанию & Авто">
                         <option value="CrN PhotoAI" selected>CrN PhotoAI</option>
+                        <option value="Автоматический выбор ИИ">Автоматический выбор ИИ (определяется на основе сложности запроса и его параметров)</option>
                     </optgroup>
                     <optgroup label="Grok">
                         <option value="Grok Fast">Grok Fast</option>
@@ -604,20 +605,33 @@
                         <!-- премиум -->
                         <option value="Grok AI">Grok</option>
                         <option value="Grok 4">Grok 4</option>
+                        <option value="Grok 4 in expert type">Grok 4 в режиме Эксперта</option>
                         <option value="Grok Pro" disabled>(Premium)Grok Pro</option>
                         <option value="Grok Ultra" disabled>(Premium)Grok Ultra</option>
                     </optgroup>
                     <optgroup label="OpenAI (ChatGPT)">
-                        <option value="ChatGPT-Free">ChatGPT Free</option> <!-- бесплатный -->
-                        <option value="ChatGPT-3">ChatGPT-3</option>
-                        <option value="ChatGPT-3.5">ChatGPT-3.5</option> <!-- бесплатный -->
-                        <option value="ChatGPT 4">ChatGPT 4</option>
-                        <option value="ChatGPT 5" disabled>(Premium)ChatGPT 5</option>
-                        <option value="ChatGPT Plus" disabled>(Premium)ChatGPT Plus</option>
+                        <optgroup label="Устаревшие модели">
+                            <option value="ChatGPT-3">ChatGPT-3</option>
+                            <option value="ChatGPT-3.5">ChatGPT-3.5</option> <!-- бесплатный -->
+                            <option value="ChatGPT 4">ChatGPT 4.1</option>
+                            <option value="o4-mini">o4-mini</option>
+                        </optgroup>
+                        <optgroup label="Новейшие модели">
+                            <option value="ChatGPT-Free">ChatGPT Free</option> <!-- бесплатный -->
+                            <option value="ChatGPT 4">ChatGPT 4</option>
+                            <option value="ChatGPT 5" disabled>(Premium)ChatGPT 5</option>
+                            <option value="ChatGPT 5.1" disabled>(Premium)ChatGPT 5.1</option>
+                            <option value="ChatGPT Plus" disabled>(Premium)ChatGPT Plus</option>
+                            <option value="ChatGPT Plus" disabled>(Premium)ChatGPT Pro</option>
+                        </optgroup>
                     </optgroup>
                     <optgroup label="Google">
                         <option value="Gemini">Gemini</option> <!-- бесплатный -->
+                        <option value="Gemini 3">Gemini 3</option>
+                        <option value="Gemini 3 PRO" disabled>(Premium)Gemini 3 PRO</option>
                         <option value="Google Assistant AI">Google Assistant AI</option>
+                        <option value="Nano Banano 3">Nano Banano 3</option>
+                        <option value="Nano Banano 3" disabled>(Premium)Nano Banano 3 PRO</option>
                     </optgroup>
                     <optgroup label="Anthropic">
                         <option value="Claude Haiku">Claude Haiku</option> <!-- бесплатный -->
@@ -632,6 +646,9 @@
                         <option value="Claude Ultra" disabled>(Premium)Claude Ultra</option>
                     </optgroup>
                     <optgroup label="Другие">
+                        <option value="Luma">Luma</option>
+                        <option value="Seedance">Seedance</option>
+                        <option value="Kling">Kling</option>
                         <option value="Yandex Alisa">Yandex Alisa</option>
                         <option value="DALL-E">DALL·E</option> <!-- бесплатный -->
                         <option value="StableVoice">StableVoice</option> <!-- бесплатный -->
@@ -655,6 +672,8 @@
                         <option value="DeepArt">DeepArt</option>
                         <option value="Pikazo">Pikazo</option>
                         <!-- премиум -->
+                         <option value="MiniMax" disabled>(Premium)MiniMax</option>
+                         <option value="Imagen 4" disabled>(Premium)Imagen 4</option>
                         <option value="Llama 2" disabled>(Premium)Llama 2</option>
                         <option value="Stable Diffusion" disabled>(Premium)Stable Diffusion</option>
                         <option value="RunwayML Pro" disabled>(Premium)RunwayML Pro</option>

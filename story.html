@@ -289,7 +289,6 @@
       "selector": "16. ИИ",
       "osvecheniye": "17. Освещение"
     };
-
     // ====== STATE ======
     let currentIndex = null;
     let confirmCallback = null;
@@ -600,6 +599,24 @@
 
     sortSelect.addEventListener('change', () => {
       applyFiltersAndSort();
+    });
+
+    document.addEventListener('click', (event) => {
+    const target = event.target;
+
+    // Проверяем, что клик не по интерактивному элементу
+    if (
+        !target.closest('input') &&
+        !target.closest('textarea') &&
+        !target.closest('select') &&
+        !target.closest('button') &&
+        !target.isContentEditable
+    ) {
+        // Снимаем фокус со всех активных элементов
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+        }
+    }
     });
 
     // ====== INIT ======

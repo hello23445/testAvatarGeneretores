@@ -1711,11 +1711,12 @@ function validateInputs() {
         if (!input.value.trim()) {
             input.classList.add('error');
             isValid = false;
+            showAlert('Описание не может быть пустым!');
         }
     });
     const sizePattern = /^\d+x\d+$/;
     if (sizeInput.value && !sizePattern.test(sizeInput.value)) {
-        warning.textContent = 'Размер должен быть указан в формате пикселей (например, 1920x1080)';
+        showAlert('Размер должен быть указан в формате пикселей (например, 1920x1080)');
         warning.style.display = 'block';
         sizeInput.classList.add('error');
         isValid = false;
@@ -2671,6 +2672,7 @@ function openEditModal(fieldId) {
   const autoExpand = () => {
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+    textarea.focus()
     updateEditCounter();
   };
   textarea.addEventListener('input', autoExpand);
@@ -2690,6 +2692,7 @@ function openEditModal(fieldId) {
 
   // Cancel
   document.getElementById('cancelEdit').onclick = () => {
+    textarea.focus()
     closeEditModal();
     textarea.removeEventListener('input', autoExpand);
   };

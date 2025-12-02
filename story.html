@@ -1,321 +1,609 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>История Генераций</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #74ABE2, #5563DE);
-            font-family: Arial, sans-serif;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-        }
-
-        .back-button, .clear-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 300px;
-            box-sizing: border-box;
-        }
-
-        .history-list {
-            list-style-type: none;
-            padding: 0;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .history-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.3s;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-        }
-
-        #modal, #confirmModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #modal-content, #confirm-content {
-            background-color: #fff;
-            color: #000;
-            padding: 20px;
-            border-radius: 5px;
-            max-width: 90%;
-            max-height: 80%;
-            overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            box-sizing: border-box;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        #confirm-content {
-            text-align: center;
-        }
-
-        .detail-item {
-            margin-bottom: 10px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-        }
-
-        .action-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px 5px 0;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        #emptyMessage {
-            text-align: center;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            .back-button, .clear-button, .action-button {
-                width: 100%;
-                margin: 10px 0;
-                font-size: 14px;
-            }
-
-            #modal-content, #confirm-content {
-                max-width: 95%;
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 1.2em;
-            }
-
-            .history-item {
-                font-size: 0.9em;
-                padding: 10px;
-            }
-
-            .detail-item {
-                font-size: 0.9em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>История генераций</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    /* ============== CSS VARIABLES ============== */
+    :root {
+      --bg1: #74ABE2;
+      --bg2: #5563DE;
+      --card-bg: rgba(255,255,255,.12);
+      --card-stroke: rgba(255,255,255,.24);
+      --surface: rgba(255,255,255,.18);
+      --text: #ffffff;
+      --text-dim: rgba(255,255,255,.8);
+      --btn: #4CAF50;
+      --btn-danger: #ff3b30;
+      --btn-neutral: #1E88E5;
+      --shadow: 0 20px 40px rgba(0,0,0,.25);
+      --radius-xl: 22px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --gap: 14px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --card-bg: rgba(255,255,255,.10); --surface: rgba(255,255,255,.14); }
+    }
+    /* ============== GLOBAL ============== */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+      background: linear-gradient(135deg, var(--bg1), var(--bg2)) fixed;
+      display: grid;
+      place-items: start center;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .page { width: min(980px, 100%); }
+    /* ============== HEADER ============== */
+    .header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .title {
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: .2px;
+      text-wrap: balance;
+      font-size: clamp(24px, 3vw, 40px);
+      text-shadow: 0 1px 0 rgba(0,0,0,.15);
+    }
+    .sub { margin: 0; color: var(--text-dim); font-size: clamp(14px, 2.2vw, 16px); }
+    /* ============== ACTION BAR ============== */
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+      margin: 14px 0 20px;
+    }
+    .btn {
+      -webkit-tap-highlight-color: transparent;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--btn);
+      box-shadow: var(--shadow);
+      outline: none;
+      width: 100%;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform .06s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
+    .btn--danger { background: var(--btn-danger); }
+    .btn--neutral { background: var(--btn-neutral); }
+    .input {
+      width: 100%;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: #fff;
+      background: var(--surface);
+      backdrop-filter: blur(8px);
+      outline: none;
+      box-shadow: inset 0 0 0 1px var(--card-stroke);
+    }
+    .input::placeholder { color: rgba(255,255,255,.65); }
+    .input:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
+    /* ============== FILTERS ============== */
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* сортировка слева, поиск справа */
+      align-items: end;
+      gap: var(--gap);
+      margin-bottom: 16px;
+    }
+    .filter-group { display: grid; gap: 6px; }
+    .filter-label { font-size: 12px; color: var(--text-dim); }
+    select {
+      width: 100%;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: #000;
+      background: var(--surface);
+      backdrop-filter: blur(8px);
+      outline: none;
+      box-shadow: inset 0 0 0 1px var(--card-stroke);
+      font-size: 14px;
+    }
+    select:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
+    /* Дата: ВСЕГДА рядом справа/слева при показе */
+    .date-filters { display: none; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+    .date-filters[data-visible="true"] { display: grid; }
+    /* Ключевое слово (новая сортировка/фильтр) */
+    .keyword-filter { display: none; }
+    .keyword-filter[data-visible="true"] { display: grid; }
+    /* ============== STATS STRIP ============== */
+    .stats { display: grid; grid-template-columns: 1fr; gap: var(--gap); margin-bottom: 16px; }
+    .stat { border-radius: var(--radius-md); padding: 12px 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--card-stroke); display: grid; gap: 6px; }
+    .stat .k { font-size: 12px; color: var(--text-dim); }
+    .stat .v { font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    /* ============== LIST ============== */
+    .list { display: grid; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
+    .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius-xl); padding: 16px 16px; box-shadow: var(--shadow); border: 1px solid var(--card-stroke); display: grid; gap: 10px; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+    .desc { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; letter-spacing: .2px; font-size: 16px; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(25,118,210,.32); border: 1px solid rgba(25,118,210,.5); padding: 6px 10px; border-radius: 999px; font-size: 13px; color: #fff; white-space: nowrap; }
+    .card .btn { width: auto; padding: 10px 12px; box-shadow: none; font-size: 14px; }
+    /* ============== EMPTY / NO RESULTS ============== */
+    .empty, .noresults {
+      text-align: center;
+      padding: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-stroke);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+    }
+    .empty[hidden], .noresults[hidden] { display: none; }
+    .empty h3 { margin: 0; font-size: 20px; }
+    .empty p { margin: 0; color: var(--text-dim); text-wrap: pretty; font-size: 16px; }
+    /* ============== MODALS ============== */
+    .modal, .confirm { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.45); padding: 20px; z-index: 1000; }
+    .modal[aria-hidden="false"], .confirm[aria-hidden="false"] { display: flex; }
+    .sheet { width: min(480px, 100%); max-height: 84vh; overflow: auto; background: #fff; color: #0d1321; border-radius: 18px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; }
+    .sheet h2 { margin: 0 0 4px; font-size: 18px; }
+    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px; background: #f5f7fb; border: 1px solid #e6e9f2; word-break: break-word; }
+    .sheet .bar { display: grid; grid-auto-flow: column; justify-content: start; gap: 10px; }
+    .sheet .btn { color: #fff; padding: 12px 14px; font-size: 14px; }
+    .sheet .btn--danger { background: #e63946; }
+    /* Центровка заголовка/кнопок только в confirm */
+    .confirm .sheet h2, .confirm #confirmText { text-align: center; }
+    .confirm .sheet .bar { justify-content: center; }
+    @media (prefers-reduced-motion: reduce) { .btn, .btn:active { transition: none; } }
+  </style>
 </head>
 <body>
-    <button class="back-button" onclick="window.location.href = 'menu.html';">ВЕРНУТЬСЯ НАЗАД</button>
-    <button class="clear-button" onclick="showConfirm('Удалить всю историю?', clearHistory)" style="background-color: red;">Удалить всю историю</button>
-    <h1 id="story">ВАША ИСТОРИЯ ГЕНЕРАЦИЙ</h1>
-    <ul class="history-list" id="historyList"></ul>
-    <div id="emptyMessage" style="display: none;">
-        <button class="action-button" onclick="window.location.href = 'index.html';">Перейти</button>
-    </div>
+  <main class="page" id="app" aria-live="polite">
+    <header class="header">
+      <h1 class="title">Ваша история генераций</h1>
+      <p class="sub">Сохраняйте, просматривайте подробности и быстро возвращайтесь к нужным параметрам.</p>
+    </header>
 
-    <div id="modal">
-        <div id="modal-content">
-            <div id="details"></div>
-            <button class="action-button" id="applyButton">Применить и вернуться к этим параметрам</button>
-            <button class="action-button" onclick="closeModal()" style="background-color: rgb(255, 0, 0);">Закрыть</button>
+    <section class="actions" aria-label="Действия">
+      <button class="btn btn--neutral" id="backBtn" type="button">Вернуться в меню</button>
+      <button class="btn btn--danger" id="clearBtn" type="button">Удалить всю историю</button>
+    </section>
+
+    <!-- Сортировка (слева) и Поиск (справа) ВСЕГДА рядом -->
+    <section class="filters" aria-label="Фильтры и сортировка">
+      <div class="filter-group">
+        <label class="filter-label" for="sort">Сортировка</label>
+        <select id="sort" aria-label="Сортировка">
+          <option value="date_desc">По дате создания (новые сначала)</option>
+          <option value="date_asc">По дате создания (старые сначала)</option>
+          <option value="length_desc">По длине описания (длинные сначала)</option>
+          <option value="length_asc">По длине описания (короткие сначала)</option>
+          <option value="alpha_asc">По алфавиту (А-Я)</option>
+          <option value="alpha_desc">По алфавиту (Я-А)</option>
+          <option value="keyword">Сортировка по слову в описании или тексте</option>
+          <option value="date_custom">По дате (указать свою дату)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="search">Поиск по описанию</label>
+        <input class="input" id="search" type="search" placeholder="Поиск по описанию…" aria-label="Поиск по истории" autocomplete="off" />
+      </div>
+
+      <!-- Дата (всегда рядом) -->
+      <div class="date-filters" id="dateFilters" data-visible="false">
+        <div class="filter-group">
+          <label class="filter-label" for="dateFrom">Дата от</label>
+          <input class="input" id="dateFrom" type="date" aria-label="Дата от" />
         </div>
-    </div>
-
-    <div id="confirmModal">
-        <div id="confirm-content">
-            <p id="confirmText"></p>
-            <button class="action-button" id="confirmYes">Да</button>
-            <button class="action-button" onclick="closeConfirm()" style="background-color: red;">Нет</button>
+        <div class="filter-group">
+          <label class="filter-label" for="dateTo">Дата до</label>
+          <input class="input" id="dateTo" type="date" aria-label="Дата до" />
         </div>
+      </div>
+
+      <!-- Поле для слова (новая сортировка) -->
+      <div class="keyword-filter" id="keywordFilter" data-visible="false">
+        <div class="filter-group" style="grid-column: 1 / -1;">
+          <label class="filter-label" for="keywordInput">Введите слово для фильтрации по описанию/тексту</label>
+          <input class="input" id="keywordInput" type="text" placeholder="Например: кот, лес, ночь…" autocomplete="off" />
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Статистика">
+      <div class="stat">
+        <div class="k">Занято слотов</div>
+        <div class="v"><span id="usedCount">0</span>/<span id="maxCount">0</span></div>
+      </div>
+    </section>
+
+    <ul class="list" id="list" role="list"></ul>
+
+    <section class="noresults" id="noResults" hidden>
+      <h3 id="noResultsTitle">Ничего не найдено</h3>
+      <p id="noResultsText"></p>
+    </section>
+
+    <section class="empty" id="empty" hidden>
+      <h3>Тут пусто</h3>
+      <p>Начните генерировать своё первое фото прямо сейчас, а здесь появится ваша история.</p>
+      <button class="btn" id="goBtn" type="button">Перейти к генератору</button>
+    </section>
+  </main>
+
+  <!-- Детали -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="sheet" role="document">
+      <h2 id="modalTitle">Подробности параметров</h2>
+      <div id="details" class="details"></div>
+      <div class="bar">
+        <button class="btn" id="applyBtn" type="button">Применить и вернуться к этим параметрам</button>
+        <button class="btn btn--danger" id="closeModal" type="button">Закрыть</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        const keysTranslation = {
-            "text": "1. Текст",
-            "autoTextStyle": "2. Автоматический стиль текста",
-            "description": "3. Описание",
-            "exclusions": "4. Исключения",
-            "quality": "5. Качество",
-            "sizeInput": "6. Размер фото",
-            "style": "7. Стиль",
-            "color-tone": "8. Цветовой тон",
-            "detail-level": "9. Уровень детализации",
-            "photo_theme": "10. Тема фото",
-            "razmitiyPHON": "11. Размытый фон",
-            "soot": "12. Соотношение",
-            "ram": "13. Рамка",
-            "rakurs": "14. Ракурс",
-            "mean": "15. Ваше мнение",
-            "selector": "16. ИИ",
-            "osvecheniye": "17. Освещение"
-        };
+  <!-- Подтверждение -->
+  <div class="confirm" id="confirm" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="sheet" role="document">
+      <h2 id="confirmTitle">Подтвердите действие</h2>
+      <p id="confirmText" style="margin:0"></p>
+      <div class="bar">
+        <button class="btn" id="confirmYes" type="button">Да</button>
+        <button class="btn btn--danger" id="confirmNo" type="button">Нет</button>
+      </div>
+    </div>
+  </div>
 
-        let currentIndex = null;
-        let confirmCallback = null;
+  <script>
+    // ====== TRANSLATIONS FOR KEYS ======
+    const keysTranslation = {
+      "text": "1. Текст",
+      "autoTextStyle": "2. Автоматический стиль текста",
+      "description": "3. Описание",
+      "exclusions": "4. Исключения",
+      "quality": "5. Качество",
+      "sizeInput": "6. Размер фото",
+      "style": "7. Стиль",
+      "color-tone": "8. Цветовой тон",
+      "detail-level": "9. Уровень детализации",
+      "photo_theme": "10. Тема фото",
+      "razmitiyPHON": "11. Размытый фон",
+      "soot": "12. Соотношение",
+      "ram": "13. Рамка",
+      "rakurs": "14. Ракурс",
+      "mean": "15. Ваше мнение",
+      "selector": "16. ИИ",
+      "osvecheniye": "17. Освещение"
+    };
 
-        function loadHistory() {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            const emptyMessage = document.getElementById('emptyMessage');
-            const story = document.getElementById('story');
+    // ====== STATE ======
+    let currentIndex = null;
+    let confirmCallback = null;
+    let cache = { items: [], filtered: [] };
 
-            let hasHistory = false;
+    // ====== DOM ======
+    const $ = (s, r = document) => r.querySelector(s);
+    const list = $('#list');
+    const empty = $('#empty');
+    const noResults = $('#noResults');
+    const noResultsTitle = $('#noResultsTitle');
+    const noResultsText = $('#noResultsText');
+    const usedCount = $('#usedCount');
+    const maxCount = $('#maxCount');
+    const modal = $('#modal');
+    const confirmBox = $('#confirm');
+    const detailsBox = $('#details');
+    const search = $('#search');
+    const dateFrom = $('#dateFrom');
+    const dateTo = $('#dateTo');
+    const sortSelect = $('#sort');
+    const dateFilters = $('#dateFilters');
+    const keywordFilter = $('#keywordFilter');
+    const keywordInput = $('#keywordInput');
+    const clearBtn = $('#clearBtn');
+    const filtersSection = $('.filters');
+    const statsSection = $('.stats');
 
-            const isPremium = localStorage.getItem('premium') === 'true';
-            const maxSlots = isPremium ? 20 : 10;
+    // ====== UTILS ======
+    const isPremium = () => localStorage.getItem('premium') === 'true';
+    const maxSlots = () => (isPremium() ? 20 : 10);
 
-            for (let i = 1; i <= maxSlots; i++) {
-                const data = localStorage.getItem(`saveDatas${i}`);
-                if (data) {
-                    try {
-                        const parsed = JSON.parse(data);
-                        if (parsed.description) {
-                            const li = document.createElement('li');
-                            li.className = 'history-item';
-                            li.textContent = parsed.description;
-                            li.onclick = () => showDetails(i, parsed);
-                            historyList.appendChild(li);
-                            hasHistory = true;
-                        }
-                    } catch (e) {
-                        console.error(`Error parsing saveDatas${i}:`, e);
-                    }
-                }
-            }
+    function trapFocus(container, onClose) {
+      const focusable = container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      function handle(e) {
+        if (e.key === 'Escape') { onClose(); }
+        if (e.key !== 'Tab') return;
+        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+      }
+      container.addEventListener('keydown', handle);
+      first.focus();
+      return () => container.removeEventListener('keydown', handle);
+    }
 
-            if (!hasHistory) {
-                historyList.style.display = 'none';
-                emptyMessage.style.display = 'block';
-                story.innerHTML = 'Тут пусто!<br>Начните генерировать свое первое фото прямо сейчас!';
-            } else {
-                historyList.style.display = 'block';
-                emptyMessage.style.display = 'none';
-                story.innerHTML = 'ВАША ИСТОРИЯ ГЕНЕРАЦИЙ';
-            }
+    function openLayer(el) {
+      el.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      return trapFocus(el, () => closeLayer(el));
+    }
+    function closeLayer(el) {
+      el.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function formatValue(value) {
+      if (typeof value === 'boolean') return value ? 'Включен' : 'Выключен';
+      return String(value);
+    }
+
+    function setDateFiltersVisible(v) {
+      dateFilters.setAttribute('data-visible', v ? 'true' : 'false');
+      if (!v) { dateFrom.value = ''; dateTo.value = ''; }
+    }
+    function setKeywordVisible(v) {
+      keywordFilter.setAttribute('data-visible', v ? 'true' : 'false');
+      if (!v) keywordInput.value = '';
+    }
+
+    function toggleControlsForZeroSlots(isZeroAndNoSearch) {
+      // Показываем только кнопку "Вернуться в меню" и блок empty
+      if (isZeroAndNoSearch) {
+        filtersSection.style.display = 'none';
+        statsSection.style.display = 'none';
+        clearBtn.style.display = 'none';
+        list.style.display = 'none';
+        noResults.hidden = true;
+        empty.hidden = false;
+      } else {
+        filtersSection.style.display = '';
+        statsSection.style.display = '';
+        clearBtn.style.display = '';
+        list.style.display = '';
+        // Пустой экран контролируется отдельно по условиям
+      }
+    }
+
+    // ====== RENDER ======
+    function renderStats() {
+      usedCount.textContent = cache.items.length; // ВСЕГО использовано слотов
+      maxCount.textContent = maxSlots();
+    }
+
+    function renderList(items, { allowEmptyScreen } = { allowEmptyScreen: false }) {
+      list.innerHTML = '';
+      noResults.hidden = true;
+      if (!items.length) {
+        // Пустой экран показываем ТОЛЬКО если разрещено и слотов 0
+        if (allowEmptyScreen) {
+          empty.hidden = false;
+        } else {
+          empty.hidden = true; // не показываем "Тут пусто" в других случаях
         }
+        return;
+      }
+      empty.hidden = true;
+      const frag = document.createDocumentFragment();
+      items.forEach(({ index, description, createdAt }) => {
+        const li = document.createElement('li');
+        li.className = 'card';
+        li.role = 'listitem';
+        li.dataset.index = index;
+        const date = new Date(createdAt);
+        const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+        li.innerHTML = `
+          <div class="row">
+            <div class="desc">${escapeHtml(description)}</div>
+            <span class="pill">${formattedDate}</span>
+          </div>
+          <div class="row" style="grid-template-columns:auto auto; gap:10px; justify-content:start">
+            <button class="btn" data-act="details">Подробнее</button>
+            <button class="btn btn--neutral" data-act="apply">Применить</button>
+          </div>
+        `;
+        frag.appendChild(li);
+      });
+      list.appendChild(frag);
+    }
 
-        function formatValue(key, value) {
-            if (typeof value === 'boolean') {
-                return value ? 'Включен' : 'Выключен';
+    function escapeHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ====== LOAD & FILTER ======
+    function loadHistory() {
+      const max = maxSlots();
+      const items = [];
+      for (let i = 1; i <= max; i++) {
+        const raw = localStorage.getItem(`saveDatas${i}`);
+        if (!raw) continue;
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.description) {
+            if (!parsed.createdAt) {
+              parsed.createdAt = new Date().toISOString();
+              localStorage.setItem(`saveDatas${i}`, JSON.stringify(parsed));
             }
-            return value;
+            items.push({ index: i, raw, data: parsed, description: parsed.description, createdAt: parsed.createdAt });
+          }
+        } catch (e) { /* ignore broken slot */ }
+      }
+      cache.items = items;
+      applyFiltersAndSort();
+    }
+
+    function applyFiltersAndSort() {
+      let filtered = cache.items.slice();
+
+      // флаг поиска
+      const q = search.value.trim().toLowerCase();
+      const isSearching = q.length > 0;
+
+      // Фильтр по поиску (только по описанию)
+      if (isSearching) {
+        filtered = filtered.filter(x => String(x.description).toLowerCase().includes(q));
+      }
+
+      // Видимость контролов дат/слова
+      const sortVal = sortSelect.value;
+      setDateFiltersVisible(sortVal === 'date_custom');
+      setKeywordVisible(sortVal === 'keyword');
+
+      // Фильтр по дате (только для "date_custom")
+      if (sortVal === 'date_custom') {
+        const from = dateFrom.value ? new Date(dateFrom.value) : null;
+        const to = dateTo.value ? new Date(dateTo.value) : null;
+        if (from || to) {
+          filtered = filtered.filter(x => {
+            const d = new Date(x.createdAt);
+            if (from && d < from) return false;
+            if (to && d > to) return false;
+            return true;
+          });
         }
+        // разумный дефолт сортировки по дате (новые сначала)
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
 
-        function showDetails(index, data) {
-            currentIndex = index;
-            const detailsDiv = document.getElementById('details');
-            detailsDiv.innerHTML = '';
-
-            for (const key in data) {
-                if (data.hasOwnProperty(key) && key !== 'sizeSelect') {
-                    const p = document.createElement('p');
-                    p.className = 'detail-item';
-                    const translatedKey = keysTranslation[key] || key;
-                    p.textContent = `${translatedKey}: ${formatValue(key, data[key])}`;
-                    detailsDiv.appendChild(p);
-                }
-            }
-
-            document.getElementById('modal').style.display = 'flex';
+      // Фильтр по слову (описание ИЛИ text)
+      if (sortVal === 'keyword') {
+        const kw = keywordInput.value.trim().toLowerCase();
+        if (kw) {
+          filtered = filtered.filter(x =>
+            (x.description && String(x.description).toLowerCase().includes(kw)) ||
+            (x.data && x.data.text && String(x.data.text).toLowerCase().includes(kw))
+          );
         }
+      }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
+      // Сортировка
+      if (sortVal === 'date_desc') {
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      } else if (sortVal === 'date_asc') {
+        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      } else if (sortVal === 'length_desc') {
+        filtered.sort((a, b) => b.description.length - a.description.length);
+      } else if (sortVal === 'length_asc') {
+        filtered.sort((a, b) => a.description.length - b.description.length);
+      } else if (sortVal === 'alpha_asc') {
+        filtered.sort((a, b) => a.description.localeCompare(b.description, 'ru'));
+      } else if (sortVal === 'alpha_desc') {
+        filtered.sort((a, b) => b.description.localeCompare(a.description, 'ru'));
+      }
 
-        function showConfirm(text, callback) {
-            document.getElementById('confirmText').textContent = text;
-            confirmCallback = callback;
-            document.getElementById('confirmModal').style.display = 'flex';
-        }
+      cache.filtered = filtered;
+      renderStats();
 
-        function closeConfirm() {
-            document.getElementById('confirmModal').style.display = 'none';
-            confirmCallback = null;
-        }
+      const totalSlots = cache.items.length;
+      const zeroSlotsNoSearch = totalSlots === 0 && !isSearching;
+      toggleControlsForZeroSlots(zeroSlotsNoSearch);
 
-        document.getElementById('confirmYes').onclick = function() {
-            if (confirmCallback) {
-                confirmCallback();
-            }
-            closeConfirm();
-        };
+      // Сообщение о "Ничего не найдено" при поиске
+      if (isSearching && filtered.length === 0) {
+        noResults.hidden = false;
+        noResultsTitle.textContent = 'Ничего не найдено';
+        noResultsText.textContent = `По запросу "${search.value}" ничего не найдено.`;
+      } else {
+        noResults.hidden = true;
+      }
 
-        function clearHistory() {
-            const isPremium = localStorage.getItem('premium') === 'true';
-            const maxSlots = isPremium ? 20 : 10;
-            for (let i = 1; i <= maxSlots; i++) {
-                localStorage.removeItem(`saveDatas${i}`);
-            }
-            loadHistory();
-        }
+      // Рендер списка. Пустой экран показываем только если слотов 0 и нет поиска
+      renderList(cache.filtered, { allowEmptyScreen: zeroSlotsNoSearch });
+    }
 
-        document.getElementById('applyButton').onclick = function() {
-            showConfirm('Применить параметры?', applyParameters);
-        };
+    // ====== DETAILS ======
+    function showDetails(slot) {
+      currentIndex = slot;
+      detailsBox.innerHTML = '';
+      const raw = localStorage.getItem(`saveDatas${slot}`);
+      if (!raw) return;
+      let parsed = {};
+      try { parsed = JSON.parse(raw); } catch {}
+      const frag = document.createDocumentFragment();
+      Object.keys(parsed).forEach(k => {
+        if (k === 'sizeSelect' || k === 'createdAt') return;
+        const p = document.createElement('div');
+        p.className = 'detail';
+        p.textContent = `${(keysTranslation[k] || k)}: ${formatValue(parsed[k])}`;
+        frag.appendChild(p);
+      });
+      detailsBox.appendChild(frag);
+      openLayer(modal);
+    }
 
-        function applyParameters() {
-            if (currentIndex !== null) {
-                const data = localStorage.getItem(`saveDatas${currentIndex}`);
-                if (data) {
-                    localStorage.setItem('savedDatasToLoad', data);
-                    window.location.href = 'index.html';
-                }
-            }
-        };
+    function applyParameters(slot) {
+      const raw = localStorage.getItem(`saveDatas${slot}`);
+      if (!raw) return;
+      localStorage.setItem('savedDatasToLoad', raw);
+      window.location.href = 'index.html';
+    }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('modal');
-            const confirmModal = document.getElementById('confirmModal');
-            if (event.target === modal) {
-                closeModal();
-            } else if (event.target === confirmModal) {
-                closeConfirm();
-            }
-        };
+    function askConfirm(actionText, cb) {
+      $('#confirmText').textContent = actionText;
+      // Заголовок: Подтвердите действие {действие}
+      const title = $('#confirmTitle');
+      title.textContent = `Подтвердите действие`;
+      confirmCallback = cb;
+      openLayer(confirmBox);
+    }
 
-        loadHistory();
-    </script>
+    function clearHistory() {
+      const max = maxSlots();
+      for (let i = 1; i <= max; i++) localStorage.removeItem(`saveDatas${i}`);
+      loadHistory();
+    }
+
+    // ====== EVENTS (DELEGATION) ======
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const card = e.target.closest('.card');
+      const slot = Number(card?.dataset.index);
+      if (!slot) return;
+      const act = btn.dataset.act;
+      if (act === 'details') showDetails(slot);
+      if (act === 'apply') askConfirm('Применить сохранённые параметры?', () => applyParameters(slot));
+    });
+    $('#closeModal').addEventListener('click', () => closeLayer(modal));
+    $('#applyBtn').addEventListener('click', () => askConfirm('Применить сохранённые параметры?', () => applyParameters(currentIndex)));
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeLayer(modal); });
+    $('#confirmYes').addEventListener('click', () => { if (confirmCallback) confirmCallback(); closeLayer(confirmBox); });
+    $('#confirmNo').addEventListener('click', () => closeLayer(confirmBox));
+    confirmBox.addEventListener('click', (e) => { if (e.target === confirmBox) closeLayer(confirmBox); });
+    $('#backBtn').addEventListener('click', () => { window.location.href = 'menu.html'; });
+    $('#goBtn')?.addEventListener('click', () => { window.location.href = 'index.html'; });
+    $('#clearBtn').addEventListener('click', () => askConfirm('Удалить всю историю?', clearHistory));
+
+    // Поиск и фильтры
+    let tId;
+    [search, dateFrom, dateTo, keywordInput].forEach(el => {
+      el.addEventListener('input', () => {
+        clearTimeout(tId);
+        tId = setTimeout(applyFiltersAndSort, 120);
+      });
+    });
+
+    sortSelect.addEventListener('change', () => {
+      applyFiltersAndSort();
+    });
+
+    // ====== INIT ======
+    document.addEventListener('DOMContentLoaded', loadHistory);
+  </script>
 </body>
 </html>

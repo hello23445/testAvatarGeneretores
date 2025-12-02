@@ -189,17 +189,16 @@
         <select id="sort" aria-label="Сортировка">
           <option value="date_desc">По дате создания (новые сначала)</option>
           <option value="date_asc">По дате создания (старые сначала)</option>
+          <option value="date_custom">По дате (указать свою дату)</option>
           <option value="length_desc">По длине описания (длинные сначала)</option>
           <option value="length_asc">По длине описания (короткие сначала)</option>
           <option value="alpha_asc">По алфавиту (А-Я)</option>
           <option value="alpha_desc">По алфавиту (Я-А)</option>
-          <option value="keyword">Сортировка по слову в описании или тексте</option>
-          <option value="date_custom">По дате (указать свою дату)</option>
+          <option value="keyword">По слову в описании или тексте</option>
         </select>
       </div>
       <div class="filter-group">
-        <label class="filter-label" for="search">Поиск по описанию</label>
-        <input class="input" id="search" type="search" placeholder="Поиск по описанию…" aria-label="Поиск по истории" autocomplete="off" />
+        <input class="input" id="search" type="search" placeholder="Поиск" aria-label="Поиск по истории" autocomplete="off" />
       </div>
 
       <!-- Дата (всегда рядом) -->

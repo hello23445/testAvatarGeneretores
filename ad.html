@@ -181,11 +181,126 @@
 
     <div class="container">
         <!-- controls оставляем, loop + autoplay, PiP запрещён -->
-        <video
-            id="adVideo"
-            autoplay
-            disablepictureinpicture
-        ></video>
+<video
+  id="adVideo"
+  src="video.mp4"
+  autoplay
+  playsinline
+  controls
+  disablepictureinpicture
+  controlsList="nodownload nofullscreen noremoteplayback"
+  oncontextmenu="return false"
+  style="width: 100%; max-width: 600px; border-radius: 12px;"
+>
+  Ваш браузер не поддерживает видео.
+</video>
+
+<style>
+  /* Скрываем/блокируем элементы перемотки */
+video::-webkit-media-controls-timeline,
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+video::-webkit-media-controls-seek-back-button,
+video::-webkit-media-controls-seek-forward-button,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-picture-in-picture-button,
+video::-webkit-media-controls-playback-rate-button,
+video::-webkit-media-controls-overflow-button,
+video::-webkit-media-controls-text-track-button {
+  display: none !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+  video::-webkit-media-controls-panel { pointer-events: auto !important; }
+</style>
+
+<script>
+  const adVideoEl = document.getElementById('adVideo');
+  setInterval(() => {
+    adVideoEl.playbackRate = 1.0;
+  }, 1000);
+  // ---- ЖЕСТКИЙ ЗАПРЕТ ИЗМЕНЕНИЯ СКОРОСТИ ----
+  function lockPlaybackRate(el) {
+    try {
+      // Ставим скорость и дефолт
+      el.playbackRate = 1;
+      el.defaultPlaybackRate = 1;
+
+      // Лочим геттер/сеттеры именно для ЭТОГО элемента
+      const lockedGetter = () => 1;
+      const lockedSetter = () => {}; // игнор любых попыток
+
+      // playbackRate
+      Object.defineProperty(el, 'playbackRate', {
+        configurable: false,
+        enumerable: true,
+        get: lockedGetter,
+        set: lockedSetter
+      });
+
+      // defaultPlaybackRate
+      Object.defineProperty(el, 'defaultPlaybackRate', {
+        configurable: false,
+        enumerable: true,
+        get: lockedGetter,
+        set: lockedSetter
+      });
+    } catch (e) {
+      // Если браузер не дал переопределить — дублируем защиту событиями
+      console.warn('Lock props failed, fallback to events only', e);
+    }
+
+    // Отлавливаем любые изменения скорости и откатываем обратно
+    const enforceRate = () => {
+      if (el.playbackRate !== 1) el.playbackRate = 1;
+      if (el.defaultPlaybackRate !== 1) el.defaultPlaybackRate = 1;
+    };
+    el.addEventListener('ratechange', enforceRate);
+
+    // Периодическая страховка (на случай нестандартных меню)
+    const watchdog = setInterval(enforceRate, 300);
+    el.addEventListener('ended', () => clearInterval(watchdog));
+  }
+
+  // Загружается мета — фиксируем скорость
+  if (adVideoEl.readyState >= 1,0) {
+    lockPlaybackRate(adVideoEl);
+  } else {
+    adVideoEl.addEventListener('loadedmetadata', () => lockPlaybackRate(adVideoEl), { once: true });
+  }
+
+  // ---- Остальные запреты (как раньше) ----
+  let lastAllowedTime = 0;
+
+  adVideoEl.addEventListener('timeupdate', () => {
+    const now = adVideoEl.currentTime;
+    if (now - lastAllowedTime > 0.3) lastAllowedTime = now;         // естественный прогресс
+    if (now < lastAllowedTime - 0.5) adVideoEl.currentTime = lastAllowedTime; // назад нельзя
+  });
+
+  adVideoEl.addEventListener('seeking', () => {
+    if (adVideoEl.currentTime > lastAllowedTime + 0.3) {
+      adVideoEl.currentTime = lastAllowedTime; // вперёд нельзя
+    }
+  });
+
+  // Блок клавиатуры (стрелки/пробел/+/= для некоторых раскладок)
+  window.addEventListener('keydown', (evt) => {
+    const blocked = ['ArrowLeft', 'ArrowRight', ' ', '+', '=', '-', '_'];
+    if (blocked.includes(evt.key)) evt.preventDefault();
+  });
+
+  // Блок колесика мыши над видео (некоторые UI меняют скорость колесом)
+  adVideoEl.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+
+  // Прочие мелочи
+  adVideoEl.addEventListener('contextmenu', e => e.preventDefault());
+  adVideoEl.addEventListener('dragstart', e => e.preventDefault());
+</script>
+
+
 
         <div id="adText" class="ad-text"></div>
 
@@ -218,7 +333,7 @@
             <input id="complainInput" type="text" placeholder="Опишите причину (если Другое)" style="display: none;">
             <div class="modal-buttons">
                 <button id="sendComplain" style="background-color: green;">Отправить</button>
-                <button id="cancelComplain" style="background-color: red;">Отмена</button>
+                <button id="cancelComplain" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Отмена</button>
             </div>
         </div>
     </div>
@@ -231,7 +346,7 @@
             <p>Ваш комментарий анонимный.</p>
             <div class="modal-buttons">
                 <button id="sendComment" style="background-color: green;">Отправить</button>
-                <button id="cancelComment" style="background-color: red;">Отмена</button>
+                <button id="cancelComment" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Отмена</button>
             </div>
         </div>
     </div>
@@ -666,7 +781,17 @@
             commentInput.value = '';
             showToast('Комментарий отправлен.', 'success');
         });
-
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .btn, .btn btn--danger, .btn--neutral {
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
         // Старт
         fetchAdsData();
     </script>

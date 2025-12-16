@@ -219,7 +219,7 @@
         <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
         <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
         <button id="goto" onclick="Goto()">Перейти к покупке</button>
-        <button onclick="goToMainMenu()" style="margin-top: 1%;">Главное меню</button>
+        <button onclick="goToMainMenu()" style="margin-top: 1%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
     </div>
     <div id="div2" style="display: none;">
         <table>
@@ -256,7 +256,7 @@
         <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод на Premium.<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a> .</h2>
         <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
         <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
-        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%;">Назад</button>
+        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%; background: linear-gradient(135deg, #8b0000, #ff0000);">Назад</button>
     </div>
     <!-- Модалки -->
     <div id="confirmModal" class="modal" style="display: none;">
@@ -293,6 +293,17 @@
         let removeAnswers = ['', '', ''];
         let clickCount = 0;
         let clickTimer;
+            if (/iPhone/i.test(navigator.userAgent)) {
+                if (localStorage.getItem('liquid') === 'Включен') {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                    button, .btn, .btn btn--danger, .btn--neutral {
+                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
+                    }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
         // 1. Активация режима админа по 50 кликам в пустое место
         document.body.addEventListener('click', function(e) {
             if (e.target === document.body || e.target.tagName === 'BODY') {

@@ -633,6 +633,17 @@
     </div>
 
     <script>
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .btn, .btn btn--danger, .btn--neutral {
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
         const gasUrl = 'https://script.google.com/macros/s/AKfycbxJcX6JYiTmUVy5nIZwvegsmYpZdBGbz6PHjXVm64nlO4P-v11-MTa-a3k6FmZDctETTg/exec';
         const createBtn = document.getElementById('createApiBtn');
         const apiInfo = document.getElementById('apiInfo');

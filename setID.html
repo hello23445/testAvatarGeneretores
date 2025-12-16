@@ -142,7 +142,7 @@
 </head>
 <body>
   <div class="container" role="main" aria-labelledby="title-step1">
-    <button class="btn" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
+    <button class="btn" onclick="window.location.href = 'index.html'" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
 ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ
 </button>
     <div id="step1" aria-hidden="false">
@@ -433,6 +433,17 @@
         }
       }
     });
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .btn, .btn btn--danger, .btn--neutral {
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
   </script>
 </body>
 </html>

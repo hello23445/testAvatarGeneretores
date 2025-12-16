@@ -160,10 +160,10 @@
     .modal[aria-hidden="false"], .confirm[aria-hidden="false"] { display: flex; }
     .sheet { width: min(480px, 100%); max-height: 84vh; overflow: auto; background: #fff; color: #0d1321; border-radius: 18px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; }
     .sheet h2 { margin: 0 0 4px; font-size: 18px; }
-    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px; background: #f5f7fb; border: 1px solid #e6e9f2; word-break: break-word; }
+    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px; background: darkblue; border: 1px solid #e6e9f2; word-break: break-word; color: white;}
     .sheet .bar { display: grid; grid-auto-flow: column; justify-content: start; gap: 10px; }
     .sheet .btn { color: #fff; padding: 12px 14px; font-size: 14px; }
-    .sheet .btn--danger { background: #e63946; }
+    .sheet .btn--danger { background: linear-gradient(135deg, #c81414, #ff0000); }
     /* Центровка заголовка/кнопок только в confirm */
     .confirm .sheet h2, .confirm #confirmText { text-align: center; }
     .confirm .sheet .bar { justify-content: center; }
@@ -179,7 +179,7 @@
 
     <section class="actions" aria-label="Действия">
       <button class="btn btn--neutral" id="backBtn" type="button">Вернуться в меню</button>
-      <button class="btn btn--danger" id="clearBtn" type="button">Удалить всю историю</button>
+      <button class="btn btn--danger" id="clearBtn" type="button" style="background-color: red;">Удалить всю историю</button>
     </section>
 
     <!-- Сортировка (слева) и Поиск (справа) ВСЕГДА рядом -->
@@ -246,8 +246,8 @@
 
   <!-- Детали -->
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="sheet" role="document">
-      <h2 id="modalTitle">Подробности параметров</h2>
+    <div class="sheet" role="document" style="background-color: darkblue;">
+      <h2 id="modalTitle" style="color: white;">Подробности параметров</h2>
       <div id="details" class="details"></div>
       <div class="bar">
         <button class="btn" id="applyBtn" type="button">Применить и вернуться к этим параметрам</button>
@@ -257,8 +257,8 @@
   </div>
 
   <!-- Подтверждение -->
-  <div class="confirm" id="confirm" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-    <div class="sheet" role="document">
+  <div class="confirm" id="confirm" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" >
+    <div class="sheet" role="document" style="background-color: darkblue; color: white;">
       <h2 id="confirmTitle">Подтвердите действие</h2>
       <p id="confirmText" style="margin:0"></p>
       <div class="bar">
@@ -579,7 +579,7 @@
       if (act === 'apply') askConfirm('Применить сохранённые параметры?', () => applyParameters(slot));
     });
     $('#closeModal').addEventListener('click', () => closeLayer(modal));
-    $('#applyBtn').addEventListener('click', () => askConfirm('Применить сохранённые параметры?', () => applyParameters(currentIndex)));
+    $('#applyBtn').addEventListener('click', () => askConfirm('Применить эти параметры?', () => applyParameters(currentIndex)));
     modal.addEventListener('click', (e) => { if (e.target === modal) closeLayer(modal); });
     $('#confirmYes').addEventListener('click', () => { if (confirmCallback) confirmCallback(); closeLayer(confirmBox); });
     $('#confirmNo').addEventListener('click', () => closeLayer(confirmBox));
@@ -618,6 +618,17 @@
         }
     }
     });
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .btn, .btn btn--danger, .btn--neutral {
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
 
     // ====== INIT ======
     document.addEventListener('DOMContentLoaded', loadHistory);

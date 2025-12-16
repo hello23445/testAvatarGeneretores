@@ -406,6 +406,7 @@
   <i class="fa-solid fa-bars" style="color: white; font-size: 24px;"></i>
 </button>
     <div id="mainContainer" class="container" style="display: none;">
+        
         <div class="left-section">
             <div class="input-group">
                 <label for="quality" id="qw">Качество фото</label>
@@ -1008,9 +1009,20 @@
                     function updateTextLimit() {
                         const textInput = document.getElementById('text');
                         const textCounter = document.getElementById('textCounter');
+                        const autoTextStyle = document.getElementById('autoTextStyle');
                         let maxLen = localStorage.getItem('premium') === 'true' ? 500 : 30;
                         textInput.maxLength = maxLen;
                         textCounter.textContent = textInput.value.length + '/' + maxLen;
+                        
+                        // Отключаем/включаем чекбокс в зависимости от наличия текста
+                        if (textInput.value.trim() === '') {
+                            autoTextStyle.disabled = true;
+                            autoTextStyle.checked = false;
+                            document.getElementById('autoTextStyleLabel').classList.add('disabled-label');
+                        } else {
+                            autoTextStyle.disabled = false;
+                            document.getElementById('autoTextStyleLabel').classList.remove('disabled-label');
+                        }
                     }
                     window.addEventListener('DOMContentLoaded', updateTextLimit);
                     document.getElementById('text').addEventListener('input', updateTextLimit);
@@ -1018,7 +1030,7 @@
             </div>
             <div class="input-group" title="Попросить искуственного интеллекта самому выбрать стиль текста">
                 <label for="autoTextStyle" class="disabled-label" id="autoTextStyleLabel">
-                    <input type="checkbox" id="autoTextStyle" disabled> Автоматический выбор стиля текста.
+                    <input type="checkbox" id="autoTextStyle"> Автоматический выбор стиля текста.
                 </label>
                 <h5>Вы можете ввести текст, который будет на фотографии.<br>Автоматический выбор стиля текста позволяет ИИ самому выбрать стиль текста.</h5>
             </div>
@@ -1150,7 +1162,7 @@
             <div id="warning" class="warning" style="display: none;"></div>
             <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
                 <button id="continueButton" style="display: none;" onclick="handleContinue()">Продолжить</button>
-                <button onclick="goToMainMenu()">Главное меню</button>
+                <button onclick="goToMainMenu()" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
             </div>
         </div>
     </div>
@@ -1216,7 +1228,7 @@
     <div id="alertModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p id="alertMessage"></p>
-            <button onclick="closeAlertModal()">Закрыть</button>
+            <button onclick="closeAlertModal()" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Закрыть</button>
         </div>
     </div>
     <!-- Overlay for blocking interaction during upload -->
@@ -1235,8 +1247,8 @@
             <h5 id="editDesc"></h5>
             <div class="modal-buttons">
                 <button id="saveEdit">Сохранить</button>
-                <button id="cancelEdit">Отмена</button>
-                <button id="clearEdit">Очистить поле</button>
+                <button id="cancelEdit" style="background: linear-gradient(135deg, #b70202, #ff0000);">Отмена</button>
+                <button id="clearEdit" style="background: linear-gradient(135deg, #b70202, #ff0000);">Очистить поле</button>
             </div>
         </div>
     </div>
@@ -2716,7 +2728,17 @@ function closeEditModal() {
   document.getElementById('editModal').style.display = 'none';
   currentEditFieldId = null;
 }
-
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .btn, .btn btn--danger, .btn--neutral {
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
     </script>
 </body>
 </html>

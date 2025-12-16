@@ -9,97 +9,192 @@
       margin: 0;
       min-height: 100vh;
       background: linear-gradient(135deg, #74ABE2, #5563DE);
-      display: flex;
-      justify-content: center;
-      align-items: center;
       font-family: "Segoe UI", Arial, sans-serif;
       color: white;
       text-align: center;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
     .container {
       background: rgba(255, 255, 255, 0.1);
-      padding: 30px 40px;
+      padding: 25px 35px;
       border-radius: 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(8px);
+      width: 100%;
+      max-width: 400px;
+      margin-top: 30px;
     }
-
+    .glass {
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 2rem;
+      box-shadow:
+        0 8px 32px rgba(31, 38, 135, 0.2),
+        inset 0 4px 20px rgba(255, 255, 255, 0.3);
+    }
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      filter: url(#liquid-glass-filter) blur(5px);
+      background: inherit;
+      z-index: -1;
+    }
+    .glass::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2rem;
+      box-shadow:
+        inset -10px -8px 0px -11px rgba(255, 255, 255, 1),
+        inset 0px -9px 0px -8px rgba(255, 255, 255, 1);
+      opacity: 0.6;
+      z-index: -1;
+      filter: blur(1px) drop-shadow(10px 4px 6px black) brightness(115%);
+    }
+    .btn.glass {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+    }
+    .btn.glass:not(.back-btn)::after {
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .back-btn.glass::after {
+      background: linear-gradient(135deg, rgba(139,0,0,0.2), rgba(255,0,0,0.2));
+    }
     h2 {
       margin-bottom: 25px;
       font-size: 1.8rem;
       font-weight: 600;
+      position: relative;
+      z-index: 1;
     }
-
     .btn {
-      background-color: #4CAF50; /* сохраняем твой цвет */
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      text-align: center;
-      text-decoration: none;
       display: block;
-      font-size: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
       width: 70%;
       max-width: 220px;
-      margin: 10px auto;
+      margin: 12px auto;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
       font-weight: 500;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
+      position: relative;
     }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    .btn:not(.back-btn) { background: #4CAF50; }
+    .back-btn {
+      background: linear-gradient(135deg, #8b0000, #ff0000);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
-    .btn:active {
+    .btn:active{
       transform: translateY(0);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    /* 📱 Адаптивность */
-    @media (max-width: 768px) {
-      .container {
-        padding: 25px 30px;
-      }
-
-      h2 {
-        font-size: 1.5rem;
-      }
-
-      .btn {
-        width: 75%;
-        padding: 10px 18px;
-        font-size: 0.95rem;
-      }
+    /* 🟡 Кнопка переключателя Liquid */
+    .liquid-toggle {
+      background: linear-gradient(135deg, rgba(255,193,7,0.85), rgba(255,152,0,0.85));
+    }
+    .liquid-toggle.glass::after{
+      background: rgba(255, 193, 7, 0.12);
     }
 
+    @media (max-width: 768px) {
+      h2 { font-size: 1.5rem; }
+      .btn { width: 80%; padding: 10px 18px; font-size: 0.95rem; }
+      .container { width: 60%; }
+    }
     @media (max-width: 480px) {
-      .container {
-        padding: 20px 20px;
-      }
-
-      h2 {
-        font-size: 1.3rem;
-      }
-
-      .btn {
-        width: 80%;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-      }
+      h2 { font-size: 1.3rem; }
+      .btn { width: 85%; padding: 9px 16px; font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
+  <svg style="display: none">
+    <filter id="liquid-glass-filter" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="1" result="turbulence"/>
+      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="10" xChannelSelector="R" yChannelSelector="G" result="displacement"/>
+      <feGaussianBlur in="displacement" stdDeviation="5" result="blur"/>
+    </filter>
+  </svg>
+
   <div class="container">
     <h2>Меню</h2>
-    <a href="index.html" class="btn">Вернуться назад</a>
+
+    
+    <a href="index.html" class="btn back-btn" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Вернуться назад</a>
+    <a href="setID.html" class="btn">Изменить мой Telegram ID</a>
     <a href="story.html" class="btn">История генераций</a>
+    <!-- Кнопка появится/работает только на iPhone -->
+    <a id="liquidToggle" href="javascript:void(0)" class="btn liquid-toggle" style="display:none;">
+  Liquid glass: ...
+</a>
   </div>
+
+  <script>
+    const isIPhone = /iPhone/i.test(navigator.userAgent);
+
+    function applyLiquidState(enabled) {
+      const container = document.querySelector('.container');
+      const btns = document.querySelectorAll('.btn');
+
+      if (enabled) {
+        container.classList.add('glass');
+        btns.forEach(b => b.classList.add('glass'));
+        document.querySelectorAll('button, .btn').forEach(el => {
+          el.style.border = '1px solid rgba(255, 255, 255, 0.8)';
+        });
+      } else {
+        container.classList.remove('glass');
+        btns.forEach(b => b.classList.remove('glass'));
+        document.querySelectorAll('button, .btn').forEach(el => {
+          el.style.border = ''; // вернуть как было
+        });
+      }
+    }
+
+    if (isIPhone) {
+      const toggleBtn = document.getElementById('liquidToggle');
+      toggleBtn.style.display = 'block';
+
+      // по умолчанию: включен
+      let state = localStorage.getItem('liquid');
+      if (!state) {
+        localStorage.setItem('liquid', 'Включен');
+        state = 'Включен';
+      }
+
+      const enabled = (state === 'Включен');
+      applyLiquidState(enabled);
+      toggleBtn.textContent = `Liquid glass: ${state}`;
+
+      toggleBtn.addEventListener('click', () => {
+        const current = localStorage.getItem('liquid') || 'Включен';
+        const next = (current === 'Включен') ? 'Выключен' : 'Включен';
+        localStorage.setItem('liquid', next);
+
+        applyLiquidState(next === 'Включен');
+        toggleBtn.textContent = `Liquid glass: ${next}`;
+      });
+    }
+  </script>
 </body>
 </html>

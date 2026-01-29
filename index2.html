@@ -9,6 +9,7 @@
   <title>CrN PhotoAI Бесплатный генератор изображений.</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <!-- Top bar -->
@@ -1108,7 +1109,28 @@
         </div>
       </div>
     </div>
+    <!-- Surprise Confirm Modal -->
+    <div id="surpriseConfirmModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background-color: black;">
+        <p style="color: white; text-align: center;">Будут применены случайные параметры и описание. Продолжить?</p>
+        <center>
+          <button class="btn btn--primary" onclick="confirmSurprise(true)" style="margin-top: 2%;">Да</button>
+          <button class="btn btn--secondary" onclick="confirmSurprise(false)" style="margin-top: 2%; background-color: red;">Нет</button>
+        </center>
+      </div>
+    </div>
     <script>
+      const tg = window.Telegram.WebApp;
+      tg.expand();
+      tg.enableClosingConfirmation();
+      tg.MainButton.text = 'Закрыть меню генерации';
+      tg.MainButton.color = '#FF0000';
+      tg.MainButton.textColor = '#FFFFFF';
+      tg.MainButton.onClick(() => {
+        tg.close();
+      });
+      tg.showMainButton();
+
 const text = document.getElementById('text');
 const copy = document.getElementById('copy');
 const autoTextStyle = document.getElementById('autoTextStyle');
@@ -1185,12 +1207,18 @@ text.addEventListener('input', function () {
       if (autoTextStyle.disabled === true) {
         autoTextStyle.checked = false;
       }
-      // Telegram WebApp for index
-      const WebApp = window.Telegram?.WebApp;
-      if (WebApp) {
-        WebApp.ready();
-        WebApp.expand();
-        WebApp.enableClosingConfirmation();
+      function confirmSurprise(confirm) {
+        document.getElementById('surpriseConfirmModal').style.display = 'none';
+        if (confirm) {
+          getRandomParameters();
+        }
+      }
+      function surpriseMode() {
+        document.getElementById('surpriseConfirmModal').style.display = 'flex';
+      }
+      function getRandomParameters() {
+        // логика для случайных параметров
+        surpriseModeOriginal(); // вызов оригинальной функции
       }
     </script>
   </main>

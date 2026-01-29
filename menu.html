@@ -205,6 +205,16 @@
         toggleBtn.textContent = `Liquid Glass: ${next}`;
       });
     }
+const WebApp = window.Telegram?.WebApp;
+    if (WebApp) {
+      WebApp.ready();
+      WebApp.expand();
+      WebApp.enableClosingConfirmation();
+      WebApp.BackButton.show();
+      WebApp.BackButton.onClick(() => {
+        window.location.href = 'index.html';
+      });
+    }
   </script>
 </body>
 </html>

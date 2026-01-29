@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Просмотр Рекламы</title>
-
     <!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">    
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #74ABE2, #5563DE);
+            background:
+                radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+                radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+                linear-gradient(180deg, #0f172a, #020617);
             font-family: 'Arial', sans-serif;
             color: #fff;
             display: flex;
@@ -32,12 +32,13 @@
             backdrop-filter: blur(10px);
             text-align: center;
         }
-        video {
+        iframe {
             width: 100%;
-            max-height: 450px;
+            height: 450px;
             border-radius: 10px;
             margin-bottom: 20px;
-            background-color: #000; /* фон чёрный до загрузки видео */
+            background-color: #000;
+            border: none;
         }
         .ad-text {
             font-size: 18px;
@@ -160,8 +161,8 @@
             .container {
                 padding: 20px;
             }
-            video {
-                max-height: 300px;
+            iframe {
+                height: 300px;
             }
             button {
                 padding: 10px 20px;
@@ -178,132 +179,19 @@
 <body>
     <!-- контейнер для уведомлений -->
     <div id="toastContainer"></div>
-
     <div class="container">
-        <!-- controls оставляем, loop + autoplay, PiP запрещён -->
-<video
-  id="adVideo"
-  src="video.mp4"
-  autoplay
-  playsinline
-  controls
-  disablepictureinpicture
-  controlsList="nodownload nofullscreen noremoteplayback"
-  oncontextmenu="return false"
-  style="width: 100%; max-width: 600px; border-radius: 12px;"
->
-  Ваш браузер не поддерживает видео.
-</video>
-
-<style>
-  /* Скрываем/блокируем элементы перемотки */
-video::-webkit-media-controls-timeline,
-video::-webkit-media-controls-current-time-display,
-video::-webkit-media-controls-time-remaining-display,
-video::-webkit-media-controls-seek-back-button,
-video::-webkit-media-controls-seek-forward-button,
-video::-webkit-media-controls-mute-button,
-video::-webkit-media-controls-volume-slider,
-video::-webkit-media-controls-fullscreen-button,
-video::-webkit-media-controls-picture-in-picture-button,
-video::-webkit-media-controls-playback-rate-button,
-video::-webkit-media-controls-overflow-button,
-video::-webkit-media-controls-text-track-button {
-  display: none !important;
-  pointer-events: none !important;
-  opacity: 0 !important;
-}
-  video::-webkit-media-controls-panel { pointer-events: auto !important; }
-</style>
-
-<script>
-  const adVideoEl = document.getElementById('adVideo');
-  setInterval(() => {
-    adVideoEl.playbackRate = 1.0;
-  }, 1000);
-  // ---- ЖЕСТКИЙ ЗАПРЕТ ИЗМЕНЕНИЯ СКОРОСТИ ----
-  function lockPlaybackRate(el) {
-    try {
-      // Ставим скорость и дефолт
-      el.playbackRate = 1;
-      el.defaultPlaybackRate = 1;
-
-      // Лочим геттер/сеттеры именно для ЭТОГО элемента
-      const lockedGetter = () => 1;
-      const lockedSetter = () => {}; // игнор любых попыток
-
-      // playbackRate
-      Object.defineProperty(el, 'playbackRate', {
-        configurable: false,
-        enumerable: true,
-        get: lockedGetter,
-        set: lockedSetter
-      });
-
-      // defaultPlaybackRate
-      Object.defineProperty(el, 'defaultPlaybackRate', {
-        configurable: false,
-        enumerable: true,
-        get: lockedGetter,
-        set: lockedSetter
-      });
-    } catch (e) {
-      // Если браузер не дал переопределить — дублируем защиту событиями
-      console.warn('Lock props failed, fallback to events only', e);
-    }
-
-    // Отлавливаем любые изменения скорости и откатываем обратно
-    const enforceRate = () => {
-      if (el.playbackRate !== 1) el.playbackRate = 1;
-      if (el.defaultPlaybackRate !== 1) el.defaultPlaybackRate = 1;
-    };
-    el.addEventListener('ratechange', enforceRate);
-
-    // Периодическая страховка (на случай нестандартных меню)
-    const watchdog = setInterval(enforceRate, 300);
-    el.addEventListener('ended', () => clearInterval(watchdog));
-  }
-
-  // Загружается мета — фиксируем скорость
-  if (adVideoEl.readyState >= 1,0) {
-    lockPlaybackRate(adVideoEl);
-  } else {
-    adVideoEl.addEventListener('loadedmetadata', () => lockPlaybackRate(adVideoEl), { once: true });
-  }
-
-  // ---- Остальные запреты (как раньше) ----
-  let lastAllowedTime = 0;
-
-  adVideoEl.addEventListener('timeupdate', () => {
-    const now = adVideoEl.currentTime;
-    if (now - lastAllowedTime > 0.3) lastAllowedTime = now;         // естественный прогресс
-    if (now < lastAllowedTime - 0.5) adVideoEl.currentTime = lastAllowedTime; // назад нельзя
-  });
-
-  adVideoEl.addEventListener('seeking', () => {
-    if (adVideoEl.currentTime > lastAllowedTime + 0.3) {
-      adVideoEl.currentTime = lastAllowedTime; // вперёд нельзя
-    }
-  });
-
-  // Блок клавиатуры (стрелки/пробел/+/= для некоторых раскладок)
-  window.addEventListener('keydown', (evt) => {
-    const blocked = ['ArrowLeft', 'ArrowRight', ' ', '+', '=', '-', '_'];
-    if (blocked.includes(evt.key)) evt.preventDefault();
-  });
-
-  // Блок колесика мыши над видео (некоторые UI меняют скорость колесом)
-  adVideoEl.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
-
-  // Прочие мелочи
-  adVideoEl.addEventListener('contextmenu', e => e.preventDefault());
-  adVideoEl.addEventListener('dragstart', e => e.preventDefault());
-</script>
-
-
+        <!-- iframe вместо video -->
+        <iframe
+            id="adIframe"
+            src=""
+            allowfullscreen
+            allow="autoplay"
+            style="width: 100%; max-width: 600px; border-radius: 12px; height: 450px;"
+        >
+            Ваш браузер не поддерживает iframe.
+        </iframe>
 
         <div id="adText" class="ad-text"></div>
-
         <div class="buttons">
             <button id="commentBtn" style="display: none; background-color: darkblue;">Написать комментарий</button>
             <button id="complainBtn" style="background-color: rgb(239, 22, 22);">Пожаловаться</button>
@@ -313,12 +201,8 @@ video::-webkit-media-controls-text-track-button {
             <i class="fa-solid fa-circle-check fa-lg" style="color: #005eff;"></i>
             Эта реклама и её ссылки были проверены средством CrN Ads’ Security
         </h5>
-
-
-
-
     </div>
-    
+
     <!-- Complain Modal -->
     <div id="complainModal" class="modal">
         <div class="modal-content">
@@ -351,7 +235,7 @@ video::-webkit-media-controls-text-track-button {
         </div>
     </div>
 
-    <!-- Loading Modal (только один раз за вход) -->
+    <!-- Loading Modal -->
     <div id="loadingModal" class="modal">
         <div class="modal-content">
             <h3>Загрузка данных...</h3>
@@ -363,39 +247,29 @@ video::-webkit-media-controls-text-track-button {
         // Переменные для Telegram Bot
         const BOT_TOKEN = '7633424551:AAH8JptpFazBaf7FlfCVrDjhquI1JYxf3RM';
         const ADMIN_CHAT_ID = '6434781065';
-
         // URL вашего Google Apps Script Web App
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbzkqKO8IpT-v_E76Bdo4F4u0dDcKwkt6cht3-tnJrCjLV2iaGkWqirmRoDYfvl0bUXW/exec';
-
         let adsData = [];
-        let currentAdIndex = parseInt(localStorage.getItem('currentAdIndex')) || 1; // индексы с 1 (строка 2 в таблице)
+        let currentAdIndex = parseInt(localStorage.getItem('currentAdIndex')) || 1;
         let currentAd = null;
-
-        const video = document.getElementById('adVideo');
+        const adIframe = document.getElementById('adIframe');
         const adText = document.getElementById('adText');
         const continueBtn = document.getElementById('continueBtn');
         const commentBtn = document.getElementById('commentBtn');
         const complainBtn = document.getElementById('complainBtn');
-
         const complainModal = document.getElementById('complainModal');
         const complainSelect = document.getElementById('complainSelect');
         const complainInput = document.getElementById('complainInput');
         const sendComplain = document.getElementById('sendComplain');
         const cancelComplain = document.getElementById('cancelComplain');
-
         const commentModal = document.getElementById('commentModal');
         const commentInput = document.getElementById('commentInput');
         const sendComment = document.getElementById('sendComment');
         const cancelComment = document.getElementById('cancelComment');
-
         const loadingModal = document.getElementById('loadingModal');
         const toastContainer = document.getElementById('toastContainer');
 
-        // запрет перемотки
-        let lastTime = 0;
         let hasWatchedOnce = false;
-
-        // лоадер только один раз
         let loaderLocked = false;
 
         function showLoader() {
@@ -408,24 +282,18 @@ video::-webkit-media-controls-text-track-button {
             loadingModal.style.display = 'none';
         }
 
-        // Toast
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
             toastContainer.appendChild(toast);
-
-            requestAnimationFrame(() => {
-                toast.classList.add('show');
-            });
-
+            requestAnimationFrame(() => toast.classList.add('show'));
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // Экранирование HTML
         function escapeHtml(str) {
             return String(str)
                 .replace(/&/g, '&amp;')
@@ -435,7 +303,6 @@ video::-webkit-media-controls-text-track-button {
                 .replace(/'/g, '&#39;');
         }
 
-        // Линковка
         function linkify(text) {
             const escaped = escapeHtml(text);
             const regex = /(^|\s)(@[\w_]+|https?:\/\/[^\s<]+|t\.me\/[\w_]+)/g;
@@ -452,9 +319,8 @@ video::-webkit-media-controls-text-track-button {
             });
         }
 
-        // Получение данных из Google Sheets через GAS
         async function fetchAdsData() {
-            showLoader(); // только первый раз
+            showLoader();
             try {
                 const response = await fetch(GAS_URL);
                 adsData = await response.json();
@@ -466,48 +332,39 @@ video::-webkit-media-controls-text-track-button {
             }
         }
 
-        // Поиск следующей валидной рекламы, начиная с startIndex
         function findNextValidAd(startIndex) {
             const length = adsData.length;
-            if (length <= 1) return null; // только заголовки
-
+            if (length <= 1) return null;
             let index = startIndex;
             if (index < 1 || index >= length) index = 1;
-
             const allowedTargets = [
                 'не важно',
                 'does not matter',
                 "мини-приложение 'сгенерировать фото'"
             ].map(s => s.toLowerCase());
-
             let attempts = 0;
-            const maxAttempts = length - 1; // без строки заголовков
-
+            const maxAttempts = length - 1;
             while (attempts < maxAttempts) {
                 const row = adsData[index];
                 const where = (row[2] || '').toLowerCase();
                 const videoUrl = row[1];
-
                 if (
                     allowedTargets.includes(where) &&
                     videoUrl && typeof videoUrl === 'string' && videoUrl.trim() !== ''
                 ) {
                     return { index, ad: row };
                 }
-
                 index++;
                 if (index >= length) index = 1;
                 attempts++;
             }
-
             return null;
         }
 
-        // Инкремент просмотров в колонке H (через GAS)
         async function incrementViewCount() {
             if (!currentAd) return;
             try {
-                const sheetRow = currentAdIndex + 1; // строка в таблице (2+)
+                const sheetRow = currentAdIndex + 1;
                 await fetch(GAS_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -521,7 +378,6 @@ video::-webkit-media-controls-text-track-button {
             }
         }
 
-        // Загрузка следующей рекламы
         function loadNextAd() {
             const next = findNextValidAd(currentAdIndex);
             if (!next) {
@@ -529,25 +385,32 @@ video::-webkit-media-controls-text-track-button {
                 hideLoader();
                 return;
             }
-
             currentAdIndex = next.index;
             currentAd = next.ad;
-
             const length = adsData.length;
             let nextIndex = currentAdIndex + 1;
             if (nextIndex >= length) nextIndex = 1;
             localStorage.setItem('currentAdIndex', nextIndex);
-
             continueBtn.disabled = true;
             continueBtn.textContent = 'Продолжить(…)';
-
-            lastTime = 0;
             hasWatchedOnce = false;
 
-            video.onloadedmetadata = null;
-            video.onerror = null;
+            let videoUrl = currentAd[1];
+            let isGoogleDrive = false;
 
-            const videoUrl = currentAd[1];
+            if (videoUrl.includes('drive.google.com')) {
+                isGoogleDrive = true;
+                const idMatch = videoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || videoUrl.match(/id=([a-zA-Z0-9_-]+)/);
+                if (idMatch) {
+                    videoUrl = `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+                } else {
+                    console.warn('Не удалось извлечь ID из Google Drive ссылки');
+                    currentAdIndex = currentAdIndex + 1;
+                    loadNextAd();
+                    return;
+                }
+            }
+
             if (!videoUrl || typeof videoUrl !== 'string' || videoUrl.trim() === '') {
                 console.warn('Пустая ссылка на видео, пробуем следующую рекламу');
                 currentAdIndex = currentAdIndex + 1;
@@ -555,140 +418,60 @@ video::-webkit-media-controls-text-track-button {
                 return;
             }
 
-            video.src = videoUrl;
-            video.load();
-
-            video.onloadedmetadata = () => {
-                const duration = video.duration;
-                if (!isFinite(duration) || duration <= 0) {
-                    console.warn('Некорректная длительность видео, пробуем следующую рекламу');
+            if (isGoogleDrive) {
+                adIframe.src = videoUrl;
+                adIframe.onload = () => {
+                    hideLoader();
+                    loaderLocked = true;
+                    const rawText = currentAd[0] || '';
+                    adText.innerHTML = linkify(rawText);
+                    if (currentAd[4] == 1) {
+                        commentBtn.style.display = 'block';
+                    } else {
+                        commentBtn.style.display = 'none';
+                    }
+                    // Имитация просмотра (iframe сам управляет)
+                    setTimeout(() => {
+                        hasWatchedOnce = true;
+                        continueBtn.textContent = 'Продолжить';
+                        continueBtn.disabled = false;
+                    }, 15000); // Пример: считаем просмотренным через 15 секунд
+                };
+                adIframe.onerror = () => {
+                    console.error('Ошибка загрузки iframe, пробуем следующую рекламу');
                     currentAdIndex = currentAdIndex + 1;
                     loadNextAd();
-                    return;
-                }
-
-                // первое успешное видео загружено – больше никогда не показываем лоадер
-                hideLoader();
-                loaderLocked = true;
-
-                video.play().catch(() => {});
-
-                const rawText = currentAd[0] || '';
-                adText.innerHTML = linkify(rawText);
-
-                if (currentAd[4] == 1) {
-                    commentBtn.style.display = 'block';
-                } else {
-                    commentBtn.style.display = 'none';
-                }
-            };
-
-            video.onerror = () => {
-                console.error('Ошибка загрузки видео, пробуем следующую рекламу');
+                };
+            } else {
+                // Если не Google Drive — можно оставить <video>, но для простоты сейчас используем iframe для всех
+                // Или верни <video> обратно, если нужно
+                console.warn('Не Google Drive ссылка, пропускаем или обрабатываем иначе');
                 currentAdIndex = currentAdIndex + 1;
                 loadNextAd();
-            };
+            }
         }
 
-        // Обновление таймера
+        // Обновление таймера (теперь имитация, т.к. iframe)
         function updateTimer() {
-            const duration = video.duration;
-            const current = video.currentTime;
-
-            if (!isFinite(duration) || duration <= 0) {
-                continueBtn.textContent = 'Продолжить(…)';
-                continueBtn.disabled = true;
-                return;
-            }
-
-            const remaining = Math.ceil(duration - current);
-
             if (hasWatchedOnce) {
                 continueBtn.textContent = 'Продолжить';
                 continueBtn.disabled = false;
             } else {
-                if (remaining <= 0) {
-                    continueBtn.textContent = 'Продолжить';
-                    continueBtn.disabled = false;
-                } else {
-                    continueBtn.textContent = `Продолжить(${remaining})`;
-                    continueBtn.disabled = true;
-                }
+                continueBtn.textContent = 'Продолжить(…)';
+                continueBtn.disabled = true;
             }
         }
-
-        // События видео
-
-        // отслеживаем естественное воспроизведение
-        video.addEventListener('timeupdate', () => {
-            lastTime = video.currentTime;
-
-            const duration = video.duration;
-            if (
-                !hasWatchedOnce &&
-                isFinite(duration) &&
-                duration > 0 &&
-                lastTime >= duration - 0.5
-            ) {
-                hasWatchedOnce = true;
-            }
-
-            updateTimer();
-        });
-
-        // полный запрет перемотки (вперёд и назад)
-        video.addEventListener('seeking', () => {
-            if (Math.abs(video.currentTime - lastTime) > 0.25) {
-                video.currentTime = lastTime;
-            }
-        });
-
-        // запрет входа в PiP
-        video.addEventListener('enterpictureinpicture', (e) => {
-            e.preventDefault();
-            video.pause();
-        });
-
-        // блокируем клавишами перемотку
-        document.addEventListener('keydown', (e) => {
-            const blockKeys = ['ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown'];
-            if (blockKeys.includes(e.key)) {
-                e.preventDefault();
-            }
-        });
-
-        video.addEventListener('ended', () => {
-            hasWatchedOnce = true;
-            updateTimer();
-        });
-
-        // Пауза при смене вкладки
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                video.pause();
-            } else {
-                if (!video.ended) {
-                    video.play().catch(() => {});
-                }
-            }
-        });
 
         // Продолжить
         continueBtn.addEventListener('click', async () => {
             loadingModal.style.display = 'flex';
-            const dur = video.duration;
-            let attempts = 3;
-            if (dur < 5) attempts = 1;
-            else if (dur < 10) attempts = 2;
-
+            let attempts = 3; // Можно оставить логику с длительностью, если нужно
             localStorage.setItem('attemptsFromAd', attempts);
-
             await incrementViewCount();
-
             window.location.href = 'index.html';
         });
 
-        // Модалка жалобы
+        // Остальные функции (жалобы, комментарии) остаются без изменений
         complainBtn.addEventListener('click', () => {
             complainModal.style.display = 'flex';
             complainInput.style.display = 'none';
@@ -717,14 +500,11 @@ video::-webkit-media-controls-text-track-button {
                 showToast('Пожалуйста, опишите причину жалобы.', 'error');
                 return;
             }
-
             const userID = localStorage.getItem('userID') || '';
             const userToken = localStorage.getItem('user_Token') || '';
             const from = userID ? `ID: ${userID}\nToken: ${userToken}` : "User Token:" + userToken;
-
             const reasonSelect = complainSelect.value;
             const reasonInput = complainInput.value.trim() || '-';
-
             const message =
                 `ЖАЛОБА ОТ: \n${from}\n\n` +
                 `НА:\n` +
@@ -734,20 +514,17 @@ video::-webkit-media-controls-text-track-button {
                 `ID, имя: ${currentAd ? (currentAd[5] + ', ' + currentAd[6]) : '-'}\n` +
                 `Причина жалобы из инпута: ${reasonInput}\n` +
                 `Причина жалобы из select: ${reasonSelect}`;
-
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: message })
             });
-
             complainModal.style.display = 'none';
             complainSelect.value = '';
             complainInput.value = '';
             showToast('Жалоба отправлена.', 'success');
         });
 
-        // Модалка комментария
         commentBtn.addEventListener('click', () => {
             commentModal.style.display = 'flex';
         });
@@ -763,35 +540,34 @@ video::-webkit-media-controls-text-track-button {
                 showToast('Введите текст комментария.', 'error');
                 return;
             }
-
             const advertiserID = currentAd[5];
             const textForAdvertiser =
                 `Название рекламы: ${currentAd[3]}\n` +
                 `Комментарий от анонима:\n` +
                 `${comment}` +
                 `\n\nAd name: ${currentAd[3]}\nComment from anonimous:\n${comment}`;
-
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: advertiserID, text: textForAdvertiser })
             });
-
             commentModal.style.display = 'none';
             commentInput.value = '';
             showToast('Комментарий отправлен.', 'success');
         });
-    if (/iPhone/i.test(navigator.userAgent)) {
-      if (localStorage.getItem('liquid') === 'Включен') {
-        const style = document.createElement('style');
-        style.textContent = `
-          button, .btn, .btn btn--danger, .btn--neutral {
-            border: 1px solid rgba(255, 255, 255, 0.8) !important;
-          }
-        `;
-        document.head.appendChild(style);
-      }
-    }
+
+        if (/iPhone/i.test(navigator.userAgent)) {
+            if (localStorage.getItem('liquid') === 'Включен') {
+                const style = document.createElement('style');
+                style.textContent = `
+                    button, .btn, .btn btn--danger, .btn--neutral {
+                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
         // Старт
         fetchAdsData();
     </script>

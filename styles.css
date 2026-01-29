@@ -1,0 +1,722 @@
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
+}
+html {
+  scroll-behavior: smooth;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+:root{
+  --bg-1:#060a18;
+  --bg-2:#08122a;
+
+  --card: rgba(255,255,255,0.06);
+  --card-strong: rgba(255,255,255,0.08);
+
+  --stroke: rgba(255,255,255,0.14);
+  --stroke-2: rgba(255,255,255,0.20);
+
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.65);
+  --muted-2: rgba(255,255,255,0.55);
+
+  --danger: #ff4d4d;
+  --ok: #25c06d;
+
+  --accent: #3b82f6;
+  --accent-2: #22d3ee;
+
+  --shadow: 0 18px 45px rgba(0,0,0,0.45);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  --gap: 12px;
+
+  /* reusable gradient */
+  --panel-bg:
+    radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+    radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-2));
+}
+
+body{
+  min-height: 100vh;
+  color: var(--text);
+  background: var(--panel-bg);
+  padding: 16px;
+}
+
+a{
+  color: #a7d0ff;
+  text-decoration: none;
+}
+a:visited{
+  color: #a7d0ff;
+}
+
+/* Topbar */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 14px;
+  backdrop-filter: blur(10px);
+  background: rgba(6,10,24,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  max-width: 1200px;
+  margin: 0 auto 14px;
+}
+.icon-btn{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  flex: 0 0 auto;
+}
+.topbar-title{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.app-title{
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.app-subtitle{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Layout */
+.app{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+}
+
+/* IMPORTANT: Mobile order -> Description first, Parameters below */
+@media (max-width: 768px){
+  .app{
+    grid-template-columns: 1fr;
+  }
+  .app > .card--primary{ order: 1; }
+  .app > .card:not(.card--primary){ order: 2; }
+}
+
+.card{
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  min-width: 0;
+}
+.card--primary{
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.section-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 12px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.field{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  min-width: 0;
+}
+.field--inline{
+  margin-bottom: 12px;
+}
+
+label{
+  font-weight: 700;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.2px;
+  line-height: 1.25;
+}
+
+input, select, textarea{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  outline: none;
+  font-size: 14px;
+  font-weight: 650;
+  min-width: 0;
+  max-width: 100%;
+}
+
+textarea{
+  min-height: 220px;
+  resize: vertical;
+  max-width: 100%;
+}
+
+select option, optgroup{
+  color: #0b1220;
+}
+
+input:disabled, select:disabled, textarea:disabled{
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.counter{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.hint{
+  font-size: 12px;
+  color: var(--muted-2);
+  line-height: 1.35;
+}
+.warning{
+  margin-top: 10px;
+  color: var(--danger);
+  font-weight: 800;
+  font-size: 13px;
+  word-break: break-word;
+}
+.result{
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.88);
+  word-break: break-word;
+}
+
+/* Grid helpers */
+.grid{
+  display: grid;
+  gap: var(--gap);
+  min-width: 0;
+}
+.grid-2{
+  grid-template-columns: 1fr 1fr;
+}
+.grid-3{
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Buttons (no :hover!) */
+.btn{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  border-radius: 16px;
+  padding: 12px 12px;
+  font-weight: 850;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.30);
+  font-size: 14px;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+}
+.btn:disabled{
+  opacity: 0.60;
+  cursor: not-allowed;
+}
+.btn--primary{
+  border: 1px solid rgba(34,211,238,0.30);
+  background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));
+}
+.btn--accent{
+  border: 1px solid rgba(59,130,246,0.35);
+  background: linear-gradient(135deg, rgba(34,211,238,0.70), rgba(59,130,246,0.85));
+}
+.btn--secondary{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+}
+
+/* Attempts */
+.attempts{
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  text-align: center;
+}
+
+/* Checkbox */
+.checkbox{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  font-weight: 800;
+  flex-wrap: wrap;
+}
+.checkbox input{
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  padding: 0;
+  margin: 0;
+}
+#agreeLabel{
+  font-size: 12.5px;
+}
+
+/* Small preloader text */
+.small-preloader{
+  display: none;
+  margin-top: 10px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.80);
+}
+
+/* Previews */
+.previews{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.preview-item{
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.28);
+}
+.preview-item img{
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+.preview-remove{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.95);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Hide "Uploaded photos" block until there are items */
+#previews:empty{
+  display: none;
+}
+#previews:empty + *{
+  display: none;
+}
+
+/* tighter spacing between blur hint and uploaded photos header */
+.row-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.field .hint{
+  margin-top: -2px;
+}
+
+/* Modal */
+.modal{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.62);
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 999;
+  overflow-y: auto;
+}
+.modal-content{
+  width: 100%;
+  max-width: 520px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.92);
+  color: #0b1220;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.35);
+  padding: 18px;
+}
+.modal-content h2, .modal-content h1{
+  margin-bottom: 10px;
+}
+
+/* FORCE MODAL DARKBLUE inline styles -> gradient */
+#messengerModal .modal-content,
+#botUnlockModal .modal-content,
+#resultModal .modal-content,
+#fastGenModal .modal-content{
+  background: var(--panel-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+#messengerModal .modal-content h2,
+#botUnlockModal .modal-content h2,
+#resultModal .modal-content h1,
+#resultModal .modal-content p,
+#resultModal .modal-content h2{
+  color: var(--text) !important;
+}
+
+/* subscription + alert stay dark but readable */
+#fakeSubscriptionModal .modal-content,
+#alertModal .modal-content,
+#editModal .modal-content{
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.45);
+}
+
+/* Messenger options */
+.radio-group{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+.radio-option{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.95);
+  cursor: pointer;
+}
+.radio-option input[type="radio"]{
+  width: 18px;
+  height: 18px;
+}
+.radio-option label{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 850;
+  font-size: 13px;
+  margin: 0;
+  flex: 1;
+  color: #0b1220;
+}
+.radio-option .icon-end{
+  margin-left: auto;
+}
+.pill{
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(59,130,246,0.12);
+  color: #0b1220;
+}
+.info-box{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.95);
+}
+.info-text{
+  font-weight: 800;
+  font-size: 13px;
+  color: #0b1220;
+}
+
+/* Fast gen preloader */
+.preloader-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.preloader-text{
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text);
+}
+.preloader{
+  border: 5px solid rgba(255,255,255,0.16);
+  border-top: 5px solid rgba(59,130,246,0.85);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin{
+  0%{ transform: rotate(0deg); }
+  100%{ transform: rotate(360deg); }
+}
+
+/* Overlay */
+.overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.62);
+  z-index: 9999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+/* Edit modal */
+#editTextarea{
+  resize: none;
+  overflow: hidden;
+  min-height: 70px;
+  text-align: left;
+}
+.modal-buttons{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* =========================================================
+   MOBILE LAYOUT FOR "Параметры" SECTION (exact order)
+   - 2 columns grid
+   - specific full-width items:
+       {Тон цвета} spans 2
+       {Согласие} spans 2
+   - After that: buttons etc (existing grids keep working)
+========================================================= */
+
+@media (max-width: 768px){
+  body{
+    padding: 10px;
+  }
+
+  .card{
+    padding: 12px;
+  }
+
+  .section-title{
+    font-size: 13px;
+    padding: 9px 9px 10px;
+  }
+
+  label{
+    font-size: 11.3px;
+  }
+
+  input, select, textarea{
+    font-size: 13px;
+    padding: 10px 10px;
+    border-radius: 14px;
+  }
+
+  textarea{
+    min-height: 160px;
+  }
+
+  .btn{
+    font-size: 14px;
+    padding: 10px 10px;
+    border-radius: 14px;
+    gap: 8px;
+  }
+
+  .counter{
+    font-size: 11.2px;
+  }
+  .hint{
+    font-size: 11.2px;
+    line-height: 1.25;
+  }
+
+  /* Default: max 2 per row on mobile (no overflow) */
+  .grid-3{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .grid-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Make some grids become 1 column if they contain long buttons */
+  .grid.grid-2:has(.btn--primary),
+  .grid.grid-2:has(.btn--accent),
+  .grid.grid-3:has(.btn){
+    grid-template-columns: 1fr;
+  }
+
+  /* Smaller previews on mobile */
+  .previews{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .preview-item img{
+    height: 90px;
+  }
+  .preview-remove{
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    top: 6px;
+    right: 6px;
+  }
+
+  /* --- Exact mobile layout for parameters by IDs --- */
+
+  /* Force the first parameters block (size/sizeSelect/soot) into 2 columns */
+  .card:not(.card--primary) .grid-3{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 1) {Качество}{Освещение} -> same row on mobile */
+  /* This is inside the "quality/osvecheniye/style" grid in HTML.
+     We need style to move later; since HTML order is fixed, we make style behave like it belongs to later grid visually:
+     Put style into next row by spanning 2 and ordering last inside that grid.
+  */
+
+  /* Keep quality + osvecheniye 50/50 */
+  #quality{ }
+  #osvecheniye{ }
+
+  /* 2) {Ввод размера}{Выбор размера} -> first two of grid-3 size block */
+  /* (already 2-col, soot will wrap) */
+
+  /* 3) {Соотношение сторон}{Уровень детализации} */
+  /* Put soot and detail-level side-by-side */
+  #soot{ }
+  #detail-level{ }
+
+  /* 4) {Выбор ии}{Стиль} */
+  /* selector + style side-by-side (style moved visually by setting order within its grid) */
+  #selector{ }
+  #style{ }
+
+  /* 5) {Рамка}{Ракурс} */
+  #ram{ }
+  #rakurs{ }
+
+  /* 6) {Тон цвета} spans 2 columns */
+  .field:has(#color-tone){
+    grid-column: 1 / -1;
+  }
+
+  /* 7) {Согласие} spans 2 columns */
+  .field:has(#agree),
+  .field--inline:has(#agree){
+    grid-column: 1 / -1;
+  }
+
+  /* Make sure long label links wrap */
+  #agreeLabel{
+    white-space: normal;
+    line-height: 1.25;
+  }
+}
+
+/* Very small phones: keep 2 columns where possible, but allow single if too tight */
+@media (max-width: 390px){
+  .grid-3{
+    grid-template-columns: 1fr 1fr;
+  }
+  .grid-2{
+    grid-template-columns: 1fr 1fr;
+  }
+  label{
+    font-size: 11px;
+  }
+  input, select, textarea{
+    font-size: 12.7px;
+    padding: 10px 10px;
+  }
+  .btn{
+    font-size: 12.7px;
+    padding: 10px 10px;
+  }
+}
+#settings_forTG {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 3%;
+}
+
+.tg-option {
+  margin-left: -95%;
+  display: flex;
+  align-items: center; /* ← ВАЖНО */
+  gap: 10px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 14px;
+}
+
+.tg-option input[type="checkbox"] {
+  margin: 0; /* убирает стандартные смещения */
+}
+.tg-option span{
+  margin-left: -50%;
+}
+
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Часто задаваемые вопросы</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+                        radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+                        linear-gradient(180deg, #0f172a, #020617);
+            color: #ffffff;
+            overflow-y: auto; /* Прокрутка по вертикали, если контент превышает высоту экрана */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        .faq-item {
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 15px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            word-wrap: break-word; /* Перенос длинных слов в вопросах */
+            white-space: normal; /* Нормальный перенос для вопросов */
+            list-style: none; /* Убрать стандартный маркер */
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            content: "\f105"; /* fa-angle-right */
+            margin-right: 10px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        details[open] summary::before {
+            content: "\f107"; /* fa-angle-down */
+        }
+
+        .answer {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            white-space: pre-wrap; /* Сохраняет \n и пробелы, но позволяет перенос длинных строк */
+            word-wrap: break-word; /* Перенос длинных слов */
+            overflow-wrap: break-word; /* Дополнительная поддержка для переноса */
+        }
+
+        .back-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));
+            color: #ffffff;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            margin-bottom: 20px; /* Отступ снизу для кнопки вверху */
+            box-sizing: border-box;
+        }
+
+        /* Оптимизация для мобильных: responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="menu.html" class="back-btn">Вернуться назад</a>
+        <h1>Часто задаваемые вопросы</h1>
+        <input type="text" id="search" placeholder="Поиск по вопросам...">
+        <div id="faq-list"></div>
+    </div>
+
+    <script>
+        // Массив вопросов и ответов (добавляйте сюда)
+        const faqData = [
+            {
+                question: "Почему фотографии долго генерируются?",
+                answer: `— Бот один, а пользователей много.\nИз-за этого генерация может занимать больше времени.
+Кроме того, бот проверяет, не нарушает ли запрос правила.
+Если запрос нарушает правила — изображение не генерируется.
+Максимальный срок генерации — до 2 дней.`
+            },
+            {
+                question: "Как купить премиум-подписку?",
+                answer: ` 1. Купите промокод на премиум у поддержки.
+ 2. Откройте приложение бота.
+ 3. Подпишитесь на канал, если бот попросит.
+ 4. Если лимиты на генерацию исчерпаны — приобретите промокод на лимиты (см. следующий вопрос).
+ 5. На экране параметров генерации нажмите «Premium».
+ 6. Нажмите «Перейти к оплате», введите купленный промокод и нажмите «Отправить».`
+            },
+            {
+                question: "Как увеличить количество лимитов в день?",
+                answer: `Есть два способа:
+
+1. Купить промокод на лимиты у поддержки.
+Введите его на экране «Недостаточно лимитов».
+
+2. Купить премиум.
+Инструкция о том как купить премиум указана выше.`
+            },
+            {
+                question: "Как получить свой API-ключ?",
+                answer: `
+1. Откройте главное меню приложения.
+2. В самом низу нажмите "Мой API-ключ".
+3. Нажмите "Создать мой API-ключ".
+4. В поле "Ваш API-ключ" появится ваш ключ.`
+            },
+            {
+                question: "Как получить лимиты на генерацию?",
+                answer: `Лимиты на генерацию можно получить следующими способами:
+1. Введя промокод, купленный у поддержки(если у вас нету лимитов).
+2. Посмотрев видео-рекламу (если у вас нету лимитов).
+3. Через службу поддержки.`
+            },
+            {
+                question: 'Для чего нужен режим "Удиви меня"?',
+                answer: `Режим "Удиви меня" применяет случайное описание и параметры.`
+            },
+            {
+                question: "Где можно увидить цены на Premium?",
+                answer: `Увидить цены на Premium можно так:
+1. Откройте главное меню приложения.
+2. Нажмите "Premium" в самом низу.
+3. Нажмите "Перейти к покупке".
+4. На экране появится таблица с ценами на Premium.
+(Псс! Иногда бывают скидки! Но чур никому об этом не слово!)`
+            },
+            {
+                question: "Для чего нужен параметр 'Тип освещения'?",
+                answer: `Тип освещения — это способ организации света в кадре (фото, видео, кино, дизайне), который определяет как именно свет падает на объект, какой он по характеру и какое настроение создаёт.`
+            },
+            {
+                question: 'Для чего нужно авторизовываться в сервисе если выбран "Отправить через Telegram бота"?',
+                answer: `Авторизация требуется для того чтобы мы могли убедиться, что сгенерированные изображения получаете именно вы.\nНо почему именно по Telegram ID? Ответ прост - по нему бот отправляет сгенерированные изображения.`
+            }
+        ];
+
+        // Функция для рендеринга FAQ
+        function renderFAQ(data) {
+            const faqList = document.getElementById('faq-list');
+            faqList.innerHTML = '';
+            data.forEach(item => {
+                const faqItem = document.createElement('details');
+                faqItem.classList.add('faq-item');
+
+                const summary = document.createElement('summary');
+                summary.textContent = item.question;
+                faqItem.appendChild(summary);
+
+                const answer = document.createElement('div');
+                answer.classList.add('answer');
+                answer.textContent = item.answer;
+                faqItem.appendChild(answer);
+
+                faqList.appendChild(faqItem);
+            });
+        }
+
+        // Изначальный рендер
+        renderFAQ(faqData);
+
+        // Поиск
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const filtered = faqData.filter(item => item.question.toLowerCase().includes(query));
+            renderFAQ(filtered);
+        });
+
+        // iPhone liquid border tweak
+        if (/iPhone/i.test(navigator.userAgent)) {
+            if (localStorage.getItem('liquid') === 'Включен') {
+                const style = document.createElement('style');
+                style.textContent = `
+                    button, .btn, .btn btn--danger, .btn--neutral {
+                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Убираем клавиатуру при клике вне поля ввода
+        document.addEventListener('click', (event) => {
+            if (event.target !== searchInput) {
+                searchInput.blur();
+            }
+        });
+    </script>
+</body>
+</html>

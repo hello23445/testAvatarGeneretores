@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Купить Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -18,7 +19,10 @@
             align-items: flex-start;
             min-height: 100vh;
             padding: 20px;
-            background: linear-gradient(135deg, #74ABE2, #5563DE);
+            background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);
         }
         .prices {
             background: rgba(255, 255, 255, 0.1);
@@ -123,6 +127,31 @@
             color: #d9d9d9;
             text-decoration: line-through #e63946 2px;
         }
+        h4{
+            color: white;
+        }
+        td:active{
+            background-color: black;
+        }
+        button{
+            background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));
+        }
+        #invoiceButtons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .or-divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .support-link a {
+            color: #00ff00;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -130,87 +159,87 @@
         <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
         <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">1.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">1.</span>
             Доступ к высоким разрешениям фото(2560x1440, 3840x2160, 4096x2160, и другие).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">2.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">2.</span>
             Больше стилей (стимпанк, абстрактный, готический, и другие).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">3.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">3.</span>
             Уровень детализации (высокий, ультра).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">4.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">4.</span>
             Тон цвета (пастельный, сепия, неоновый, и другие).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">5.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">5.</span>
             Возможность писать в закрытых полях.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">6.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">6.</span>
             Доступ к высоким качествам (2160p60(4K), 4320p(8K)).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">7.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">7.</span>
             Описание фото увеличивается с 500 до 1000 символов.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">8.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">8.</span>
             Текст на фото увеличивается с 250 до 500 символов.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">9.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">9.</span>
             Возможность выбирать ИИ (Grok 4, ChatGPT 5 и другие).
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">10.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">10.</span>
             Возможность выбирать другие фоны фото.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">11.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">11.</span>
             Возможность выбирать другие соотношения сторон.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">12.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">12.</span>
             Возможность получить фото по WhatsApp и Telegram.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">13.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">13.</span>
             Возможность выбирать другие рамки для фото.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">14.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">14.</span>
             Возможность выбирать другие ракурсы для фото.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">15.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">15.</span>
             Возможность загружать до 6-ти фотографий.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">16.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">16.</span>
             Возможность получить сгенерированное фото прямо в приложении.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">17.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">17.</span>
             Доступ к быстрой генерации фото.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">18.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">18.</span>
             Сохранение до 20 историй генераций.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">19.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">19.</span>
             Возможность выбирать другие освещения для фото.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">20.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">20.</span>
             До 50 лимитов генераций фото по API в день.
             </li>
             <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: #1a237e; font-weight: bold; margin-right: 8px;">21.</span>
+            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">21.</span>
             Бесконечное количество генераций в день.
             </li>
         </ul>
@@ -218,69 +247,77 @@
         <h4>ℹ️Список со временем будет пополняться</h4>
         <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
         <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
-        <button id="goto" onclick="Goto()">Перейти к покупке</button>
-        <button onclick="goToMainMenu()" style="margin-top: 1%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
-    </div>
-    <div id="div2" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Срок Премиума</th>
-                    <th>Цена Премиума</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Premium на 1 месяц</td>
-                    <td><s>25</s> > 15🌟 <span class="discount">(-40%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 3 месяца</td>
-                    <td><s>50</s> > 25🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 6 месяцев</td>
-                    <td><s>100</s> > 50🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 1 год</td>
-                    <td><s>200</s> > 100🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium навсегда</td>
-                    <td><s>1 000</s> > 350🌟 <span class="discount">(-65%)</span></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="payment-info">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</div>
+        <div id="invoiceButtons"></div>
+        <div class="or-divider">-------ИЛИ--------</div>
         <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод на Premium.<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a> .</h2>
         <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
         <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
-        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%; background: linear-gradient(135deg, #8b0000, #ff0000);">Назад</button>
+        <h5 class="support-link">Если возникнут проблемы, обращайтесь в службу поддержки: <a href="https://t.me/Clickerstart_bot">@Clickerstart_bot</a></h5>
+        <button onclick="goToMainMenu()" style="margin-top: 1%; background: linear-gradient(135deg, #8b0000, #ff0000);">Назад</button>
     </div>
     <!-- Модалки -->
     <div id="confirmModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p id="confirmMessage"></p>
+        <div class="modal-content" style=" background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617); color: white;">
+            <p id="confirmMessage" style="margin-bottom: 3%;"></p>
             <button id="confirmYes">Да</button>
             <button onclick="closeConfirmModal()" style="background-color: red;">Нет</button>
         </div>
     </div>
     <div id="promptModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p id="promptMessage"></p>
+        <div class="modal-content" style=" background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);">
+            <p id="promptMessage" style="color: white;"></p>
             <input type="text" id="promptInput">
             <button id="promptSubmit">Отправить</button>
             <button onclick="closePromptModal()" style="background-color: red;">Отмена</button>
         </div>
     </div>
     <div id="alertModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p id="alertMessage"></p>
+        <div class="modal-content" style=" background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);">
+            <p id="alertMessage" style="color: white;"></p>
             <button onclick="closeAlertModal()" id="alertCloseBtn" style="background-color: red;">Закрыть</button>
         </div>
     </div>
     <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.MainButton.text = 'Вернуться назад';
+        tg.MainButton.color = '#FF0000';
+        tg.MainButton.textColor = '#FFFFFF';
+        tg.MainButton.onClick(() => {
+          window.location.href = 'index.html';
+        });
+        tg.showMainButton();
+
+        const invoiceData = [
+            {label: 'Premium на 1 месяц', duration: '1 месяц', price: 15},
+            {label: 'Premium на 3 месяца', duration: '3 месяца', price: 25},
+            {label: 'Premium на 6 месяцев', duration: '6 месяцев', price: 50},
+            {label: 'Premium на 1 год', duration: '1 год', price: 100},
+            {label: 'Premium навсегда', duration: 'навсегда', price: 350}
+        ];
+
+        const invoiceButtons = document.getElementById('invoiceButtons');
+        invoiceData.forEach(item => {
+            const btn = document.createElement('button');
+            btn.textContent = item.label;
+            btn.onclick = () => sendInvoice(item.duration, item.price);
+            invoiceButtons.appendChild(btn);
+        });
+
+        function sendInvoice(duration, price) {
+            tg.sendData(JSON.stringify({action: 'invoice', duration, price}));
+        }
+
         const promoCodes = [
             { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
             { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяца' },
@@ -330,31 +367,6 @@
         }
         function goToMainMenu() {
             window.location.href = 'index.html';
-        }
-        function Goto() {
-            document.getElementById('div1').style.display = 'none';
-            document.getElementById('div2').style.display = 'block';
-            document.getElementById('goto').style.display = 'none';
-            document.getElementById('promoCom').innerHTML = '';
-        }
-        function GoBackToPremiumScreen() {
-            document.getElementById('div2').style.display = 'none';
-            document.getElementById('div1').style.display = 'block';
-            document.getElementById('goto').style.display = 'block';
-            document.getElementById('promoCom').innerHTML = '';
-            if (localStorage.getItem('premium') === 'true') {
-                document.getElementById('removePremiumButton').style.display = 'block';
-            } else {
-                document.getElementById('removePremiumButton').style.display = 'none';
-            }
-            // Обновляем заголовок
-            document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
-                ? 'Вы в режиме администратора!'
-                : 'Возможности Premium-версии';
-            if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
-                document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
-                localStorage.setItem('premiumCongratsShown', 'true');
-            }
         }
         function calculateExpiry(duration) {
             if (duration === 'none') return 'none';
@@ -492,8 +504,6 @@
         // Инициализация
         window.onload = function() {
             if (localStorage.getItem('premium') === 'true') {
-                document.getElementById('goto').style.display = 'none';
-                document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
                 document.getElementById('removePremiumButton').style.display = 'block';
             } else {
                 document.getElementById('removePremiumButton').style.display = 'none';
@@ -501,6 +511,10 @@
             document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
                 ? 'Вы в режиме администратора!'
                 : 'Возможности Premium-версии';
+            if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
+                document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
+                localStorage.setItem('premiumCongratsShown', 'true');
+            }
         };
     </script>
 </body>

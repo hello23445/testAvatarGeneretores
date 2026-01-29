@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrN PhotoAI API</title>
+    <meta
+    name="CrN PhotoAI API Бесплатный API для генерации изображений."
+    content="Бесплатный API для генерации изображений с помощью CrN PhotoAI."
+    >
+
+    <title>CrN PhotoAI - CrN PhotoAI API - Бесплатный API для генерации изображений.</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -21,7 +26,12 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
             margin: 0; 
             padding: 16px; 
-            background: linear-gradient(135deg, #74ABE2, #5563DE); /* НЕ ТРОГАЛ */
+            /* background: linear-gradient(135deg, #74ABE2, #5563DE);*/
+            background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);
+
             color: #fff; 
             min-height: 100vh;
             display: flex;
@@ -533,7 +543,14 @@
                 <table>
                     <tr><th>Метод</th><th>Описание</th><th>Статус</th></tr>
                     <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
+                    <tr><td>POST</td><td>Используется для получения количества текущих лимитов.</td><td>Обязательный.</td></tr>
                 </table>
+
+                <div style="margin-top: 40px;"></div>
+                <center>
+                    <h1>Генерация изображений</h1>
+                    <p style="margin-top: -2%; color: #d9d9d9;">Этот запрос позволяет сгенерировать изображение по описанию.</p>
+                </center>
 
                 <h2>Тело запроса</h2>
                 <table>
@@ -623,6 +640,84 @@
   "message": "No limit available"
 }</span></pre>
 
+                <div style="margin-top: 40px;"></div>
+                
+                <center><h1>Получение лимитов</h1>
+                    <p style="margin-top: -2%; color: #d9d9d9;">Этот запрос позволяет получить информацию о ваших текущих лимитах использования API.</p>
+                </center>
+                <h2>Тело запроса</h2>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                    <tr><td><code>api_key</code></td><td>Ваш API ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td><code>action</code></td><td>Здесь надо передать <code>'get_limit'</code></td><td>Строка.</td><td>Обязательный.</td></tr>
+                </table>
+
+                <h2>
+                    Готовый curl-запрос
+                    <button class="copy-btn" onclick="copyToClipboard('readyLimitCurl')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="readyLimitCurl"><span class="code-text"></span></pre>
+
+                <h2>
+                    Готовый fetch-запрос
+                    <button class="copy-btn" onclick="copyToClipboard('fetchLimitRequest')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="fetchLimitRequest"><span class="code-text"></span></pre>
+
+                <h2>
+                    Пример успешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('successLimitExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="successLimitExample"><span class="code-text">{
+  "status": "success",
+  "limit": 15
+}</span></pre>
+
+                <h2>
+                    Пример неуспешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('errorLimitExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="errorLimitExample"><span class="code-text">{
+  "status": "error",
+  "message": "Iтernal server error"
+}</span></pre>
+
+                <h2>
+                    Когда <code>api_key</code> не заполнено или <code>action</code> не заполнено
+                    <button class="copy-btn" onclick="copyToClipboard('missingLimitParamsExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="missingLimitParamsExample"><span class="code-text">{
+  "status": "error",
+  "message": "Missing api_key"
+}</span></pre>
+
+                <h2>
+                    Когда <code>api_key</code> неверный
+                    <button class="copy-btn" onclick="copyToClipboard('invalidLimitKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="invalidLimitKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Invalid api_key"
+}</span></pre>
+
                 <p class="limits-text">
                     Ваш текущий лимит: <span id="currentLimit">проверяем...</span><br>
                     Лимиты обновляются каждый день.<br>
@@ -633,17 +728,17 @@
     </div>
 
     <script>
-    if (/iPhone/i.test(navigator.userAgent)) {
-      if (localStorage.getItem('liquid') === 'Включен') {
-        const style = document.createElement('style');
-        style.textContent = `
-          button, .btn, .btn btn--danger, .btn--neutral {
-            border: 1px solid rgba(255, 255, 255, 0.8) !important;
-          }
-        `;
-        document.head.appendChild(style);
-      }
-    }
+        if (/iPhone/i.test(navigator.userAgent)) {
+            if (localStorage.getItem('liquid') === 'Включен') {
+                const style = document.createElement('style');
+                style.textContent = `
+                button, .btn, .btn btn--danger, .btn--neutral {
+                    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+                }
+                `;
+                document.head.appendChild(style);
+            }
+        }
         const gasUrl = 'https://script.google.com/macros/s/AKfycbxJcX6JYiTmUVy5nIZwvegsmYpZdBGbz6PHjXVm64nlO4P-v11-MTa-a3k6FmZDctETTg/exec';
         const createBtn = document.getElementById('createApiBtn');
         const apiInfo = document.getElementById('apiInfo');
@@ -652,6 +747,8 @@
         const errorP = document.getElementById('error');
         const readyRequest = document.getElementById('readyRequest');
         const fetchRequest = document.getElementById('fetchRequest');
+        const readyLimitCurl = document.getElementById('readyLimitCurl');
+        const fetchLimitRequest = document.getElementById('fetchLimitRequest');
         const currentLimitSpan = document.getElementById('currentLimit');
         const apiKeyPre = document.getElementById('apiKeyPre');
         const loader = document.getElementById('loader');
@@ -749,6 +846,22 @@
     photo_description: 'A beautiful sunset over the mountains',
     width: '1024',
     height: '768'
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));`;
+
+            readyLimitCurl.querySelector('.code-text').textContent =
+`curl -X POST '${gasUrl}' \\
+  -d 'action=get_limit' \\
+  -d 'api_key=${token}'`;
+
+            fetchLimitRequest.querySelector('.code-text').textContent =
+`fetch('${gasUrl}', {
+  method: 'POST',
+  body: new URLSearchParams({
+    action: 'get_limit',
+    api_key: '${token}'
   })
 })
   .then(response => response.json())

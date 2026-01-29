@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Меню</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);
       font-family: "Segoe UI", Arial, sans-serif;
       color: white;
       text-align: center;
@@ -97,8 +101,9 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       transition: all 0.25s ease;
       position: relative;
+    
     }
-    .btn:not(.back-btn) { background: #4CAF50; }
+    .btn:not(.back-btn) {background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));}
     .back-btn {
       background: linear-gradient(135deg, #8b0000, #ff0000);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -107,7 +112,6 @@
       transform: translateY(0);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-
     /* 🟡 Кнопка переключателя Liquid */
     .liquid-toggle {
       background: linear-gradient(135deg, rgba(255,193,7,0.85), rgba(255,152,0,0.85));
@@ -115,7 +119,6 @@
     .liquid-toggle.glass::after{
       background: rgba(255, 193, 7, 0.12);
     }
-
     @media (max-width: 768px) {
       h2 { font-size: 1.5rem; }
       .btn { width: 80%; padding: 10px 18px; font-size: 0.95rem; }
@@ -135,27 +138,39 @@
       <feGaussianBlur in="displacement" stdDeviation="5" result="blur"/>
     </filter>
   </svg>
-
-  <div class="container">
+  <div class="container" style="overflow: auto;">
     <h2>Меню</h2>
-
-    
+  
     <a href="index.html" class="btn back-btn" style="background: linear-gradient(135deg, #8b0000, #ff0000);">Вернуться назад</a>
     <a href="setID.html" class="btn">Изменить мой Telegram ID</a>
     <a href="story.html" class="btn">История генераций</a>
     <!-- Кнопка появится/работает только на iPhone -->
     <a id="liquidToggle" href="javascript:void(0)" class="btn liquid-toggle" style="display:none;">
-  Liquid glass: ...
-</a>
+      Liquid glass: ...
+    </a>
+    <h3>Другое</h3>
+    <a href="https://t.me/Clickerstart_bot" class="btn">Поддержка</a>
+    <a href="https://t.me/GeneratorPhotosBot/rules" class="btn">Правила</a>
+    <a href="https://t.me/NickNaymesBot/submit_complaints" class="btn">Жалоба</a>
+    <a href="https://t.me/NickNaymes2Bot" class="btn">Наш Telegram-канал</a>
+    <a href="oftenasks.html" class="btn">Часто задаваемые вопросы</a>
   </div>
-
   <script>
-    const isIPhone = /iPhone/i.test(navigator.userAgent);
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.enableClosingConfirmation();
+    tg.MainButton.text = 'Вернуться назад';
+    tg.MainButton.color = '#FF0000';
+    tg.MainButton.textColor = '#FFFFFF';
+    tg.MainButton.onClick(() => {
+      window.location.href = 'index.html';
+    });
+    tg.showMainButton();
 
+    const isIPhone = /iPhone/i.test(navigator.userAgent);
     function applyLiquidState(enabled) {
       const container = document.querySelector('.container');
       const btns = document.querySelectorAll('.btn');
-
       if (enabled) {
         container.classList.add('glass');
         btns.forEach(b => b.classList.add('glass'));
@@ -170,29 +185,24 @@
         });
       }
     }
-
     if (isIPhone) {
       const toggleBtn = document.getElementById('liquidToggle');
       toggleBtn.style.display = 'block';
-
       // по умолчанию: включен
       let state = localStorage.getItem('liquid');
       if (!state) {
         localStorage.setItem('liquid', 'Включен');
         state = 'Включен';
       }
-
       const enabled = (state === 'Включен');
       applyLiquidState(enabled);
-      toggleBtn.textContent = `Liquid glass: ${state}`;
-
+      toggleBtn.textContent = `Liquid Glass: ${state}`;
       toggleBtn.addEventListener('click', () => {
         const current = localStorage.getItem('liquid') || 'Включен';
         const next = (current === 'Включен') ? 'Выключен' : 'Включен';
         localStorage.setItem('liquid', next);
-
         applyLiquidState(next === 'Включен');
-        toggleBtn.textContent = `Liquid glass: ${next}`;
+        toggleBtn.textContent = `Liquid Glass: ${next}`;
       });
     }
   </script>

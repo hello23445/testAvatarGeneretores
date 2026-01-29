@@ -34,11 +34,18 @@
       margin: 0;
       color: var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
-      background: linear-gradient(135deg, var(--bg1), var(--bg2)) fixed;
+      background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);
+
       display: grid;
       place-items: start center;
       padding: 24px;
       min-height: 100vh;
+        background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
     }
     .page { width: min(980px, 100%); }
     /* ============== HEADER ============== */
@@ -160,7 +167,10 @@
     .modal[aria-hidden="false"], .confirm[aria-hidden="false"] { display: flex; }
     .sheet { width: min(480px, 100%); max-height: 84vh; overflow: auto; background: #fff; color: #0d1321; border-radius: 18px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; }
     .sheet h2 { margin: 0 0 4px; font-size: 18px; }
-    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px; background: darkblue; border: 1px solid #e6e9f2; word-break: break-word; color: white;}
+    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px;       background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);; border: 1px solid #e6e9f2; word-break: break-word; color: white;}
     .sheet .bar { display: grid; grid-auto-flow: column; justify-content: start; gap: 10px; }
     .sheet .btn { color: #fff; padding: 12px 14px; font-size: 14px; }
     .sheet .btn--danger { background: linear-gradient(135deg, #c81414, #ff0000); }
@@ -168,6 +178,7 @@
     .confirm .sheet h2, .confirm #confirmText { text-align: center; }
     .confirm .sheet .bar { justify-content: center; }
     @media (prefers-reduced-motion: reduce) { .btn, .btn:active { transition: none; } }
+    select{color: white; background-color: rgb(3, 3, 48)}
   </style>
 </head>
 <body>
@@ -178,7 +189,7 @@
     </header>
 
     <section class="actions" aria-label="Действия">
-      <button class="btn btn--neutral" id="backBtn" type="button">Вернуться в меню</button>
+      <button class="btn btn--neutral" id="backBtn" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Вернуться в меню</button>
       <button class="btn btn--danger" id="clearBtn" type="button" style="background-color: red;">Удалить всю историю</button>
     </section>
 
@@ -246,11 +257,14 @@
 
   <!-- Детали -->
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="sheet" role="document" style="background-color: darkblue;">
+    <div class="sheet" role="document" style="background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);">
       <h2 id="modalTitle" style="color: white;">Подробности параметров</h2>
       <div id="details" class="details"></div>
       <div class="bar">
-        <button class="btn" id="applyBtn" type="button">Применить и вернуться к этим параметрам</button>
+        <button class="btn" id="applyBtn" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Применить и вернуться к этим параметрам</button>
         <button class="btn btn--danger" id="closeModal" type="button">Закрыть</button>
       </div>
     </div>
@@ -258,11 +272,14 @@
 
   <!-- Подтверждение -->
   <div class="confirm" id="confirm" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" >
-    <div class="sheet" role="document" style="background-color: darkblue; color: white;">
+    <div class="sheet" role="document" style="      background:
+  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+  linear-gradient(180deg, #0f172a, #020617);; color: white;">
       <h2 id="confirmTitle">Подтвердите действие</h2>
       <p id="confirmText" style="margin:0"></p>
       <div class="bar">
-        <button class="btn" id="confirmYes" type="button">Да</button>
+        <button class="btn" id="confirmYes" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Да</button>
         <button class="btn btn--danger" id="confirmNo" type="button">Нет</button>
       </div>
     </div>
@@ -285,9 +302,8 @@
       "soot": "12. Соотношение",
       "ram": "13. Рамка",
       "rakurs": "14. Ракурс",
-      "mean": "15. Ваше мнение",
-      "selector": "16. ИИ",
-      "osvecheniye": "17. Освещение"
+      "selector": "15. ИИ",
+      "osvecheniye": "16. Освещение"
     };
     // ====== STATE ======
     let currentIndex = null;
@@ -412,7 +428,7 @@
           </div>
           <div class="row" style="grid-template-columns:auto auto; gap:10px; justify-content:start">
             <button class="btn" data-act="details">Подробнее</button>
-            <button class="btn btn--neutral" data-act="apply">Применить</button>
+            <button class="btn btn--neutral" data-act="apply" style='background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));'>Применить</button>
           </div>
         `;
         frag.appendChild(li);

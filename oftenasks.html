@@ -236,6 +236,13 @@
           WebApp.ready();
           WebApp.expand();
           WebApp.enableClosingConfirmation();
+          // BackButton для oftenasks.html - переход на menu.html
+          if (WebApp.BackButton) {
+            WebApp.BackButton.show();
+            WebApp.BackButton.onClick(() => {
+              window.location.href = 'menu.html';
+            });
+          }
         }
 
         // Убираем клавиатуру при клике вне поля ввода

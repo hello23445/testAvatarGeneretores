@@ -337,6 +337,62 @@
             { name: 'Premium на 1 год', duration: '1 год', price: 200 },
             { name: 'Premium навсегда', duration: 'none', price: 1000 }
         ];
+        const PAYMENT_BOT_TOKEN = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk'; // Токен для платежей (может быть другим)
+        const CHANNEL_USERNAME = '@NickNaymes2Bot';
+
+        // ===== PREMIUM PAYMENT FUNCTION =====
+        function sendPremiumInvoice(planIndex) {
+            const WebApp = window.Telegram?.WebApp;
+            if (!WebApp) {
+                showAlert('Эта функция доступна только в Telegram');
+                return;
+            }
+
+            const plan = premium_list[planIndex];
+            if (!plan) return;
+
+            const payload = `${localStorage.getItem('user_Token') || ''}:premium:${planIndex}`;
+            const title = plan.name;
+            const description = `Покупка ${plan.name} за ${plan.price} Telegram Stars`;
+
+            (async () => {
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${PAYMENT_BOT_TOKEN}/createInvoiceLink`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title,
+                            description,
+                            payload,
+                            currency: 'XTR',
+                            prices: [{ label: 'Premium', amount: plan.price }]
+                        })
+                    });
+                    const data = await res.json();
+                    if (!data.ok) throw new Error(data.description || 'Не удалось создать счёт');
+                    const link = data.result;
+                    const tg = window.Telegram.WebApp;
+                    tg.openInvoice(link, async (status) => {
+                        if (status.status === 'paid') {
+                            // Выдаём премиум локально
+                            localStorage.setItem('premium', 'true');
+                            localStorage.setItem('premiumFromPromo', 'false');
+                            localStorage.setItem('premiumActivationDate', new Date().toISOString());
+                            localStorage.setItem('premiumDuration', plan.duration);
+                            
+                            // Рассчитать дату окончания
+                            const expiry = calculateExpiry(plan.duration);
+                            localStorage.setItem('premiumExpiry', expiry);
+
+                            showAlert(`Платёж успешен! Вам выдан премиум на ${expiry === 'none' ? 'навсегда' : plan.duration}.`);
+                            setTimeout(() => location.reload(), 1200);
+                        }
+                    });
+                } catch (e) {
+                    showAlert(`Не удалось создать счёт: ${e.message}`);
+                }
+            })();
+        }
 
         const promoCodes = [
             { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
@@ -615,5 +671,6 @@
             }
         };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

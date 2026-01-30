@@ -4,6 +4,56 @@ import { badWords } from './security.js';
 if (blockedUsers.includes(localStorage.getItem('user_Token'))) {
   window.location.href = 'block.html';
 }
+
+// ===== BACKBUTTON MANAGEMENT SYSTEM =====
+const BackButtonManager = {
+  stack: [], // стек обработчиков для BackButton
+  
+  setHandler(handler, options = {}) {
+    // handler: function() или null для скрытия
+    this.stack.push({ handler, ...options });
+    this.update();
+  },
+  
+  popHandler() {
+    if (this.stack.length > 0) {
+      this.stack.pop();
+      this.update();
+    }
+  },
+  
+  clear() {
+    this.stack = [];
+    this.hide();
+  },
+  
+  update() {
+    const WebApp = window.Telegram?.WebApp;
+    if (!WebApp || !WebApp.BackButton) return;
+    
+    if (this.stack.length === 0) {
+      WebApp.BackButton.hide();
+    } else {
+      const current = this.stack[this.stack.length - 1];
+      if (current.handler) {
+        WebApp.BackButton.show();
+        WebApp.BackButton.offClick(this._boundHandler);
+        this._boundHandler = current.handler.bind(this);
+        WebApp.BackButton.onClick(this._boundHandler);
+      } else {
+        WebApp.BackButton.hide();
+      }
+    }
+  },
+  
+  hide() {
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp && WebApp.BackButton) {
+      WebApp.BackButton.hide();
+    }
+  }
+};
+
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
 const SHEET_NAME = 'Sheet1';
 const limitPromos = [
@@ -15,14 +65,6 @@ const MAX_DAILY_ATTEMPTS = 1;
 const BOT_TOKEN = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
 const CHANNEL_USERNAME = '@NickNaymes2Bot';
 
-// Конфигурация для кнопок sendInvoice (для покупки Premium)
-const premiumPlanButtons = [
-  { text: 'Premium на 1 месяц', duration: '1 месяц', price: 15 },
-  { text: 'Premium на 3 месяца', duration: '3 месяца', price: 25 },
-  { text: 'Premium на 6 месяцев', duration: '6 месяцев', price: 50 },
-  { text: 'Premium на 1 год', duration: '1 год', price: 100 },
-  { text: 'Premium навсегда', duration: 'Навсегда', price: 350 }
-];
 
 // Функция для отправки счета Telegram через WebApp
 function sendPremiumInvoice(planIndex) {
@@ -670,11 +712,10 @@ function generateImage() {
   handleDailyPremium(false);
   const WebApp = window.Telegram?.WebApp;
   if (WebApp) {
-    WebApp.BackButton.show();
-    WebApp.BackButton.onClick(() => {
+    BackButtonManager.setHandler(() => {
       messengerModal.style.display = 'none';
       mainContainer.style.display = 'grid';
-      WebApp.BackButton.hide();
+      BackButtonManager.popHandler();
     });
   }
 }
@@ -816,10 +857,7 @@ function goToMainMenu() {
   mainContainer.style.display = 'grid';
   const mb = document.getElementById('menuButton');
   if (mb) mb.style.display = 'inline-flex';
-  const WebApp = window.Telegram?.WebApp;
-  if (WebApp) {
-    WebApp.BackButton.hide();
-  }
+  BackButtonManager.popHandler();
 }
 function proceedToSend(messenger, contact) {
   const AI_selected = document.getElementById('selector').value;
@@ -1601,6 +1639,7 @@ window.shareFastLink = shareFastLink;
 window.closeFastGenModal = closeFastGenModal;
 window.closeAlertModal = closeAlertModal;
 window.sendPremiumInvoice = sendPremiumInvoice;
+window.BackButtonManager = BackButtonManager;
 window.confirmSurprise = confirmSurprise;
 window.closeSurpriseModal = closeSurpriseModal;
 window.closeNoAttemptsModal = closeNoAttemptsModal;

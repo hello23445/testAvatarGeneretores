@@ -563,6 +563,18 @@
         document.head.appendChild(style);
       }
     }
+    
+    // BackButton для setID.html - переход на menu.html
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp) {
+      WebApp.ready();
+      if (WebApp.BackButton) {
+        WebApp.BackButton.show();
+        WebApp.BackButton.onClick(() => {
+          window.location.href = 'menu.html';
+        });
+      }
+    }
   </script>
 </body>
 </html>

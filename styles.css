@@ -602,6 +602,15 @@ input:disabled, select:disabled, textarea:disabled{
     grid-template-columns: 1fr;
   }
 
+  /* На мобильных: переместить загруженные фото ниже поля загрузки */
+  .grid.grid-2:has(#previewsCont) {
+    grid-template-columns: 1fr;
+  }
+  
+  #previewsCont {
+    order: 2; /* Размещаем после первого элемента */
+  }
+
   /* Smaller previews on mobile */
   .previews{
     grid-template-columns: repeat(2, minmax(0, 1fr));

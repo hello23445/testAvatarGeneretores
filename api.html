@@ -1038,6 +1038,13 @@
             WebApp.ready();
             WebApp.expand();
             WebApp.enableClosingConfirmation();
+            // BackButton для api.html - переход на index.html
+            if (WebApp.BackButton) {
+                WebApp.BackButton.show();
+                WebApp.BackButton.onClick(() => {
+                    window.location.href = 'index.html';
+                });
+            }
         }
     </script>
 </body>

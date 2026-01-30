@@ -1146,7 +1146,6 @@ const copy = document.getElementById('copy');
 const autoTextStyle = document.getElementById('autoTextStyle');
 /* проверка при загрузке */
 if (text.value !== '') {
-  alert('test');
   autoTextStyle.checked = false;
 }
 /* реакция на ввод */
@@ -1223,6 +1222,11 @@ text.addEventListener('input', function () {
         WebApp.ready();
         WebApp.expand();
         WebApp.enableClosingConfirmation();
+        // BackButton на главной странице (index.html) скрыт по умолчанию
+        // Он будет показан при нажатии на кнопку "Сгенерировать"
+        if (WebApp.BackButton) {
+          WebApp.BackButton.hide();
+        }
       }
     </script>
   </main>

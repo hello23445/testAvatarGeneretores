@@ -140,6 +140,9 @@
     </style>
 </head>
 <body>
+    <div style="position: absolute; top: 16px; left: 16px; z-index: 60;">
+        <button id="dynamicBack" style="padding:8px 12px; border-radius:8px; background: linear-gradient(135deg, #8b0000, #ff0000); color: white; border: none; cursor: pointer;">Назад</button>
+    </div>
     <div id="div1" style="display: block;">
         <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
         <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
@@ -519,6 +522,79 @@
             showAlert('Премиум успешно убран!');
             setTimeout(() => location.reload(), 1500);
         }
+        // Реализация покупки через createInvoiceLink (Telegram Stars)
+        const BOT_TOKEN_LOCAL = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk';
+
+        const PREMIUM_PLANS = [
+            { duration: '1 месяц', stars: 15 },
+            { duration: '3 месяца', stars: 25 },
+            { duration: '6 месяцев', stars: 50 },
+            { duration: '1 год', stars: 100 },
+            { duration: 'Навсегда', stars: 350 }
+        ];
+
+        async function sendPremiumInvoice(planIndex) {
+            const WebApp = window.Telegram?.WebApp;
+            if (!WebApp) {
+                showAlert('Эта функция доступна только в Telegram');
+                return;
+            }
+            const plan = PREMIUM_PLANS[planIndex];
+            if (!plan) return;
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_LOCAL}/createInvoiceLink`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: `Premium — ${plan.duration}`,
+                        description: `Покупка премиума на ${plan.duration} за ${plan.stars} Telegram Stars`,
+                        payload: `${localStorage.getItem('userID') || localStorage.getItem('id') || ''}:${planIndex}`,
+                        currency: 'XTR',
+                        prices: [{ label: 'Premium', amount: plan.stars }]
+                    })
+                });
+                const data = await res.json();
+                if (!data.ok) throw new Error(data.description || 'createInvoiceLink failed');
+                const link = data.result;
+                WebApp.openInvoice(link, async (status) => {
+                    if (status.status === 'paid') {
+                        // Выдаём премиум на выбранный срок
+                        localStorage.setItem('premium', 'true');
+                        localStorage.setItem('premiumActivationDate', new Date().toISOString());
+                        localStorage.setItem('premiumDuration', plan.duration);
+                        try {
+                            const expiry = calculateExpiry(plan.duration);
+                            localStorage.setItem('premiumExpiry', expiry);
+                        } catch (e) {
+                            // calculateExpiry может быть объявлена в этом файле
+                        }
+                        // Попытка сообщить бэкенду (если доступен GAS_URL)
+                        try {
+                            if (typeof GAS_URL !== 'undefined') {
+                                await fetch(`${GAS_URL}?action=grantPremium&userID=${encodeURIComponent(localStorage.getItem('userID')||'')}&duration=${encodeURIComponent(plan.duration)}`, { method: 'GET', mode: 'cors' });
+                            }
+                        } catch (e) {
+                            // не критично
+                        }
+                        showAlert(`Премиум активирован на ${plan.duration}!`);
+                        setTimeout(() => window.location.href = 'index.html', 1400);
+                    }
+                });
+            } catch (e) {
+                showAlert('Не удалось создать счёт: ' + (e.message || e));
+            }
+        }
+
+        // Динамическая кнопка "Назад" — если открыто окно покупки (div2), возвращаемся на экран премиума, иначе на index
+        function dynamicBack() {
+            const div2 = document.getElementById('div2');
+            if (div2 && div2.style.display !== 'none') {
+                GoBackToPremiumScreen();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
         // Инициализация
         window.onload = function() {
             if (localStorage.getItem('premium') === 'true') {
@@ -532,7 +608,11 @@
             document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
                 ? 'Вы в режиме администратора!'
                 : 'Возможности Premium-версии';
-            
+
+            // Привязываем динамическую кнопку назад
+            const dyn = document.getElementById('dynamicBack');
+            if (dyn) dyn.addEventListener('click', dynamicBack);
+
             // Initialize Telegram WebApp
             const WebApp = window.Telegram?.WebApp;
             if (WebApp) {

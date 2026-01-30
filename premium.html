@@ -140,9 +140,6 @@
     </style>
 </head>
 <body>
-    <div style="position: absolute; top: 16px; left: 16px; z-index: 60;">
-        <button id="dynamicBack" style="padding:8px 12px; border-radius:8px; background: linear-gradient(135deg, #8b0000, #ff0000); color: white; border: none; cursor: pointer;">Назад</button>
-    </div>
     <div id="div1" style="display: block;">
         <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
         <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
@@ -239,33 +236,52 @@
         <!-- Меню покупки премиума (показываем если нет премиума) -->
         <div id="purchaseMenu" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
             <h2 style="color: white; text-align: center;">Выберите тариф:</h2>
-            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(0)">Premium на 1 месяц - 15🌟</button>
-            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(1)">Premium на 3 месяца - 25🌟</button>
-            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(2)">Premium на 6 месяцев - 50🌟</button>
-            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(3)">Premium на 1 год - 100🌟</button>
-            <button style="width: 100%; margin-bottom: 20px;" onclick="sendPremiumInvoice(4)">Premium навсегда - 350🌟</button>
+            <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды(Telegram Stars)🌟</p>
+            <div id="purchaseButtonsContainer"></div>
             
-            <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</p>
-            
-            <div style="text-align: center; margin: 20px 0;">
+            <style>
+                .or-divider {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    margin: 24px 0;
+                    color: #fff;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                }
+                .or-divider::before, .or-divider::after {
+                    content: "";
+                    flex: 1;
+                    height: 1px;
+                    background: linear-gradient(
+                        to right,
+                        transparent,
+                        rgba(255,255,255,0.6),
+                        transparent
+                    );
+                }
+                .or-divider span {
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    background: rgba(255,255,255,0.08);
+                    backdrop-filter: blur(4px);
+                }
+            </style>
+            <div style="text-align: center; margin: 20px 0;" class="or-divider">
                 <span style="color: white; font-size: 18px; font-weight: bold;">ИЛИ</span>
             </div>
             
             <h2 style="color: white; text-align: center; margin-top: 10px;">Введите промокод на Premium:</h2>
             <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
-            <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%; width: 100%;">Отправить</button>
+            <h5 style="color: white; margin-top: 2px; text-align: center;">Если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
+            <button onclick="CheckPromoCodeToPremium()" style="margin-top: 1%; width: 100%;">Отправить</button>
             
-            <h5 style="color: white; margin-top: 20px;">Если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
         </div>
         
-        <button onclick="goToMainMenu()" style="margin-top: 1%; width: 100%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
+        <button onclick="goToMainMenu()" style="margin-top: 0.5%; width: 100%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
     </div>
     <div id="div2" style="display: none;">
-        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(0)">Premium на 1 месяц - 15🌟</button>
-        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(1)">Premium на 3 месяца - 25🌟</button>
-        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(2)">Premium на 6 месяцев - 50🌟</button>
-        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(3)">Premium на 1 год - 100🌟</button>
-        <button style="width: 100%; margin-bottom: 20px;" onclick="sendPremiumInvoice(4)">Premium навсегда - 350🌟</button>
+        <div id="purchaseButtonsContainer2"></div>
         
         <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</p>
         
@@ -314,6 +330,14 @@
         </div>
     </div>
     <script>
+        const premium_list = [
+            { name: 'Premium на 1 месяц', duration: '1 месяц', price: 25 },
+            { name: 'Premium на 3 месяца', duration: '3 месяца', price: 50 },
+            { name: 'Premium на 6 месяцев', duration: '6 месяцев', price: 100 },
+            { name: 'Premium на 1 год', duration: '1 год', price: 200 },
+            { name: 'Premium навсегда', duration: 'none', price: 1000 }
+        ];
+
         const promoCodes = [
             { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
             { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяца' },
@@ -369,6 +393,16 @@
             document.getElementById('div2').style.display = 'block';
             document.getElementById('goto').style.display = 'none';
             document.getElementById('promoCom').innerHTML = '';
+            // Если Telegram WebApp доступен — показываем BackButton, который закроет меню покупки
+            const WebApp = window.Telegram?.WebApp;
+            if (WebApp && WebApp.BackButton) {
+                try {
+                    WebApp.BackButton.show();
+                    WebApp.BackButton.onClick(() => {
+                        GoBackToPremiumScreen();
+                    });
+                } catch (e) { console.warn('BackButton Goto error', e); }
+            }
         }
         function GoBackToPremiumScreen() {
             document.getElementById('div2').style.display = 'none';
@@ -387,6 +421,16 @@
             if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
                 document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
                 localStorage.setItem('premiumCongratsShown', 'true');
+            }
+            // Восстанавливаем BackButton поведение — по умолчанию возвращаем на index.html
+            const WebApp = window.Telegram?.WebApp;
+            if (WebApp && WebApp.BackButton) {
+                try {
+                    WebApp.BackButton.show();
+                    WebApp.BackButton.onClick(() => {
+                        window.location.href = 'index.html';
+                    });
+                } catch (e) { console.warn('BackButton restore error', e); }
             }
         }
         function calculateExpiry(duration) {
@@ -522,81 +566,25 @@
             showAlert('Премиум успешно убран!');
             setTimeout(() => location.reload(), 1500);
         }
-        // Реализация покупки через createInvoiceLink (Telegram Stars)
-        const BOT_TOKEN_LOCAL = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk';
-
-        const PREMIUM_PLANS = [
-            { duration: '1 месяц', stars: 15 },
-            { duration: '3 месяца', stars: 25 },
-            { duration: '6 месяцев', stars: 50 },
-            { duration: '1 год', stars: 100 },
-            { duration: 'Навсегда', stars: 350 }
-        ];
-
-        async function sendPremiumInvoice(planIndex) {
-            const WebApp = window.Telegram?.WebApp;
-            if (!WebApp) {
-                showAlert('Эта функция доступна только в Telegram');
-                return;
-            }
-            const plan = PREMIUM_PLANS[planIndex];
-            if (!plan) return;
-            try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_LOCAL}/createInvoiceLink`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: `Premium — ${plan.duration}`,
-                        description: `Покупка премиума на ${plan.duration} за ${plan.stars} Telegram Stars`,
-                        payload: `${localStorage.getItem('userID') || localStorage.getItem('id') || ''}:${planIndex}`,
-                        currency: 'XTR',
-                        prices: [{ label: 'Premium', amount: plan.stars }]
-                    })
-                });
-                const data = await res.json();
-                if (!data.ok) throw new Error(data.description || 'createInvoiceLink failed');
-                const link = data.result;
-                WebApp.openInvoice(link, async (status) => {
-                    if (status.status === 'paid') {
-                        // Выдаём премиум на выбранный срок
-                        localStorage.setItem('premium', 'true');
-                        localStorage.setItem('premiumActivationDate', new Date().toISOString());
-                        localStorage.setItem('premiumDuration', plan.duration);
-                        try {
-                            const expiry = calculateExpiry(plan.duration);
-                            localStorage.setItem('premiumExpiry', expiry);
-                        } catch (e) {
-                            // calculateExpiry может быть объявлена в этом файле
-                        }
-                        // Попытка сообщить бэкенду (если доступен GAS_URL)
-                        try {
-                            if (typeof GAS_URL !== 'undefined') {
-                                await fetch(`${GAS_URL}?action=grantPremium&userID=${encodeURIComponent(localStorage.getItem('userID')||'')}&duration=${encodeURIComponent(plan.duration)}`, { method: 'GET', mode: 'cors' });
-                            }
-                        } catch (e) {
-                            // не критично
-                        }
-                        showAlert(`Премиум активирован на ${plan.duration}!`);
-                        setTimeout(() => window.location.href = 'index.html', 1400);
-                    }
-                });
-            } catch (e) {
-                showAlert('Не удалось создать счёт: ' + (e.message || e));
-            }
-        }
-
-        // Динамическая кнопка "Назад" — если открыто окно покупки (div2), возвращаемся на экран премиума, иначе на index
-        function dynamicBack() {
-            const div2 = document.getElementById('div2');
-            if (div2 && div2.style.display !== 'none') {
-                GoBackToPremiumScreen();
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
-
         // Инициализация
         window.onload = function() {
+            // Генерируем кнопки покупки из premium_list
+            const generatePremiumButtons = () => {
+                const container1 = document.getElementById('purchaseButtonsContainer');
+                const container2 = document.getElementById('purchaseButtonsContainer2');
+                if (container1) {
+                    container1.innerHTML = premium_list.map((plan, idx) => 
+                        `<button style="width: 100%; margin-bottom: ${idx === premium_list.length - 1 ? '20' : '10'}px;" onclick="sendPremiumInvoice(${idx})">${plan.name} - ${plan.price}🌟</button>`
+                    ).join('');
+                }
+                if (container2) {
+                    container2.innerHTML = premium_list.map((plan, idx) => 
+                        `<button style="width: 100%; margin-bottom: ${idx === premium_list.length - 1 ? '20' : '10'}px;" onclick="sendPremiumInvoice(${idx})">${plan.name} - ${plan.price}🌟</button>`
+                    ).join('');
+                }
+            };
+            generatePremiumButtons();
+
             if (localStorage.getItem('premium') === 'true') {
                 document.getElementById('purchaseMenu').style.display = 'none';
                 document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
@@ -608,17 +596,22 @@
             document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
                 ? 'Вы в режиме администратора!'
                 : 'Возможности Premium-версии';
-
-            // Привязываем динамическую кнопку назад
-            const dyn = document.getElementById('dynamicBack');
-            if (dyn) dyn.addEventListener('click', dynamicBack);
-
+            
             // Initialize Telegram WebApp
             const WebApp = window.Telegram?.WebApp;
             if (WebApp) {
                 WebApp.ready();
                 WebApp.expand();
                 WebApp.enableClosingConfirmation();
+                try {
+                    if (WebApp.BackButton) {
+                        WebApp.BackButton.show();
+                        WebApp.BackButton.onClick(() => {
+                            // По умолчанию возвращаем на index.html
+                            window.location.href = 'index.html';
+                        });
+                    }
+                } catch (e) { console.warn('BackButton init failed', e); }
             }
         };
     </script>

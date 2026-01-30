@@ -353,40 +353,14 @@
       return () => container.removeEventListener('keydown', handle);
     }
 
-    // Управление стеком открытых модальных окон и кнопкой "Назад"
-    window._modalStack = window._modalStack || [];
-    function updateBackBtnForModals() {
-      const back = document.getElementById('backBtn');
-      if (!back) return;
-      if (window._modalStack && window._modalStack.length) {
-        back.textContent = 'Закрыть';
-        back.onclick = () => {
-          const top = window._modalStack[window._modalStack.length - 1];
-          if (top) closeLayer(top);
-        };
-      } else {
-        back.textContent = 'Вернуться в меню';
-        back.onclick = () => { window.location.href = 'menu.html'; };
-      }
-    }
-
     function openLayer(el) {
       el.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      window._modalStack = window._modalStack || [];
-      window._modalStack.push(el);
-      updateBackBtnForModals();
       return trapFocus(el, () => closeLayer(el));
     }
-
     function closeLayer(el) {
       el.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      if (window._modalStack && window._modalStack.length) {
-        const idx = window._modalStack.indexOf(el);
-        if (idx !== -1) window._modalStack.splice(idx, 1);
-      }
-      updateBackBtnForModals();
     }
 
     function formatValue(value) {
@@ -627,8 +601,7 @@
     $('#confirmYes').addEventListener('click', () => { if (confirmCallback) confirmCallback(); closeLayer(confirmBox); });
     $('#confirmNo').addEventListener('click', () => closeLayer(confirmBox));
     confirmBox.addEventListener('click', (e) => { if (e.target === confirmBox) closeLayer(confirmBox); });
-    // Инициализация кнопки назад: будет переключаться между закрытием модального окна и переходом в меню
-    updateBackBtnForModals();
+    $('#backBtn').addEventListener('click', () => { window.location.href = 'menu.html'; });
     $('#goBtn')?.addEventListener('click', () => { window.location.href = 'index.html'; });
     $('#clearBtn').addEventListener('click', () => askConfirm('Удалить всю историю?', clearHistory));
 

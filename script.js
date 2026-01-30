@@ -31,13 +31,76 @@ function sendPremiumInvoice(planIndex) {
     showAlert('Эта функция доступна только в Telegram');
     return;
   }
-  
+
   const plan = premiumPlanButtons[planIndex];
   if (!plan) return;
-  
-  // web_app_open_invoice требует payload от бота
-  // Используем упрощенный метод - показываем сообщение с инструкциями
-  showAlert(`Чтобы купить ${plan.text} (${plan.price}🌟), обратитесь к:\n@Clickerstart_bot`);
+
+  const payload = `${localStorage.getItem('user_Token') || ''}:premium:${planIndex}`;
+  const title = `${plan.text}`;
+  const description = `Покупка ${plan.text} за ${plan.price} Telegram Stars`;
+
+  (async () => {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          description,
+          payload,
+          currency: 'XTR',
+          prices: [{ label: 'Premium', amount: plan.price }]
+        })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.description || 'Не удалось создать счёт');
+      const link = data.result;
+      const tg = window.Telegram.WebApp;
+      tg.openInvoice(link, async (status) => {
+        if (status.status === 'paid') {
+          // Выдаём премиум локально
+          localStorage.setItem('premium', 'true');
+          localStorage.setItem('premiumFromPromo', 'false');
+          localStorage.setItem('premiumActivationDate', new Date().toISOString());
+          localStorage.setItem('premiumDuration', plan.duration);
+          // Рассчитать дату окончания (дублируем логику calculateExpiry)
+          const expiry = (function(duration) {
+            if (duration === 'none' || duration.toLowerCase() === 'навсегда') return 'none';
+            const activation = new Date();
+            const parts = duration.split(' ');
+            const num = parseInt(parts[0]);
+            const unit = parts[1];
+            let expiryDate;
+            if (unit.includes('месяц')) {
+              expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
+            } else if (unit.includes('год')) {
+              expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
+            } else {
+              return 'none';
+            }
+            const day = expiryDate.getDate().toString().padStart(2, '0');
+            const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = expiryDate.getFullYear();
+            return `${day}.${month}.${year}`;
+          })(plan.duration);
+          localStorage.setItem('premiumExpiry', expiry);
+
+          // Попытка уведомить сервер (если нужен серверный учёт) - используем GAS_URL если доступен
+          try {
+            await fetch(`${GAS_URL}?action=grantPremium&userID=${encodeURIComponent(localStorage.getItem('user_Token'))}&duration=${encodeURIComponent(plan.duration)}`, { method: 'GET', mode: 'cors' });
+          } catch (e) {
+            // Игнорируем ошибку, премиум уже выставлен локально
+            console.warn('grantPremium error', e);
+          }
+
+          showAlert(`Платёж успешен! Вам выдан премиум на ${expiry === 'none' ? 'навсегда' : plan.duration}.`);
+          setTimeout(() => location.reload(), 1200);
+        }
+      });
+    } catch (e) {
+      showAlert(`Не удалось создать счёт: ${e.message}`);
+    }
+  })();
 }
 let selectedMessengerValue, contactValue;
 let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
@@ -282,6 +345,7 @@ function getFormData() {
   const parameters = [
     { id: 'text', type: 'input' },
     { id: 'autoTextStyle', type: 'checkbox' },
+    { id: 'autoTextPosition', type: 'checkbox' },
     { id: 'description', type: 'textarea' },
     { id: 'exclusions', type: 'input' },
     { id: 'quality', type: 'select' },
@@ -343,6 +407,7 @@ function restoreFormData() {
   const parameters = [
     { id: 'text', type: 'input' },
     { id: 'autoTextStyle', type: 'checkbox' },
+    { id: 'autoTextPosition', type: 'checkbox' },
     { id: 'description', type: 'textarea' },
     { id: 'exclusions', type: 'input' },
     { id: 'quality', type: 'select' },
@@ -465,6 +530,20 @@ function updateTextLimit() {
   }
   const counter = document.getElementById('textCounter');
   if (counter && textInput) counter.textContent = `${textInput.value.length}/${max}`;
+  
+  // Отключаем чекбоксы если текст пустой
+  const isEmpty = !textInput || textInput.value.trim() === '';
+  const autoTextStyleCheckbox = document.getElementById('autoTextStyle');
+  const autoTextPositionCheckbox = document.getElementById('autoTextPosition');
+  
+  if (autoTextStyleCheckbox) {
+    autoTextStyleCheckbox.disabled = isEmpty;
+    if (isEmpty) autoTextStyleCheckbox.checked = false;
+  }
+  if (autoTextPositionCheckbox) {
+    autoTextPositionCheckbox.disabled = isEmpty;
+    if (isEmpty) autoTextPositionCheckbox.checked = false;
+  }
 }
 function updateExclusionsLimit() {
   const max = 250;
@@ -520,6 +599,23 @@ function showValidationError(message) {
 // Функция для закрытия модального окна ошибки валидации
 function closeValidationModal() {
   const modal = document.getElementById('validationErrorModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Функции для модального окна случайных параметров
+function showRandomParametersModal(message = 'Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!') {
+  const modal = document.getElementById('randomParametersModal');
+  const text = document.getElementById('randomParametersText');
+  if (modal && text) {
+    text.textContent = message;
+    modal.style.display = 'flex';
+  }
+}
+
+function closeRandomParametersModal() {
+  const modal = document.getElementById('randomParametersModal');
   if (modal) {
     modal.style.display = 'none';
   }
@@ -728,6 +824,8 @@ function goToMainMenu() {
 function proceedToSend(messenger, contact) {
   const AI_selected = document.getElementById('selector').value;
   const autoTextStyleText = autoTextStyle && autoTextStyle.checked ? 'Автоматический выбор стиля текста включено.' : 'Автоматический выбор стиля текста выключено.';
+  const autoTextPositionCheckbox = document.getElementById('autoTextPosition');
+  const autoTextPositionText = autoTextPositionCheckbox && autoTextPositionCheckbox.checked ? 'Автоматическое позиционирование текста включено.' : 'Автоматическое позиционирование текста выключено.';
   const params = [
     `1. Описание: ${descriptionInput.value}`,
     `2. ИИ: ${AI_selected}`,
@@ -739,6 +837,7 @@ function proceedToSend(messenger, contact) {
     `8. Тон цвета: ${colorToneSelect.value}`,
     `9. Уровень детализации: ${detailLevelInput.value || 'normal'}`,
     `10. ${autoTextStyleText}`,
+    `10.5. ${autoTextPositionText}`,
     `11. Фон фото: ${document.getElementById('photo_theme').value}`,
     `12. Размытие фона: ${document.getElementById('razmitiyPHON').checked ? 'Включено' : 'Выключено'}`,
     `13. Соотношение сторон фото: ${document.getElementById('soot').value}`,
@@ -1326,7 +1425,7 @@ function applySurprise() {
   if (themes.length) document.getElementById('photo_theme').value = getRandomElement(themes);
   const aspects = getAvailableOptions('soot');
   if (aspects.length) document.getElementById('soot').value = getRandomElement(aspects);
-  showAlert('Случайные параметры применены! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
+  showRandomParametersModal('Случайные параметры применены! Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!');
 }
 // --- Admin toggle ---
 document.addEventListener('click', function (event) {
@@ -1507,6 +1606,8 @@ window.closeSurpriseModal = closeSurpriseModal;
 window.closeNoAttemptsModal = closeNoAttemptsModal;
 window.showValidationError = showValidationError;
 window.closeValidationModal = closeValidationModal;
+window.showRandomParametersModal = showRandomParametersModal;
+window.closeRandomParametersModal = closeRandomParametersModal;
 // Also keep these accessible (used inline in HTML)
 window.updateDescriptionLimit = updateDescriptionLimit;
 window.updateTextLimit = updateTextLimit;

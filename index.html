@@ -44,6 +44,16 @@
           <input type="text" id="text" maxlength="30" oninput="updateTextLimit()" placeholder="Например: Hello!" />
           <div class="counter" id="textCounter">0/30</div>
           <div class="hint">Premium — до 500 символов.</div>
+          <!-- Автоматический выбор стиля текста -->
+          <label class="checkbox" for="autoTextStyle" id="autoTextStyleLabel" style="margin-top: 12px; display: block;">
+            <input type="checkbox" id="autoTextStyle" />
+            <span>Автоматический выбор стиля текста</span>
+          </label>
+          <!-- Автоматическое позиционирование текста -->
+          <label class="checkbox" for="autoTextPosition" id="autoTextPositionLabel" style="margin-top: 12px; display: block;">
+            <input type="checkbox" id="autoTextPosition" />
+            <span>Автоматическое позиционирование текста</span>
+          </label>
         </div>
         <div class="field">
           <label for="exclusions">Чего на фото не должно быть?</label>
@@ -269,22 +279,15 @@
             </optgroup>
           </select>
           <div class="hint">Фон помогает сделать картинку атмосфернее.</div>
+          <!-- Размытие фона -->
+          <div class="field field--inline compact-hint" style="margin-top: 12px;">
+            <label class="checkbox" for="razmitiyPHON">
+              <input type="checkbox" id="razmitiyPHON" />
+              <span>Размытие фона</span>
+            </label>
+            <div class="hint">Размытие фона делает фокус на главном объекте.</div>
+          </div>
         </div>
-        <div class="field field--inline compact-hint">
-          <label class="checkbox" for="razmitiyPHON">
-            <input type="checkbox" id="razmitiyPHON" />
-            <span>Размытие фона</span>
-          </label>
-          <div class="hint">Размытие фона делает фокус на главном объекте.</div>
-        </div>
-      </div>
-      <!-- Параметр Автоматический выбор стиля текста -->
-      <div class="field field--inline compact-hint">
-        <label class="checkbox" for="autoTextStyle" id="autoTextStyleLabel">
-          <input type="checkbox" id="autoTextStyle" />
-          <span>Автоматический выбор стиля текста</span>
-        </label>
-        <div class="hint">Автоматически выбирает стиль текста для фото.</div>
       </div>
       <!-- {Поле загрузки фото}{Загруженные фото...} -->
       <div class="grid grid-2">
@@ -928,6 +931,14 @@
           <button class="btn btn--primary" onclick="confirmSurprise()" title="Применить случайные параметры.">Да</button>
           <button class="btn btn--secondary" onclick="closeSurpriseModal()" title="Отменить.">Нет</button>
         </div>
+      </div>
+    </div>
+    <!-- RANDOM PARAMETERS MODAL -->
+    <div id="randomParametersModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 500px;">
+        <h2 style="color: #00ff33; text-align: center;">✓ Случайные параметры применены!</h2>
+        <p id="randomParametersText" style="color: #d9d9d9; text-align: center;">Осталось только согласиться с правилами и нажать кнопку "Сгенерировать"!</p>
+        <button class="btn btn--primary" onclick="closeRandomParametersModal()" style="width: 100%;" title="Закрыть.">Понял</button>
       </div>
     </div>
     <!-- VALIDATION ERROR MODAL -->

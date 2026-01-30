@@ -307,6 +307,7 @@
     
     // Initialize at page load
     function initializeIdSelection() {
+      alert('Инициализация телеграма.')
       const WebApp = window.Telegram?.WebApp;
       const tgIdInput = document.getElementById('tg-id');
       const idSelectionGroup = document.getElementById('idSelectionGroup');
@@ -319,8 +320,10 @@
       // Get Telegram user ID if available
       let tgUserIdFromInit = null;
       if (WebApp && WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+        alert('Телеграм ид сохранён в переменную tgUserIdFromInit .')
         tgUserIdFromInit = WebApp.initDataUnsafe.user.id;
       }
+      alert('Телеграм ид: ' + tgUserIdFromInit);
       
       idSelectionGroup.style.display = 'block'; // Always show the group
       

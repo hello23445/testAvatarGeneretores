@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Настройка Telegram</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
@@ -16,7 +16,13 @@
       --success-dark:#046b40;
     }
 
-    html,body{height:100%;margin:0;touch-action:manipulation;}
+    input, button, select, textarea {
+      font-size: 16px !important;
+    }
+    
+    html, body {
+      overflow: hidden;
+    }
     body{
       background:
   radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
@@ -61,7 +67,7 @@
       border:none;
       background: rgba(255,255,255,0.12);
       color:#fff;
-      font-size:14px;
+      font-size:16px;
       box-sizing:border-box;
       margin-bottom:12px;
       transition: box-shadow .18s ease, background .18s ease, transform .12s ease;
@@ -335,7 +341,7 @@
         // Show both options
         initOption.style.display = 'flex';
         customOption.style.display = 'flex';
-        initIdText.textContent = `Telegram ID пользователя через метод init (${tgUserIdFromInit})`;
+        initIdText.textContent = `Использовать мой Telegram ID (${tgUserIdFromInit})`;
         
         // Handle radio change
         idFromInitRadio.addEventListener('change', () => {

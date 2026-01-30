@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Подтверждение Telegram ID</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root{
@@ -67,6 +68,28 @@
       transition: box-shadow .18s ease, background .18s ease, transform .12s ease;
     }
     input[type="text"]:focus{ outline:none; background: rgba(255,255,255,0.16); box-shadow: 0 6px 16px rgba(37,24,151,0.12); transform: translateY(-1px); }
+
+    input[type="range"] {
+      width: 100%;
+      padding: 8px 0;
+      margin: 12px 0;
+      cursor: pointer;
+      accent-color: #251897;
+    }
+
+    .range-group {
+      margin: 16px 0;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+    }
+
+    .range-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
 
     .controls-row{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
     .btn{
@@ -146,8 +169,8 @@
 </head>
 <body>
   <div class="container" role="main" aria-labelledby="title-step1">
-    <button class="btn" onclick="window.location.href = 'index.html'" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
-ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ
+    <button class="btn" onclick="window.location.href = 'menu.html'" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer; background: linear-gradient(135deg, #8b0000, #ff0000);">
+НАЗАД
 </button>
     <div id="step1" aria-hidden="false">
       <h1 id="title-step1">Подтвердите ваш Telegram ID</h1>
@@ -164,6 +187,25 @@
       <p id="info-code">Введите код, отправленный от <a id="link-bot" href="https://t.me/NickNaymesBot" target="_blank" rel="noopener">@NickNaymesBot</a>.</p>
       <input type="text" id="code-input" placeholder="Введите код" inputmode="numeric" />
       <div id="step2-message" class="message hidden" role="status"></div>
+      
+      <!-- Выбор способа получения результата -->
+      <div id="resultMethodContainer" class="hidden">
+        <h2 style="font-size: 16px; margin: 16px 0 8px; color: #fff;">Выберите способ получения результата</h2>
+        
+        <!-- Range 1: Telegram ID пользователя -->
+        <div id="telegramIdRangeContainer" class="range-group">
+          <label class="range-label" id="telegramIdLabel">Использовать мой Telegram ID</label>
+          <input type="range" id="telegramIdRange" min="0" max="1" value="0" />
+        </div>
+        
+        <!-- Range 2: Использовать другой ID -->
+        <div class="range-group">
+          <label class="range-label">Использовать другой ID</label>
+          <input type="range" id="otherIdRange" min="0" max="1" value="0" />
+          <input type="text" id="customIdInput" placeholder="Введите другой ID" inputmode="numeric" style="display: none; margin-top: 8px;" />
+        </div>
+      </div>
+
       <div class="controls-row">
         <button class="btn" onclick="verifyCode()" id="btn-verify">Подтвердить</button>
         <button class="btn small" onclick="resendCode()" id="btn-resend">Отправить снова</button>
@@ -349,6 +391,7 @@
       document.getElementById('step1').classList.remove('hidden');
       document.getElementById('code-input').value = '';
       document.getElementById('step2-message').classList.add('hidden');
+      document.getElementById('resultMethodContainer').classList.add('hidden');
       document.getElementById('step1').setAttribute('aria-hidden', 'false');
       document.getElementById('step2').setAttribute('aria-hidden', 'true');
     }
@@ -361,7 +404,24 @@
         const isSubscribed = await checkSubscriptionStatus(tempId);
         if (isSubscribed) {
           localStorage.setItem('sub', 'true');
-          localStorage.setItem('userID', tempId);
+          
+          // Check which ID method was selected
+          const telegramIdRange = document.getElementById('telegramIdRange');
+          const otherIdRange = document.getElementById('otherIdRange');
+          const customIdInput = document.getElementById('customIdInput');
+          
+          // Determine which ID to save
+          let finalId = tempId;
+          if (otherIdRange && parseInt(otherIdRange.value) === 1) {
+            // Use custom ID if selected
+            const customId = customIdInput.value.trim();
+            if (customId) {
+              finalId = customId;
+            }
+          }
+          // If telegramIdRange is 1, use tempId (default behavior)
+          
+          localStorage.setItem('userID', finalId);
           document.getElementById('step2').classList.add('hidden');
           document.getElementById('step2').setAttribute('aria-hidden', 'true');
           showSuccess();
@@ -448,6 +508,74 @@
         document.head.appendChild(style);
       }
     }
+
+    // Initialize Telegram WebApp
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp) {
+      WebApp.ready();
+      WebApp.expand();
+      WebApp.enableClosingConfirmation();
+    }
+
+    // Handle range slider changes
+    document.addEventListener('DOMContentLoaded', function() {
+      const telegramIdRange = document.getElementById('telegramIdRange');
+      const otherIdRange = document.getElementById('otherIdRange');
+      const customIdInput = document.getElementById('customIdInput');
+      const resultMethodContainer = document.getElementById('resultMethodContainer');
+      const telegramIdRangeContainer = document.getElementById('telegramIdRangeContainer');
+
+      // Check if user has Telegram ID (tempId should be set after code verification starts)
+      // If no tempId yet (step1), hide ranges
+      function updateRangeVisibility() {
+        if (tempId && tempId.trim()) {
+          resultMethodContainer.classList.remove('hidden');
+          telegramIdRangeContainer.classList.remove('hidden');
+          const telegramIdLabel = document.getElementById('telegramIdLabel');
+          if (telegramIdLabel) {
+            telegramIdLabel.textContent = `Использовать мой Telegram ID (${tempId})`;
+          }
+        } else {
+          resultMethodContainer.classList.add('hidden');
+        }
+      }
+
+      if (telegramIdRange) {
+        telegramIdRange.addEventListener('change', function() {
+          // If telegram range is set to 1, hide custom input
+          if (parseInt(this.value) === 1) {
+            customIdInput.style.display = 'none';
+            otherIdRange.value = 0;
+          }
+        });
+      }
+
+      if (otherIdRange) {
+        otherIdRange.addEventListener('change', function() {
+          // If other ID range is set to 1, show custom input and hide telegram range
+          if (parseInt(this.value) === 1) {
+            customIdInput.style.display = 'block';
+            telegramIdRange.value = 0;
+          } else {
+            customIdInput.style.display = 'none';
+            customIdInput.value = '';
+          }
+        });
+      }
+
+      // Check visibility when step changes
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.target.id === 'step2') {
+            if (!document.getElementById('step2').classList.contains('hidden')) {
+              updateRangeVisibility();
+            }
+          }
+        });
+      });
+
+      observer.observe(document.getElementById('step2'), { attributes: true, attributeFilter: ['class'] });
+    });
   </script>
 </body>
 </html>

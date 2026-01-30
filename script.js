@@ -14,6 +14,31 @@ const limitPromos = [
 const MAX_DAILY_ATTEMPTS = 1;
 const BOT_TOKEN = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI';
 const CHANNEL_USERNAME = '@NickNaymes2Bot';
+
+// Конфигурация для кнопок sendInvoice (для покупки Premium)
+const premiumPlanButtons = [
+  { text: 'Premium на 1 месяц', duration: '1 месяц', price: 15 },
+  { text: 'Premium на 3 месяца', duration: '3 месяца', price: 25 },
+  { text: 'Premium на 6 месяцев', duration: '6 месяцев', price: 50 },
+  { text: 'Premium на 1 год', duration: '1 год', price: 100 },
+  { text: 'Premium навсегда', duration: 'Навсегда', price: 350 }
+];
+
+// Функция для отправки счета Telegram через WebApp
+function sendPremiumInvoice(planIndex) {
+  const WebApp = window.Telegram?.WebApp;
+  if (!WebApp) {
+    showAlert('Эта функция доступна только в Telegram');
+    return;
+  }
+  
+  const plan = premiumPlanButtons[planIndex];
+  if (!plan) return;
+  
+  // web_app_open_invoice требует payload от бота
+  // Используем упрощенный метод - показываем сообщение с инструкциями
+  showAlert(`Чтобы купить ${plan.text} (${plan.price}🌟), обратитесь к:\n@Clickerstart_bot`);
+}
 let selectedMessengerValue, contactValue;
 let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
 let pendingRequest = JSON.parse(localStorage.getItem('pendingRequest')) || null;
@@ -377,6 +402,8 @@ function checkAttempts() {
   }
   if (localStorage.getItem('premium') === 'true') {
     attemptsDisplayDiv.innerHTML = '<b>Осталось генераций: ∞</b>';
+    noAttemptsModal.style.display = 'none';
+    mainContainer.style.display = 'grid';
     return true;
   }
   const max = data.promoUsed ? (data.maxAttempts ?? MAX_DAILY_ATTEMPTS) : MAX_DAILY_ATTEMPTS;
@@ -467,17 +494,35 @@ function validateInputs() {
     if (!descriptionInput.value.trim()) {
       descriptionInput.classList.add('error');
       isValid = false;
-      showAlert('Описание не может быть пустым!');
+      showValidationError('Описание не может быть пустым!');
     }
   }
   const sizePattern = /^\d+x\d+$/;
   if (sizeInput && sizeInput.value && !sizePattern.test(sizeInput.value)) {
-    showAlert('Размер должен быть указан в формате пикселей (например, 1920x1080)');
+    showValidationError('Размер должен быть указан в формате пикселей (например, 1920x1080)');
     if (warning) warning.style.display = 'block';
     sizeInput.classList.add('error');
     isValid = false;
   }
   return isValid;
+}
+
+// Функция для показа модального окна ошибки валидации
+function showValidationError(message) {
+  const modal = document.getElementById('validationErrorModal');
+  const errorText = document.getElementById('validationErrorText');
+  if (modal && errorText) {
+    errorText.textContent = message;
+    modal.style.display = 'flex';
+  }
+}
+
+// Функция для закрытия модального окна ошибки валидации
+function closeValidationModal() {
+  const modal = document.getElementById('validationErrorModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 }
 // --- Generation flow ---
 function generateImage() {
@@ -529,8 +574,11 @@ function generateImage() {
   handleDailyPremium(false);
   const WebApp = window.Telegram?.WebApp;
   if (WebApp) {
-    WebApp.onEvent('backButtonClicked', () => {
+    WebApp.BackButton.show();
+    WebApp.BackButton.onClick(() => {
       messengerModal.style.display = 'none';
+      mainContainer.style.display = 'grid';
+      WebApp.BackButton.hide();
     });
   }
 }
@@ -672,6 +720,10 @@ function goToMainMenu() {
   mainContainer.style.display = 'grid';
   const mb = document.getElementById('menuButton');
   if (mb) mb.style.display = 'inline-flex';
+  const WebApp = window.Telegram?.WebApp;
+  if (WebApp) {
+    WebApp.BackButton.hide();
+  }
 }
 function proceedToSend(messenger, contact) {
   const AI_selected = document.getElementById('selector').value;
@@ -852,7 +904,7 @@ function checkRulesAgree() {
   const agree = document.getElementById('agree');
   const agreeLabel = document.getElementById('agreeLabel');
   if (!agree || !agree.checked) {
-    showAlert('Вы должны согласиться с правилами, чтобы продолжить.');
+    showValidationError('Вы должны согласиться с правилами, чтобы продолжить.');
     if (agree) agree.focus();
     if (agreeLabel) agreeLabel.style.color = 'red';
     return false;
@@ -871,25 +923,25 @@ function checkPremiumOptions() {
   if (foundPremium) {
     checkPremium();
     if (localStorage.getItem('premium') !== 'true') {
-      showAlert('Вы выбрали опцию, доступную только для премиум-пользователей.\nПожалуйста, купите премиум, чтобы использовать эту опцию.');
+      showValidationError('Вы выбрали опцию, доступную только для премиум-пользователей.\nПожалуйста, купите премиум, чтобы использовать эту опцию.');
       return;
     }
   }
   if (qualitySelect && qualitySelect.value === 'none') {
-    showAlert('Пожалуйста, выберите качество фото.');
+    showValidationError('Пожалуйста, выберите качество фото.');
     if (qualitySelect) qualitySelect.style.borderColor = 'red';
     return;
   }
   if (descriptionInput && descriptionInput.value.length > 500 && localStorage.getItem('premium') !== 'true') {
-    showAlert('Описание не может превышать 500 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 1000 символов.');
+    showValidationError('Описание не может превышать 500 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 1000 символов.');
     return;
   }
   if (textInput && textInput.value.length > 30 && localStorage.getItem('premium') !== 'true') {
-    showAlert('Текст на фото не может превышать 30 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 500 символов.');
+    showValidationError('Текст на фото не может превышать 30 символов для обычных пользователей.\nПожалуйста, купите премиум, чтобы увеличить лимит до 500 символов.');
     return;
   }
   if (exclusionsInput && exclusionsInput.value.length > 250) {
-    showAlert('Исключения не могут превышать 250 символов.');
+    showValidationError('Исключения не могут превышать 250 символов.');
     return;
   }
   generateImage();
@@ -921,24 +973,24 @@ function checkBadWords() {
   const forbidden = ['стиль', 'качество', 'размер', 'тон', 'детализация', 'фон', 'размытие', 'соотношение', 'рамка', 'ракурс', 'количество', 'текст на фото'];
   const hasForbiddenInDesc = forbidden.some((word) => descValue.includes(word));
   if (hasForbiddenInDesc) {
-    showAlert('В описании нельзя задавать параметры, которые настраиваются в отдельном меню.');
+    showValidationError('В описании нельзя задавать параметры, которые настраиваются в отдельном меню.');
     if (descriptionInput) descriptionInput.style.background = 'red';
     return;
   }
   if (hasBadInDesc && hasBadInText) {
-    showAlert('Описание и текст на фото содержат нецензурные слова, пожалуйста уберите их и попробуйте заново.');
+    showValidationError('Описание и текст на фото содержат нецензурные слова, пожалуйста уберите их и попробуйте заново.');
     if (descriptionInput) descriptionInput.style.background = 'red';
     if (textInput) textInput.style.background = 'red';
     return;
   }
   if (hasBadInDesc) {
-    showAlert('Описание нарушает наши правила');
+    showValidationError('Описание нарушает наши правила');
     if (descriptionInput) descriptionInput.style.background = 'red';
     if (textInput) textInput.style.background = '';
     return;
   }
   if (hasBadInText) {
-    showAlert('Текст на фото нарушает наши правила');
+    showValidationError('Текст на фото нарушает наши правила');
     if (descriptionInput) descriptionInput.style.background = '';
     if (textInput) textInput.style.background = 'red';
     return;
@@ -1193,18 +1245,31 @@ function getAvailableOptions(selectId) {
   return options.map((opt) => opt.value);
 }
 function surpriseMode() {
-  const message = 'Будут применены случайные параметры и описание. Продолжить?';
-  const WebApp = window.Telegram?.WebApp;
-  if (WebApp) {
-    WebApp.showConfirm(message, (ok) => {
-      if (ok) {
-        applySurprise();
-      }
-    });
-  } else {
-    if (confirm(message)) {
-      applySurprise();
-    }
+  const surpriseModal = document.getElementById('surpriseConfirmModal');
+  if (surpriseModal) {
+    surpriseModal.style.display = 'flex';
+  }
+}
+
+function confirmSurprise() {
+  const surpriseModal = document.getElementById('surpriseConfirmModal');
+  if (surpriseModal) {
+    surpriseModal.style.display = 'none';
+  }
+  applySurprise();
+}
+
+function closeSurpriseModal() {
+  const surpriseModal = document.getElementById('surpriseConfirmModal');
+  if (surpriseModal) {
+    surpriseModal.style.display = 'none';
+  }
+}
+
+function closeNoAttemptsModal() {
+  const noAttemptsModal = document.getElementById('noAttemptsModal');
+  if (noAttemptsModal) {
+    noAttemptsModal.style.display = 'none';
   }
 }
 function applySurprise() {
@@ -1436,8 +1501,21 @@ window.shareFastImage = shareFastImage;
 window.shareFastLink = shareFastLink;
 window.closeFastGenModal = closeFastGenModal;
 window.closeAlertModal = closeAlertModal;
+window.sendPremiumInvoice = sendPremiumInvoice;
+window.confirmSurprise = confirmSurprise;
+window.closeSurpriseModal = closeSurpriseModal;
+window.closeNoAttemptsModal = closeNoAttemptsModal;
+window.showValidationError = showValidationError;
+window.closeValidationModal = closeValidationModal;
 // Also keep these accessible (used inline in HTML)
 window.updateDescriptionLimit = updateDescriptionLimit;
 window.updateTextLimit = updateTextLimit;
 window.updateExclusionsLimit = updateExclusionsLimit;
 checkPremium();
+
+// Initialize Telegram WebApp
+const WebAppInit = window.Telegram?.WebApp;
+if (WebAppInit) {
+  WebAppInit.ready();
+  WebAppInit.enableClosingConfirmation();
+}

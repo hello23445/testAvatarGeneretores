@@ -7,7 +7,7 @@
     name="CrN PhotoAI API Бесплатный API для генерации изображений."
     content="Бесплатный API для генерации изображений с помощью CrN PhotoAI."
     >
-
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <title>CrN PhotoAI - CrN PhotoAI API - Бесплатный API для генерации изображений.</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1031,6 +1031,14 @@
         }
 
         checkApiKey();
+
+        // Initialize Telegram WebApp
+        const WebApp = window.Telegram?.WebApp;
+        if (WebApp) {
+            WebApp.ready();
+            WebApp.expand();
+            WebApp.enableClosingConfirmation();
+        }
     </script>
 </body>
 </html>

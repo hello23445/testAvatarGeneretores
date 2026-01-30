@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Купить Premium</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * {
@@ -231,45 +232,52 @@
         <h4>ℹ️Список со временем будет пополняться</h4>
         <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
         <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
-        <button id="goto" onclick="Goto()">Перейти к покупке</button>
-        <button onclick="goToMainMenu()" style="margin-top: 1%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
+        
+        <!-- Меню покупки премиума (показываем если нет премиума) -->
+        <div id="purchaseMenu" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
+            <h2 style="color: white; text-align: center;">Выберите тариф:</h2>
+            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(0)">Premium на 1 месяц - 15🌟</button>
+            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(1)">Premium на 3 месяца - 25🌟</button>
+            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(2)">Premium на 6 месяцев - 50🌟</button>
+            <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(3)">Premium на 1 год - 100🌟</button>
+            <button style="width: 100%; margin-bottom: 20px;" onclick="sendPremiumInvoice(4)">Premium навсегда - 350🌟</button>
+            
+            <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <span style="color: white; font-size: 18px; font-weight: bold;">ИЛИ</span>
+            </div>
+            
+            <h2 style="color: white; text-align: center; margin-top: 10px;">Введите промокод на Premium:</h2>
+            <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
+            <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%; width: 100%;">Отправить</button>
+            
+            <h5 style="color: white; margin-top: 20px;">Если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
+        </div>
+        
+        <button onclick="goToMainMenu()" style="margin-top: 1%; width: 100%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
     </div>
     <div id="div2" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Срок Премиума</th>
-                    <th>Цена Премиума</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Premium на 1 месяц</td>
-                    <td><s>25</s> > 15🌟 <span class="discount">(-40%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 3 месяца</td>
-                    <td><s>50</s> > 25🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 6 месяцев</td>
-                    <td><s>100</s> > 50🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium на 1 год</td>
-                    <td><s>200</s> > 100🌟 <span class="discount">(-50%)</span></td>
-                </tr>
-                <tr>
-                    <td>Premium навсегда</td>
-                    <td><s>1 000</s> > 350🌟 <span class="discount">(-65%)</span></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="payment-info">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</div>
-        <h2 style="margin-top: 1%; color: rgba(255, 255, 255, 0.858);">Введите промокод на Premium.<br>Промокод можно купить у <a href="https://t.me/Clickerstart_bot" class="a1">@Clickerstart_bot</a> .</h2>
+        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(0)">Premium на 1 месяц - 15🌟</button>
+        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(1)">Premium на 3 месяца - 25🌟</button>
+        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(2)">Premium на 6 месяцев - 50🌟</button>
+        <button style="width: 100%; margin-bottom: 10px;" onclick="sendPremiumInvoice(3)">Premium на 1 год - 100🌟</button>
+        <button style="width: 100%; margin-bottom: 20px;" onclick="sendPremiumInvoice(4)">Premium навсегда - 350🌟</button>
+        
+        <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</p>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <span style="color: white; font-size: 18px; font-weight: bold;">ИЛИ</span>
+        </div>
+        
+        <h2 style="color: white; text-align: center; margin-top: 10px;">Введите промокод на Premium:</h2>
         <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
-        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%;">Отправить</button>
-        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%; background: linear-gradient(135deg, #8b0000, #ff0000);">Назад</button>
+        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%; width: 100%;">Отправить</button>
+        
+        <h5 style="color: white; margin-top: 20px;">Если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
+        
+        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%; background: linear-gradient(135deg, #8b0000, #ff0000); width: 100%;">Назад</button>
+    </div>
     </div>
     <!-- Модалки -->
     <div id="confirmModal" class="modal" style="display: none;">
@@ -514,15 +522,24 @@
         // Инициализация
         window.onload = function() {
             if (localStorage.getItem('premium') === 'true') {
-                document.getElementById('goto').style.display = 'none';
+                document.getElementById('purchaseMenu').style.display = 'none';
                 document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
                 document.getElementById('removePremiumButton').style.display = 'block';
             } else {
+                document.getElementById('purchaseMenu').style.display = 'block';
                 document.getElementById('removePremiumButton').style.display = 'none';
             }
             document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
                 ? 'Вы в режиме администратора!'
                 : 'Возможности Premium-версии';
+            
+            // Initialize Telegram WebApp
+            const WebApp = window.Telegram?.WebApp;
+            if (WebApp) {
+                WebApp.ready();
+                WebApp.expand();
+                WebApp.enableClosingConfirmation();
+            }
         };
     </script>
 </body>

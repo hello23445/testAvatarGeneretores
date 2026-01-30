@@ -7,6 +7,7 @@
   name="description"
   content="Бесплатный онлайн-генератор изображений CrN PhotoAI. Создавайте уникальные фото по текстовому описанию прямо в браузере. Приобретите Premium для расширенных возможностей таких как генерация фото в качестве 8К и многое другое!" >
   <title>CrN PhotoAI Бесплатный генератор изображений.</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -915,6 +916,26 @@
           <button class="btn btn--secondary" onclick="window.location.href='ad.html'" title="Посмотреть рекламу чтобы получить лимиты.">Посмотреть рекламу</button>
         </div>
         <div id="warning" class="warning" style="display:none; font-size: larger;"></div>
+        <button class="btn btn--secondary" onclick="closeNoAttemptsModal()" style="margin-top: 15px; width: 100%;" title="Закрыть это окно.">Закрыть</button>
+      </div>
+    </div>
+    <!-- SURPRISE MODE MODAL -->
+    <div id="surpriseConfirmModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 400px;">
+        <h2 style="color: #d9d9d9; text-align: center;">Удиви меня</h2>
+        <p style="color: #d9d9d9; text-align: center;">Будут применены случайные параметры и описание. Продолжить?</p>
+        <div class="grid grid-2">
+          <button class="btn btn--primary" onclick="confirmSurprise()" title="Применить случайные параметры.">Да</button>
+          <button class="btn btn--secondary" onclick="closeSurpriseModal()" title="Отменить.">Нет</button>
+        </div>
+      </div>
+    </div>
+    <!-- VALIDATION ERROR MODAL -->
+    <div id="validationErrorModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 500px;">
+        <h2 style="color: #d9d9d9; text-align: center;">Ошибка</h2>
+        <p id="validationErrorText" style="color: #d9d9d9; text-align: center;"></p>
+        <button class="btn btn--primary" onclick="closeValidationModal()" style="width: 100%;" title="Закрыть.">Закрыть</button>
       </div>
     </div>
     <!-- MESSENGER MODAL -->
@@ -1018,7 +1039,7 @@
         </div>
         <div style="display:flex; gap:12px; justify-content:center; margin-top:16px;">
           <button id="continueButton" class="btn btn--primary" style="display: none;" onclick="handleContinue()">Продолжить</button>
-          <button class="btn btn--secondary" onclick="goToMainMenu()">Главное меню</button>
+          <button class="btn btn--secondary" style="background: linear-gradient(135deg, #8b0000, #ff0000);" onclick="goToMainMenu()">Назад</button>
         </div>
       </div>
     </div>

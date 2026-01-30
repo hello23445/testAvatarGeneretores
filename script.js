@@ -54,6 +54,91 @@ const BackButtonManager = {
   }
 };
 
+// --- Page-specific BackButton handlers and generate pre-check ---
+function setupPageBackButtonHandlers() {
+  const path = window.location.pathname.split('/').pop();
+
+  // Pages that should return to index.html
+  if (['api.html', 'premium.html', 'menu.html'].includes(path)) {
+    BackButtonManager.setHandler(() => { window.location.href = 'index.html'; });
+  }
+
+  // Pages that should return to menu.html
+  if (['setID.html', 'story.html', 'oftenasks.html'].includes(path)) {
+    BackButtonManager.setHandler(() => { window.location.href = 'menu.html'; });
+  }
+
+  // On menu.html we always show back button (it should lead to index.html)
+  if (path === 'menu.html') {
+    BackButtonManager.setHandler(() => { window.location.href = 'index.html'; });
+  }
+
+  // Setup generate button behavior: if user selected files but didn't upload - show alert
+  const generateBtn = document.getElementById('generate');
+  if (generateBtn) {
+    generateBtn.addEventListener('click', (e) => {
+      const hasSelectedButNotUploaded = (selectedFiles && selectedFiles.length > 0) && !localStorage.getItem('downloaded_photos');
+      if (hasSelectedButNotUploaded) {
+        openUploadReminderModal();
+        e.preventDefault();
+        return;
+      }
+
+      // Show Tg BackButton while generation menu is open
+      BackButtonManager.setHandler(() => {
+        const fastGenModal = document.getElementById('fastGenModal');
+        const overlay = document.getElementById('overlay');
+        if (fastGenModal) fastGenModal.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
+        BackButtonManager.popHandler();
+      });
+    });
+  }
+}
+
+// --- Story page: observe modals and map BackButton to close them ---
+function setupStoryModalObserver() {
+  const path = window.location.pathname.split('/').pop();
+  if (path !== 'story.html') return;
+
+  function getOpenModals() {
+    return Array.from(document.querySelectorAll('.modal, .modal-window, .popup')).filter(el => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      return style && style.display !== 'none' && el.offsetParent !== null || el.classList.contains('open');
+    });
+  }
+
+  function closeTopModal() {
+    const open = getOpenModals();
+    if (open.length === 0) return false;
+    const top = open[open.length - 1];
+    if (top.classList.contains('open')) top.classList.remove('open');
+    top.style.display = 'none';
+    return true;
+  }
+
+  const observer = new MutationObserver(() => {
+    const open = getOpenModals();
+    if (open.length > 0) {
+      BackButtonManager.setHandler(() => {
+        const closed = closeTopModal();
+        if (closed) return;
+        BackButtonManager.popHandler();
+      });
+    } else {
+      BackButtonManager.popHandler();
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+}
+
+// Initialize page handlers on load
+window.addEventListener('load', () => {
+  try { setupPageBackButtonHandlers(); } catch (e) { console.warn(e); }
+  try { setupStoryModalObserver(); } catch (e) { console.warn(e); }
+});
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
 const SHEET_NAME = 'Sheet1';
 const limitPromos = [
@@ -73,6 +158,23 @@ function sendPremiumInvoice(planIndex) {
     showAlert('Эта функция доступна только в Telegram');
     return;
   }
+
+  // Пока пользователь находится в процессе покупки - показываем Tg BackButton
+  BackButtonManager.setHandler(() => {
+    try {
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.closeInvoice === 'function') {
+        window.Telegram.WebApp.closeInvoice();
+      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.close === 'function') {
+        window.Telegram.WebApp.close();
+      } else {
+        // fallback: возвращаемся на premium.html
+        window.location.href = 'premium.html';
+      }
+    } catch (e) {
+      console.warn('BackButton close invoice error', e);
+    }
+    BackButtonManager.popHandler();
+  });
 
   const plan = premiumPlanButtons[planIndex];
   if (!plan) return;
@@ -138,6 +240,7 @@ function sendPremiumInvoice(planIndex) {
           showAlert(`Платёж успешен! Вам выдан премиум на ${expiry === 'none' ? 'навсегда' : plan.duration}.`);
           setTimeout(() => location.reload(), 1200);
         }
+        try { BackButtonManager.popHandler(); } catch (e) { /* ignore */ }
       });
     } catch (e) {
       showAlert(`Не удалось создать счёт: ${e.message}`);
@@ -1659,3 +1762,51 @@ if (WebAppInit) {
   WebAppInit.ready();
   WebAppInit.enableClosingConfirmation();
 }
+// --- Upload reminder modal handlers ---
+function openUploadReminderModal() {
+  const modal = document.getElementById('uploadReminderModal');
+  const msg = document.getElementById('uploadReminderMessage');
+  if (msg) msg.textContent = "Вы забыли нажать \"Загрузить\"\nНажмите на нее чтобы загрузить выбранные фотографии, или удалите выбранные фотографии.";
+  if (modal) modal.style.display = 'flex';
+  try {
+    BackButtonManager.setHandler(() => {
+      closeUploadReminderModal();
+      BackButtonManager.popHandler();
+    });
+  } catch (e) { console.warn(e); }
+}
+function closeUploadReminderModal() {
+  const modal = document.getElementById('uploadReminderModal');
+  if (modal) modal.style.display = 'none';
+}
+function uploadReminderUpload() {
+  closeUploadReminderModal();
+  const uploadBtn = document.getElementById('uploadButton');
+  if (uploadBtn) uploadBtn.click(); else if (typeof uploadPhotos === 'function') uploadPhotos();
+}
+function uploadReminderRemove() {
+  // Clear selected files
+  selectedFiles = [];
+  if (fileInput) fileInput.value = '';
+  if (previewsContainer) previewsContainer.innerHTML = '';
+  localStorage.removeItem('downloaded_photos');
+  closeUploadReminderModal();
+}
+
+function uploadReminderBack() {
+  try {
+    closeUploadReminderModal();
+    BackButtonManager.popHandler();
+  } catch (e) {
+    closeUploadReminderModal();
+  }
+}
+
+// Expose handlers to global scope for inline HTML onclick (when script loaded as module)
+try {
+  window.openUploadReminderModal = openUploadReminderModal;
+  window.closeUploadReminderModal = closeUploadReminderModal;
+  window.uploadReminderUpload = uploadReminderUpload;
+  window.uploadReminderRemove = uploadReminderRemove;
+  window.uploadReminderBack = uploadReminderBack;
+} catch (e) { /* ignore in restricted environments */ }

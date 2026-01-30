@@ -288,8 +288,16 @@
             <div class="hint">Размытие фона делает фокус на главном объекте.</div>
           </div>
         </div>
+        <!-- Загруженные фото справа -->
+        <div class="field uploaded-field" style="display: none;" id="previewsCont">
+          <div class="row-head uploaded-head">
+            <label>Загруженные фото</label>
+            <div class="hint">Нажмите на корзину, чтобы удалить.</div>
+          </div>
+          <div id="previews" class="previews"></div>
+        </div>
       </div>
-      <!-- {Поле загрузки фото}{Загруженные фото...} -->
+      <!-- {Поле загрузки фото} -->
       <div class="grid grid-2">
         <div class="field">
           <label for="fileInput" id="fileInputTextLabel">Загрузите фото (пример/референс)</label>
@@ -301,14 +309,6 @@
           <div class="hint">Бесплатно до 3 фото, Premium до 6.</div>
           <div id="preloader" class="small-preloader" aria-live="polite">Загрузка...</div>
           <div id="result" class="result"></div>
-        </div>
-        <!-- ВАЖНО: заголовок скрыт, пока #previews пуст -->
-        <div class="field uploaded-field" style="display: none;" id="previewsCont">
-          <div class="row-head uploaded-head">
-            <label>Загруженные фото</label>
-            <div class="hint">Нажмите на корзину, чтобы удалить.</div>
-          </div>
-          <div id="previews" class="previews"></div>
         </div>
       </div>
     </section>
@@ -1116,6 +1116,15 @@
         <center>
             <button class="btn btn--secondary" onclick="closeAlertModal()" style="margin-top: 2%; background-color: darkblue; font-weight: bolder;">Закрыть</button>
         </center>
+      </div>
+    </div>
+    <!-- Upload reminder modal (has visible Back button as fallback) -->
+    <div id="uploadReminderModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background-color: black; max-width: 420px;">
+        <p id="uploadReminderMessage" style="color: white; text-align: center; font-weight: bolder; white-space: pre-line;"></p>
+        <div style="text-align:center; margin-top:12px;">
+          <button class="btn btn--secondary" onclick="uploadReminderBack()">Назад</button>
+        </div>
       </div>
     </div>
     <!-- Overlay -->

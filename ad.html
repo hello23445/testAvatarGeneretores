@@ -70,6 +70,9 @@
             background: #ccc;
             cursor: not-allowed;
         }
+        #continueBtn:disabled {
+            opacity: 0.6;
+        }
         .security-note {
             margin-top: 10px;
             font-size: 14px;
@@ -431,12 +434,8 @@
                     } else {
                         commentBtn.style.display = 'none';
                     }
-                    // Имитация просмотра (iframe сам управляет)
-                    setTimeout(() => {
-                        hasWatchedOnce = true;
-                        continueBtn.textContent = 'Продолжить';
-                        continueBtn.disabled = false;
-                    }, 15000); // Пример: считаем просмотренным через 15 секунд
+                    // Запуск таймера на 10 секунд
+                    startContinueButtonTimer();
                 };
                 adIframe.onerror = () => {
                     console.error('Ошибка загрузки iframe, пробуем следующую рекламу');
@@ -556,6 +555,24 @@
             commentInput.value = '';
             showToast('Комментарий отправлен.', 'success');
         });
+
+        function startContinueButtonTimer() {
+            let timeRemaining = 10;
+            continueBtn.disabled = true;
+            continueBtn.textContent = `Продолжить (${timeRemaining}с)`;
+
+            const timerInterval = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining > 0) {
+                    continueBtn.textContent = `Продолжить (${timeRemaining}с)`;
+                } else {
+                    clearInterval(timerInterval);
+                    continueBtn.textContent = 'Продолжить';
+                    continueBtn.disabled = false;
+                    hasWatchedOnce = true;
+                }
+            }, 1000);
+        }
 
         if (/iPhone/i.test(navigator.userAgent)) {
             if (localStorage.getItem('liquid') === 'Включен') {

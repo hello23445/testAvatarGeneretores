@@ -453,16 +453,7 @@
             document.getElementById('div2').style.display = 'block';
             document.getElementById('goto').style.display = 'none';
             document.getElementById('promoCom').innerHTML = '';
-            // Если Telegram WebApp доступен — показываем BackButton, который закроет меню покупки
-            const WebApp = window.Telegram?.WebApp;
-            if (WebApp && WebApp.BackButton) {
-                try {
-                    WebApp.BackButton.show();
-                    WebApp.BackButton.onClick(() => {
-                        GoBackToPremiumScreen();
-                    });
-                } catch (e) { console.warn('BackButton Goto error', e); }
-            }
+            // Removed Telegram BackButton usage here (handled via HTML fallback)
         }
         function GoBackToPremiumScreen() {
             document.getElementById('div2').style.display = 'none';
@@ -482,16 +473,7 @@
                 document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
                 localStorage.setItem('premiumCongratsShown', 'true');
             }
-            // Восстанавливаем BackButton поведение — по умолчанию возвращаем на index.html
-            const WebApp = window.Telegram?.WebApp;
-            if (WebApp && WebApp.BackButton) {
-                try {
-                    WebApp.BackButton.show();
-                    WebApp.BackButton.onClick(() => {
-                        window.location.href = 'index.html';
-                    });
-                } catch (e) { console.warn('BackButton restore error', e); }
-            }
+            // Removed Telegram BackButton restoration here (handled via HTML fallback)
         }
         function calculateExpiry(duration) {
             if (duration === 'none') return 'none';
@@ -657,22 +639,7 @@
                 ? 'Вы в режиме администратора!'
                 : 'Возможности Premium-версии';
             
-            // Initialize Telegram WebApp
-            const WebApp = window.Telegram?.WebApp;
-            if (WebApp) {
-                WebApp.ready();
-                WebApp.expand();
-                WebApp.enableClosingConfirmation();
-                try {
-                    if (WebApp.BackButton) {
-                        WebApp.BackButton.show();
-                        WebApp.BackButton.onClick(() => {
-                            // По умолчанию возвращаем на index.html
-                            window.location.href = 'index.html';
-                        });
-                    }
-                } catch (e) { console.warn('BackButton init failed', e); }
-            }
+            // Removed Telegram BackButton initialization (handled via HTML fallback)
         };
     </script>
     <script src="script.js"></script>

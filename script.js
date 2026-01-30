@@ -28,29 +28,12 @@ const BackButtonManager = {
   },
   
   update() {
-    const WebApp = window.Telegram?.WebApp;
-    if (!WebApp || !WebApp.BackButton) return;
-    
-    if (this.stack.length === 0) {
-      WebApp.BackButton.hide();
-    } else {
-      const current = this.stack[this.stack.length - 1];
-      if (current.handler) {
-        WebApp.BackButton.show();
-        WebApp.BackButton.offClick(this._boundHandler);
-        this._boundHandler = current.handler.bind(this);
-        WebApp.BackButton.onClick(this._boundHandler);
-      } else {
-        WebApp.BackButton.hide();
-      }
-    }
+    // No-op for Telegram BackButton: this manager only stores handlers now.
+    // Other UI should call the current handler when necessary (HTML Back buttons).
   },
   
   hide() {
-    const WebApp = window.Telegram?.WebApp;
-    if (WebApp && WebApp.BackButton) {
-      WebApp.BackButton.hide();
-    }
+    // Intentionally empty: no Telegram BackButton interactions.
   }
 };
 
@@ -768,7 +751,7 @@ function closeRandomParametersModal() {
 // --- Generation flow ---
 function generateImage() {
   if (localStorage.getItem('downloaded_confirming') === '1') {
-    showAlert('ВНИМАНИЕ!\nВы забыли нажать на кнопку "ЗАГРУЗИТЬ" (фото)\n(Это требуется даже после удаления фото)');
+    openUploadReminderModal();
     return;
   }
   if (!validateInputs()) return;
@@ -1244,7 +1227,7 @@ function fastGenerate() {
   localStorage.setItem('fastGenerationUsed', 'true');
   if (localStorage.getItem('premium') !== 'true') return;
   if (localStorage.getItem('downloaded_confirming') === '1') {
-    showAlert('ВНИМАНИЕ!\nВы забыли нажать на кнопку "ЗАГРУЗИТЬ" (фото)\n(Это требуется даже после удаления фото)');
+    openUploadReminderModal();
     return;
   }
   const descValue = (descriptionInput.value || '').toLowerCase();

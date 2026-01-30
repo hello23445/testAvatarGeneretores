@@ -327,34 +327,48 @@
         // Show radio selection
         idSelectionGroup.style.display = 'block';
         initIdText.textContent = `Telegram ID пользователя через метод init (${tgUserIdFromInit})`;
-        
+
         // Handle radio change
-        idFromInitRadio.addEventListener('change', () => {
-          if (idFromInitRadio.checked) {
-            tgIdInput.value = tgUserIdFromInit;
-            tgIdInput.disabled = true;
-            tgIdInput.style.opacity = '0.6';
-          }
-        });
-        
-        idCustomRadio.addEventListener('change', () => {
-          if (idCustomRadio.checked) {
-            tgIdInput.value = '';
-            tgIdInput.disabled = false;
-            tgIdInput.style.opacity = '1';
-            tgIdInput.focus();
-          }
-        });
-        
+        if (idFromInitRadio) {
+          idFromInitRadio.addEventListener('change', () => {
+            if (idFromInitRadio.checked) {
+              tgIdInput.value = tgUserIdFromInit;
+              tgIdInput.disabled = true;
+              tgIdInput.style.opacity = '0.6';
+            }
+          });
+        }
+
+        if (idCustomRadio) {
+          idCustomRadio.addEventListener('change', () => {
+            if (idCustomRadio.checked) {
+              tgIdInput.value = '';
+              tgIdInput.disabled = false;
+              tgIdInput.style.opacity = '1';
+              tgIdInput.focus();
+            }
+          });
+        }
+
         // Set initial value from init
         tgIdInput.value = tgUserIdFromInit;
         tgIdInput.disabled = true;
         tgIdInput.style.opacity = '0.6';
       } else {
-        // Hide radio selection, only show input field
-        idSelectionGroup.style.display = 'none';
+        // No init ID or not WebApp — show only the "Использовать другой ID" radio
+        idSelectionGroup.style.display = 'block';
+        // Hide the init radio option if present
+        const initOption = document.getElementById('idFromInit');
+        if (initOption) {
+          const wrapper = initOption.closest('.radio-option');
+          if (wrapper) wrapper.style.display = 'none';
+        }
+        // Ensure custom radio is selected and input unlocked
+        if (idCustomRadio) idCustomRadio.checked = true;
         tgIdInput.disabled = false;
         tgIdInput.style.opacity = '1';
+        tgIdInput.value = '';
+        tgIdInput.focus();
       }
     }
     
@@ -564,17 +578,7 @@
       }
     }
     
-    // BackButton для setID.html - переход на menu.html
-    const WebApp = window.Telegram?.WebApp;
-    if (WebApp) {
-      WebApp.ready();
-      if (WebApp.BackButton) {
-        WebApp.BackButton.show();
-        WebApp.BackButton.onClick(() => {
-          window.location.href = 'menu.html';
-        });
-      }
-    }
+    // Removed Telegram BackButton usage for setID.html (handled via HTML fallback)
   </script>
 </body>
 </html>

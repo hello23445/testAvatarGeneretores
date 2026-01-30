@@ -1225,18 +1225,7 @@ text.addEventListener('input', function () {
       if (autoTextStyle.disabled === true) {
         autoTextStyle.checked = false;
       }
-      // Telegram WebApp for index
-      const WebApp = window.Telegram?.WebApp;
-      if (WebApp) {
-        WebApp.ready();
-        WebApp.expand();
-        WebApp.enableClosingConfirmation();
-        // BackButton на главной странице (index.html) скрыт по умолчанию
-        // Он будет показан при нажатии на кнопку "Сгенерировать"
-        if (WebApp.BackButton) {
-          WebApp.BackButton.hide();
-        }
-      }
+      // Removed Telegram BackButton usage for index.html (handled via HTML fallback)
     </script>
   </main>
 </body>

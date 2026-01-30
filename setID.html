@@ -251,6 +251,7 @@
     </div>
   </div>
 
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     // Configuration variables
     const botToken = '6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI'; // Replace with your bot token
@@ -302,13 +303,15 @@
 
     applyLocalization();
 
-    let tempId = '';
-    let verificationCode = '';
-    
     // Initialize at page load
     function initializeIdSelection() {
-      alert('Инициализация телеграма.')
-      const WebApp = window.Telegram.WebApp;
+      const WebApp = window.Telegram?.WebApp;
+      
+      // Initialize WebApp if available
+      if (WebApp) {
+        WebApp.ready?.();
+      }
+      
       const tgIdInput = document.getElementById('tg-id');
       const idSelectionGroup = document.getElementById('idSelectionGroup');
       const idFromInitRadio = document.getElementById('idFromInit');
@@ -319,11 +322,12 @@
       
       // Get Telegram user ID if available
       let tgUserIdFromInit = null;
-      if (WebApp && WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
-        alert('Телеграм ид сохранён в переменную tgUserIdFromInit .')
+      if (WebApp && WebApp.initDataUnsafe && WebApp.initDataUnsafe.user && WebApp.initDataUnsafe.user.id) {
         tgUserIdFromInit = WebApp.initDataUnsafe.user.id;
+        console.log('Успешно получен Telegram ID:', tgUserIdFromInit);
+      } else {
+        console.warn('WebApp ID не доступен. WebApp:', WebApp, 'initDataUnsafe:', WebApp?.initDataUnsafe);
       }
-      alert('Телеграм ид: ' + tgUserIdFromInit);
       
       idSelectionGroup.style.display = 'block'; // Always show the group
       

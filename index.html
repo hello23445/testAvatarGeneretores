@@ -423,7 +423,7 @@
           <label for="soot">Соотношение сторон</label>
           <select
             id="soot"
-            onchange="if (document.getElementById('soot').value !== '9:16'){document.getElementById('sizeSelect').disabled = true; localStorage.getItem('premium') === 'true' ? sizeInput.disabled = true : ''}else{document.getElementById('sizeSelect').disabled = false ; localStorage.getItem('premium') === 'true' ? sizeInput.disabled = false : '';}">
+            onchange="if (document.getElementById('soot').value !== '9:16'){document.getElementById('sizeSelect').disabled = true;}else{document.getElementById('sizeSelect').disabled = false;}">
             <optgroup label="По-умолчанию">
               <option value="9:16" selected>9:16 (Вертикаль / Сторис)</option>
             </optgroup>
@@ -877,7 +877,7 @@
       </div>
       <!-- Buttons -->
       <div class="grid grid-2">
-        <button class="btn btn--primary" onclick="checkBadWords()" id="generate" title="Нажмите, чтобы начать генерацию. Сначала вам потребуется выбрать удобный для вас мессенджер, чтобы мы могли отправить вам результат.">
+        <button class="btn btn--primary" onclick="onGenerateClick()" id="generate" title="Нажмите, чтобы начать генерацию. Сначала вам потребуется выбрать удобный для вас мессенджер, чтобы мы могли отправить вам результат.">
           <i class="fa-solid fa-wand-sparkles"></i>
           <span>Сгенерировать</span>
         </button>
@@ -955,16 +955,30 @@
         width: 8px;
       }
       .modal-content::-webkit-scrollbar-track {
-        background: #061226; /* ещё темнее */
+        background: rgba(255,255,255,0.12);
         border-radius: 8px;
       }
-      .modal::-webkit-scrollbar-thumb {
-        background: #1e3a8a; /* синий оттенок */
+      .modal-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.85);
         border-radius: 8px;
       }
+      /* custom modal button style matches site primary buttons */
+      .modal-btn {
+        width: 100%;
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg,#2563eb,#4f46e5);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
      </style>
     <div id="messengerModal" class="modal" style="display: none;">
-      <div class="modal-content" style=" overflow-y: scroll; background:
+      <div class="modal-content" style="max-height: 85vh; overflow-y: auto; background:
         radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
         radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
         linear-gradient(180deg, var(--bg-1), var(--bg-2));">
@@ -1011,6 +1025,22 @@
             </label>
           </div>
         </div>
+        <div id="emailOptions" style="display: none; margin-top: 12px;">
+          <div id="emailStoredOption" class="radio-option" onclick="document.getElementById('emailUseStored')?.click()">
+            <input type="radio" name="emailOption" id="emailUseStored" value="stored" />
+            <label for="emailUseStored">
+              <span id="storedEmailValue" style="font-weight: 600;"></span>
+            </label>
+          </div>
+          <div id="emailNoStored" class="info-box" style="display: none; padding: 12px; margin-top: 10px; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px;">
+            <div class="info-text" style="flex: 1;">Вы можете добавить свою почту для использования в будущем.</div>
+            <button class="btn btn--secondary" onclick="window.location.href='setEMAIL.html'" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Начать</button>
+          </div>
+          <div class="radio-option" onclick="document.getElementById('emailUseOther')?.click()" style="margin-top: 1%;">
+            <input type="radio" name="emailOption" id="emailUseOther" value="other" />
+            <label for="emailUseOther">Использовать другую почту</label>
+          </div>
+        </div>
         <div id="settings_forTG">
           <label class="tg-option" >
             <input type="checkbox" id="check1">
@@ -1030,7 +1060,7 @@
         <div id="authMessage" style="display: none;">
           <div class="info-box">
             <div class="info-text">
-              Чтобы бот мог отправить вам фото, нужно авторизоваться.
+              Чтобы бот мог отправить вам фото по Telegram ID, вы должны подключить свой Telegram ID.
             </div>
             <button class="btn btn--secondary" onclick="window.location.href='setID.html'" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Начать</button>
           </div>
@@ -1039,6 +1069,21 @@
           <div class="info-box">
             <div class="info-text">
               Telegram ID получателя: <span id="userIdValue"></span>
+            </div>
+          </div>
+        </div>
+        <div id="emailAuthMessage" style="display: none;">
+          <div class="info-box">
+            <div class="info-text">
+              Чтобы бот мог отправить вам сгенерированное фото, вы должны подключить свою почту.
+            </div>
+            <button class="btn btn--secondary" onclick="window.location.href='setEMAIL.html'" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Начать</button>
+          </div>
+        </div>
+        <div id="emailDisplay" style="display: none;">
+          <div class="info-box">
+            <div class="info-text">
+              Email получателя: <span id="emailValue"></span>
             </div>
           </div>
         </div>
@@ -1086,9 +1131,13 @@
         <h2 style="color: white; text-align: center;">Подписка на канал</h2>
         <p style="color: white;">Чтобы использовать сервис, подпишитесь на Telegram-канал: <a href="https://t.me/Nicknaymes2bot" target="_blank">@Nicknaymes2bot</a></p>
         <div class="grid grid-2">
+          <a href="https://t.me/rfl_pro_bot/join?startapp=ref6434781065" target="_blank" style="text-decoration:none;">
+            <button class="btn btn--primary" style="width: 100%;">Подписаться</button>
+          </a>
           <a href="https://t.me/Nicknaymes2bot" target="_blank" style="text-decoration:none;">
             <button class="btn btn--primary" style="width:100%;">Подписаться</button>
           </a>
+
           <button class="btn btn--secondary" onclick="fakeCheckSubscription()" style="background-color: darkblue;">Проверить</button>
         </div>
       </div>
@@ -1200,6 +1249,8 @@ text.addEventListener('input', function () {
     });
     </script>
     <script type="module" src="script.js"></script>
+    <!-- reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <!-- Admin editable script -->
 <script type="module" src="script.js"></script>
     <!-- Admin editable script -->
@@ -1227,6 +1278,103 @@ text.addEventListener('input', function () {
       }
       // Removed Telegram BackButton usage for index.html (handled via HTML fallback)
     </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        function isValidUserID(uid) {
+          if (!uid) return false;
+          if (uid === 'null') return false;
+          return /^\d+$/.test(uid);
+        }
+
+        const authMessage = document.getElementById('authMessage');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const userIdValue = document.getElementById('userIdValue');
+        const continueButton = document.getElementById('continueButton');
+
+        const uid = localStorage.getItem('userID');
+
+        if (!isValidUserID(uid)) {
+          if (authMessage) authMessage.style.display = 'block';
+          if (userIdDisplay) {
+            userIdDisplay.style.display = 'none';
+          }
+          if (userIdValue) userIdValue.textContent = '';
+          if (continueButton) continueButton.style.display = 'none';
+        } else {
+          if (authMessage) authMessage.style.display = 'none';
+          if (userIdDisplay) {
+            userIdDisplay.style.display = 'block';
+            if (userIdValue) userIdValue.textContent = uid;
+          }
+          if (continueButton) continueButton.style.display = 'inline-block';
+        }
+      });
+    </script>
   </main>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script type="module" src="security.js"></script>
+
+<!-- recaptcha modal -->
+<div id="recaptchaModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="g-recaptcha" data-sitekey="6LdRJnwsAAAAAOMMnSDyNirpDCLzOJmC_03zah2U" data-callback="onRecaptchaSuccess"></div>
+    <button id="recaptchaContinue" class="modal-btn" disabled onclick="recaptchaContinue();">Продолжить</button>
+  </div>
+</div>
+
+<script>
+function onGenerateClick(){
+  const securityLevel = parseInt(localStorage.getItem('security')||'0',10);
+  if(securityLevel>=3){
+    showRecaptchaModal();
+  } else {
+    checkBadWords();
+  }
+}
+
+function showRecaptchaModal(){
+  const m = document.getElementById('recaptchaModal');
+  if(m){
+    m.classList.remove('hidden');
+    m.style.display = 'flex';
+  }
+  // reset first widget if API available
+  if(window.grecaptcha && typeof grecaptcha.reset === 'function'){
+    try{
+      grecaptcha.reset();
+    }catch(e){
+      console.warn('Не удалось сбросить reCAPTCHA', e);
+    }
+  }
+}
+
+function hideRecaptchaModal(){
+  const m = document.getElementById('recaptchaModal');
+  if(m){
+    m.classList.add('hidden');
+    m.style.display = 'none';
+  }
+  const btn = document.getElementById('recaptchaContinue');
+  if(btn) btn.disabled = true;
+}
+
+function onRecaptchaSuccess(token){
+  const btn = document.getElementById('recaptchaContinue');
+  if(btn) btn.disabled = false;
+}
+
+function recaptchaContinue(){
+  let security = parseInt(localStorage.getItem("security")) || 0;
+
+  security = security - 1;
+
+  localStorage.setItem("security", security);
+
+  console.log("Новое значение:", security);
+  hideRecaptchaModal();
+  checkBadWords();
+}
+</script>
+<style>body{overflow-y:auto !important; -webkit-overflow-scrolling: touch; touch-action: auto;}</style>
 </body>
 </html>

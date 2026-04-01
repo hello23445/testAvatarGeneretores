@@ -2,446 +2,514 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>История генераций</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <meta name="color-scheme" content="light dark" />
   <style>
-    /* ============== CSS VARIABLES ============== */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
     :root {
-      --bg1: #74ABE2;
-      --bg2: #5563DE;
-      --card-bg: rgba(255,255,255,.12);
-      --card-stroke: rgba(255,255,255,.24);
-      --surface: rgba(255,255,255,.18);
-      --text: #ffffff;
-      --text-dim: rgba(255,255,255,.8);
-      --btn: #4CAF50;
-      --btn-danger: #ff3b30;
-      --btn-neutral: #1E88E5;
-      --shadow: 0 20px 40px rgba(0,0,0,.25);
-      --radius-xl: 22px;
-      --radius-md: 14px;
-      --radius-sm: 10px;
-      --gap: 14px;
+      --primary: #00e5ff;
     }
-    @media (prefers-color-scheme: dark) {
-      :root { --card-bg: rgba(255,255,255,.10); --surface: rgba(255,255,255,.14); }
-    }
-    /* ============== GLOBAL ============== */
-    * { box-sizing: border-box; }
-    html, body { height: 100%; touch-action: manipulation; }
+    
+    * { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow; }
+    * { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+    
     body {
-      margin: 0;
-      color: var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
-      background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 30% 20%, rgba(0, 229, 255, 0.18) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.22) 0%, transparent 60%),
+                  linear-gradient(180deg, #0a1428 0%, #02040f 100%);
+      background-attachment: fixed;
+    }
+    
+    .title-font {
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -1.5px;
+    }
+    
+    .glass {
+      background: rgba(255,255,255,0.065);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    
+    .card {
+      background: rgba(255,255,255,0.075);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.35),
+                  0 0 0 1px rgba(0, 229, 255, 0.12);
+    }
+    
+    .modal-content {
+      background: linear-gradient(180deg, #0f1c3a, #02040f);
+      box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.3),
+                  0 35px 60px -15px rgb(0 0 0 / 0.5);
+    }
+    
+    .chip {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .chip.active {
+      background: linear-gradient(90deg, #00e5ff, #3b82f6);
+      color: #0a1428;
+      box-shadow: 0 10px 15px -3px rgb(0 229 255);
+    }
+    
+    .list-item {
+      animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .search-input {
+      box-shadow: 0 10px 30px -10px rgb(0 229 255 / 0.3);
+    }
 
-      display: grid;
-      place-items: start center;
-      padding: 24px;
-      min-height: 100vh;
-        background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-    }
-    .page { width: min(980px, 100%); }
-    /* ============== HEADER ============== */
-    .header {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .title {
-      margin: 0;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: .2px;
-      text-wrap: balance;
-      font-size: clamp(24px, 3vw, 40px);
-      text-shadow: 0 1px 0 rgba(0,0,0,.15);
-    }
-    .sub { margin: 0; color: var(--text-dim); font-size: clamp(14px, 2.2vw, 16px); }
-    /* ============== ACTION BAR ============== */
-    .actions {
+    #dateFilters, #keywordFilter {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--gap);
-      margin: 14px 0 20px;
+      gap: 1rem;
     }
-    .btn {
-      -webkit-tap-highlight-color: transparent;
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      font-weight: 700;
-      color: #fff;
-      background: var(--btn);
-      box-shadow: var(--shadow);
-      outline: none;
-      width: 100%;
-      text-align: center;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: transform .06s ease;
+
+    #keywordFilter .glass, #dateFilters .glass {
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.8rem;
     }
-    .btn:active { transform: scale(.98); }
-    .btn:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
-    .btn--danger { background: var(--btn-danger); }
-    .btn--neutral { background: var(--btn-neutral); }
-    .input {
-      width: 100%;
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      color: #fff;
-      background: var(--surface);
-      backdrop-filter: blur(8px);
-      outline: none;
-      box-shadow: inset 0 0 0 1px var(--card-stroke);
+
+    /* Мобильная оптимизация */
+    @media (max-width: 768px) {
+      body { font-size: 14px; }
+      .title-font { font-size: 2.25rem; line-height: 1.2; }
+      h1 { font-size: 2rem !important; }
+      h2 { font-size: 1.5rem !important; }
+      h3 { font-size: 1.25rem !important; }
+      p { font-size: 0.9rem; }
+      
+      .chip { padding: 0.5rem 0.75rem !important; font-size: 0.85rem; }
+      .chip span { font-size: 1rem; }
+      
+      .card { padding: 1rem !important; }
+      .list-item { gap: 0.25rem; }
+      
+      button { min-height: 44px; }
+      
+      .flex-col-mobile { flex-direction: column; }
+      
+      #topControls { flex-wrap: wrap; gap: 0.5rem; }
+      .glass { padding: 0.5rem !important; }
+      
+      input[type="date"], input[type="text"], label { font-size: 0.9rem; }
+      
+      .modal-content { padding: 1rem !important; }
+      
+      #sortChips { gap: 0.5rem; }
+      
+      .text-4xl { font-size: 2rem; }
+      .text-3xl { font-size: 1.5rem; }
+      .text-2xl { font-size: 1.25rem; }
+      .text-xl { font-size: 1rem; }
+      .text-lg { font-size: 0.95rem; }
+      .text-sm { font-size: 0.8rem; }
+      .text-xs { font-size: 0.7rem; }
+      
+      .px-10 { padding-left: 1rem !important; padding-right: 1rem !important; }
+      .px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+      .px-6 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+      .px-5 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+      .px-3 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      
+      .py-16 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+      .py-6 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+      .py-5 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+      
+      .w-24 { width: 4rem; height: 4rem; }
+      .w-16 { width: 3rem; height: 3rem; }
+      
+      .gap-x-3 { gap: 0.5rem; }
+      .gap-x-2 { gap: 0.25rem; }
+      
+      .mb-8 { margin-bottom: 1rem !important; }
+      .mb-9 { margin-bottom: 1rem !important; }
+      .mb-10 { margin-bottom: 1rem !important; }
+      .mb-7 { margin-bottom: 1rem !important; }
+      .mb-6 { margin-bottom: 0.75rem !important; }
+      .mb-5 { margin-bottom: 0.75rem !important; }
+      .mb-4 { margin-bottom: 0.5rem !important; }
+      .mb-3 { margin-bottom: 0.5rem !important; }
+      
+      .max-w-xs { max-width: 100%; }
+      
+      .line-clamp-4 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+      
+      .flex.items-center.justify-between { flex-wrap: wrap; gap: 0.5rem; }
+
+      #searchBlock .absolute span { display: none; }
+
+      #dateFilters, #keywordFilter {
+        grid-template-columns: 1fr;
+      }
+      #dateFilters .glass, #keywordFilter .glass {
+        display: block;
+        width: 100%;
+      }
     }
-    .input::placeholder { color: rgba(255,255,255,.65); }
-    .input:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
-    /* ============== FILTERS ============== */
-    .filters {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* сортировка слева, поиск справа */
-      align-items: end;
-      gap: var(--gap);
-      margin-bottom: 16px;
+
+    @media (max-width: 480px) {
+      body { font-size: 13px; }
+      .title-font { font-size: 1.75rem; }
+      h1 { font-size: 1.5rem !important; }
+      
+      .chip { padding: 0.4rem 0.5rem !important; font-size: 0.75rem; }
+      .card { padding: 0.75rem !important; }
+      
+      #topControls { padding: 0 0.25rem; }
+      .glass { padding: 0.4rem !important; height: 2rem !important; font-size: 0.75rem; }
+      
+      #sortChips { gap: 0.25rem; }
+      
+      .w-24 { width: 3rem; height: 3rem; }
+      
+      .gap-x-3 { gap: 0.25rem; }
+      
+      .mb-8 { margin-bottom: 0.75rem !important; }
+      .mb-9 { margin-bottom: 0.75rem !important; }
+      .mb-10 { margin-bottom: 0.75rem !important; }
+      
+      button { font-size: 0.85rem; min-height: 40px; }
+
+      #searchBlock .absolute span { display: none; }
     }
-    .filter-group { display: grid; gap: 6px; }
-    .filter-label { font-size: 12px; color: var(--text-dim); }
-    select {
-      width: 100%;
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      color: #000;
-      background: var(--surface);
-      backdrop-filter: blur(8px);
-      outline: none;
-      box-shadow: inset 0 0 0 1px var(--card-stroke);
-      font-size: 14px;
-    }
-    select:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
-    /* Дата: ВСЕГДА рядом справа/слева при показе */
-    .date-filters { display: none; grid-template-columns: 1fr 1fr; gap: var(--gap); }
-    .date-filters[data-visible="true"] { display: grid; }
-    /* Ключевое слово (новая сортировка/фильтр) */
-    .keyword-filter { display: none; }
-    .keyword-filter[data-visible="true"] { display: grid; }
-    /* ============== STATS STRIP ============== */
-    .stats { display: grid; grid-template-columns: 1fr; gap: var(--gap); margin-bottom: 16px; }
-    .stat { border-radius: var(--radius-md); padding: 12px 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--card-stroke); display: grid; gap: 6px; }
-    .stat .k { font-size: 12px; color: var(--text-dim); }
-    .stat .v { font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 8px; }
-    /* ============== LIST ============== */
-    .list { display: grid; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
-    .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius-xl); padding: 16px 16px; box-shadow: var(--shadow); border: 1px solid var(--card-stroke); display: grid; gap: 10px; }
-    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
-    .desc { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; letter-spacing: .2px; font-size: 16px; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(25,118,210,.32); border: 1px solid rgba(25,118,210,.5); padding: 6px 10px; border-radius: 999px; font-size: 13px; color: #fff; white-space: nowrap; }
-    .card .btn { width: auto; padding: 10px 12px; box-shadow: none; font-size: 14px; }
-    /* ============== EMPTY / NO RESULTS ============== */
-    .empty, .noresults {
-      text-align: center;
-      padding: 24px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-stroke);
-      border-radius: var(--radius-xl);
-      backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
-      display: grid;
-      gap: 12px;
-    }
-    .empty[hidden], .noresults[hidden] { display: none; }
-    .empty h3 { margin: 0; font-size: 20px; }
-    .empty p { margin: 0; color: var(--text-dim); text-wrap: pretty; font-size: 16px; }
-    /* ============== MODALS ============== */
-    .modal, .confirm { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.45); padding: 20px; z-index: 1000; }
-    .modal[aria-hidden="false"], .confirm[aria-hidden="false"] { display: flex; }
-    .sheet { width: min(480px, 100%); max-height: 84vh; overflow: auto; background: #fff; color: #0d1321; border-radius: 18px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; }
-    .sheet h2 { margin: 0 0 4px; font-size: 18px; }
-    .detail { font-size: 14px; padding: 10px 12px; border-radius: 12px;       background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);; border: 1px solid #e6e9f2; word-break: break-word; color: white;}
-    .sheet .bar { display: grid; grid-auto-flow: column; justify-content: start; gap: 10px; }
-    .sheet .btn { color: #fff; padding: 12px 14px; font-size: 14px; }
-    .sheet .btn--danger { background: linear-gradient(135deg, #c81414, #ff0000); }
-    /* Центровка заголовка/кнопок только в confirm */
-    .confirm .sheet h2, .confirm #confirmText { text-align: center; }
-    .confirm .sheet .bar { justify-content: center; }
-    @media (prefers-reduced-motion: reduce) { .btn, .btn:active { transition: none; } }
-    select{color: white; background-color: rgb(3, 3, 48)}
   </style>
 </head>
-<body>
-  <main class="page" id="app" aria-live="polite">
-    <header class="header">
-      <h1 class="title">Ваша история генераций</h1>
-      <p class="sub">Сохраняйте, просматривайте подробности и быстро возвращайтесь к нужным параметрам.</p>
-    </header>
+<body class="min-h-screen text-white pb-10">
+  <div class="max-w-2xl mx-auto px-5 pt-6">
 
-    <section class="actions" aria-label="Действия">
-      <button class="btn btn--neutral" id="backBtn" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Вернуться в меню</button>
-      <button class="btn btn--danger" id="clearBtn" type="button" style="background-color: red;">Удалить всю историю</button>
-    </section>
-
-    <!-- Сортировка (слева) и Поиск (справа) ВСЕГДА рядом -->
-    <section class="filters" aria-label="Фильтры и сортировка">
-      <div class="filter-group">
-        <label class="filter-label" for="sort">Сортировка</label>
-        <select id="sort" aria-label="Сортировка">
-          <option value="date_desc">По дате создания (новые сначала)</option>
-          <option value="date_asc">По дате создания (старые сначала)</option>
-          <option value="date_custom">По дате (указать свою дату)</option>
-          <option value="length_desc">По длине описания (длинные сначала)</option>
-          <option value="length_asc">По длине описания (короткие сначала)</option>
-          <option value="alpha_asc">По алфавиту (А-Я)</option>
-          <option value="alpha_desc">По алфавиту (Я-А)</option>
-          <option value="keyword">По слову в описании или тексте</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label class="filter-label" for="search"></label>
-        <input class="input" id="search" type="search" placeholder="Поиск" aria-label="Поиск по истории" autocomplete="off" />
-      </div>
-
-      <!-- Дата (всегда рядом) -->
-      <div class="date-filters" id="dateFilters" data-visible="false">
-        <div class="filter-group">
-          <label class="filter-label" for="dateFrom">Дата от</label>
-          <input class="input" id="dateFrom" type="date" aria-label="Дата от" />
+    <!-- TOP NAV -->
+    <div class="flex items-center justify-between mb-8">
+      <button id="backBtn" class="flex items-center gap-x-3 text-white/90 hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span class="text-xl font-medium">Вернуться назад</span>
+      </button>
+      
+      <div id="topControls" class="flex items-center gap-x-2">
+        <div class="glass text-sm font-semibold px-5 h-9 rounded-3xl flex items-center gap-x-2 shadow-inner">
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span id="usedCount">0</span>
+          <span class="text-white/40">/</span>
+          <span id="maxCount" class="font-mono">20</span>
         </div>
-        <div class="filter-group">
-          <label class="filter-label" for="dateTo">Дата до</label>
-          <input class="input" id="dateTo" type="date" aria-label="Дата до" />
-        </div>
+        
+        <button id="clearBtn" class="flex items-center gap-x-2 px-6 h-9 bg-red-500/90 hover:bg-red-600 rounded-3xl text-sm font-semibold">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.595 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.595-1.858L5 7m5 4v6m4-6v6" />
+          </svg>
+          Очистить
+        </button>
       </div>
+    </div>
 
-      <!-- Поле для слова (новая сортировка) -->
-      <div class="keyword-filter" id="keywordFilter" data-visible="false">
-        <div class="filter-group" style="grid-column: 1 / -1;">
-          <label class="filter-label" for="keywordInput">Введите слово для фильтрации по описанию/тексту</label>
-          <input class="input" id="keywordInput" type="text" placeholder="Например: кот, лес, ночь…" autocomplete="off" />
-        </div>
+    <!-- HEADER -->
+    <div id="storiesHeader" class="text-center mb-9">
+      <div class="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-[22px] flex items-center justify-center shadow-2xl rotate-[-8deg]">
+        <i class="fa-solid fa-clock text-4xl drop-shadow-xl"></i>
       </div>
-    </section>
+      <h1 class="title-font text-5xl font-semibold tracking-[-1.5px] leading-none mb-2">История</h1>
+      <p class="text-white/70 text-[22px]">Все твои генерации в одном месте</p>
+    </div>
 
-    <section class="stats" aria-label="Статистика">
-      <div class="stat">
-        <div class="k">Занято слотов</div>
-        <div class="v"><span id="usedCount">0</span>/<span id="maxCount">0</span></div>
+    <!-- SEARCH -->
+    <div id="searchBlock" class="relative mb-8">
+      <input id="search" 
+             type="search"
+             placeholder="Поиск по описанию или тексту на фото"
+             class="search-input glass w-full px-6 py-6 text-lg rounded-3xl placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 font-medium">
+    </div>
+
+    <!-- SORT CHIPS -->
+    <div id="sortBlock" class="mb-8">
+      <div class="text-xs font-semibold tracking-widest text-white/60 mb-3 px-1">СОРТИРОВАТЬ</div>
+      <div id="sortChips" class="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"></div>
+    </div>
+
+
+
+    <!-- LIST -->
+    <ul id="list" class="space-y-6"></ul>
+
+    <!-- EMPTY STATE -->
+    <div id="empty" class="hidden text-center py-16">
+      <div class="mx-auto w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center text-7xl mb-8">🌌</div>
+      <h3 class="text-3xl font-semibold mb-3">Ещё ничего нет</h3>
+      <p class="text-white/70 max-w-xs mx-auto text-lg">Сгенерируй первое фото — и оно сразу появится здесь</p>
+      <button id="goBtn" class="mt-10 px-10 py-5 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-semibold text-xl rounded-3xl flex items-center gap-x-3 mx-auto">
+        Перейти к генератору
+        <span class="text-3xl leading-none">→</span>
+      </button>
+    </div>
+
+    <!-- NO RESULTS -->
+    <div id="noResults" class="hidden text-center py-16">
+      <div class="mx-auto w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center text-7xl mb-8">🔎</div>
+      <h3 class="text-3xl font-semibold mb-3">Ничего не найдено</h3>
+      <p id="noResultsText" class="text-white/70 text-lg"></p>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div id="modal" onclick="if(event.target.id==='modal')closeModal()" 
+       class="hidden fixed inset-0 bg-black/80 backdrop-blur-2xl z-[9999] flex items-end lg:items-center justify-center">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="modal-content w-full max-w-xl rounded-t-3xl lg:rounded-3xl p-8 max-h-[88vh] overflow-auto">
+      
+      <div class="flex justify-between items-center mb-7">
+        <h2 class="text-3xl font-semibold title-font">Подробности генерации</h2>
+        <button onclick="closeModal()" class="text-4xl text-white/40 hover:text-white leading-none">×</button>
       </div>
-    </section>
-
-    <ul class="list" id="list" role="list"></ul>
-
-    <section class="noresults" id="noResults" hidden>
-      <h3 id="noResultsTitle">Ничего не найдено</h3>
-      <p id="noResultsText"></p>
-    </section>
-
-    <section class="empty" id="empty" hidden>
-      <h3>Тут пусто</h3>
-      <p>Начните генерировать своё первое фото прямо сейчас, а здесь появится ваша история.</p>
-      <button class="btn" id="goBtn" type="button">Перейти к генератору</button>
-    </section>
-  </main>
-
-  <!-- Детали -->
-  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="sheet" role="document" style="background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);">
-      <h2 id="modalTitle" style="color: white;">Подробности параметров</h2>
-      <div id="details" class="details"></div>
-      <div class="bar">
-        <button class="btn" id="applyBtn" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Применить и вернуться к этим параметрам</button>
-        <button class="btn btn--danger" id="closeModal" type="button">Закрыть</button>
+      
+      <div id="details" class="space-y-6 mb-10"></div>
+      
+      <div class="flex gap-3">
+        <button onclick="closeModal()" 
+                class="flex-1 py-6 rounded-3xl border border-white/30 hover:border-cyan-400 text-lg font-medium">
+          Отмена
+        </button>
+        <button onclick="applyCurrent()" 
+                class="flex-1 py-6 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 rounded-3xl text-xl font-semibold">
+          Применить параметры
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Подтверждение -->
-  <div class="confirm" id="confirm" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" >
-    <div class="sheet" role="document" style="      background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);; color: white;">
-      <h2 id="confirmTitle">Подтвердите действие</h2>
-      <p id="confirmText" style="margin:0"></p>
-      <div class="bar">
-        <button class="btn" id="confirmYes" type="button" style="background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));">Да</button>
-        <button class="btn btn--danger" id="confirmNo" type="button">Нет</button>
+  <!-- CONFIRM MODAL -->
+  <div id="confirm" onclick="if(event.target.id==='confirm')closeConfirm()" 
+       class="hidden fixed inset-0 bg-black/80 backdrop-blur-2xl z-[10000] flex items-center justify-center">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="modal-content w-full max-w-md rounded-t-3xl lg:rounded-3xl p-8 text-center">
+      <h2 id="confirmTitle" class="text-2xl font-semibold mb-4"></h2>
+      <p id="confirmText" class="text-white/80 mb-10"></p>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <button onclick="closeConfirm()" class="py-6 text-lg font-medium border border-white/30 rounded-3xl">Отмена</button>
+        <button id="confirmYesBtn" onclick="handleConfirmYes()" 
+                class="py-6 text-lg font-semibold bg-red-500 text-white rounded-3xl">Да, удалить</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ====== TRANSLATIONS FOR KEYS ======
+    // Tailwind
+    function initTailwind() {
+      return { config: () => ({ content: [], theme: { extend: {} }, plugins: [] }) };
+    }
+
     const keysTranslation = {
-      "text": "1. Текст",
-      "autoTextStyle": "2. Автоматический стиль текста",
-      "description": "3. Описание",
-      "exclusions": "4. Исключения",
-      "quality": "5. Качество",
-      "sizeInput": "6. Размер фото",
-      "style": "7. Стиль",
-      "color-tone": "8. Цветовой тон",
-      "detail-level": "9. Уровень детализации",
-      "photo_theme": "10. Тема фото",
-      "razmitiyPHON": "11. Размытый фон",
-      "soot": "12. Соотношение",
-      "ram": "13. Рамка",
-      "rakurs": "14. Ракурс",
-      "selector": "15. ИИ",
-      "osvecheniye": "16. Освещение"
+      "text": "1. Текст промпта",
+      "autoTextStyle": "2. Авто-стиль текста",
+      "autoTextPosition": "3. Авто-позиция текста",
+      "description": "4. Описание",
+      "exclusions": "5. Исключения",
+      "quality": "6. Качество",
+      "sizeInput": "7. Размер фото",
+      "style": "8. Стиль",
+      "color-tone": "9. Цветовой тон",
+      "detail-level": "10. Детализация",
+      "photo_theme": "11. Тема фото",
+      "razmitiyPHON": "12. Размытый фон",
+      "soot": "13. Соотношение сторон",
+      "ram": "14. Рамка",
+      "rakurs": "15. Ракурс",
+      "selector": "16. Модель ИИ",
+      "osvecheniye": "17. Освещение"
     };
-    // ====== STATE ======
+
+    let cache = { items: [], filtered: [] };
     let currentIndex = null;
     let confirmCallback = null;
-    let cache = { items: [], filtered: [] };
+    let currentSort = 'today';
 
-    // ====== DOM ======
-    const $ = (s, r = document) => r.querySelector(s);
-    const list = $('#list');
-    const empty = $('#empty');
-    const noResults = $('#noResults');
-    const noResultsTitle = $('#noResultsTitle');
-    const noResultsText = $('#noResultsText');
-    const usedCount = $('#usedCount');
-    const maxCount = $('#maxCount');
-    const modal = $('#modal');
-    const confirmBox = $('#confirm');
-    const detailsBox = $('#details');
-    const search = $('#search');
-    const dateFrom = $('#dateFrom');
-    const dateTo = $('#dateTo');
-    const sortSelect = $('#sort');
-    const dateFilters = $('#dateFilters');
-    const keywordFilter = $('#keywordFilter');
-    const keywordInput = $('#keywordInput');
-    const clearBtn = $('#clearBtn');
-    const filtersSection = $('.filters');
-    const statsSection = $('.stats');
-
-    // ====== UTILS ======
-    const isPremium = () => localStorage.getItem('premium') === 'true';
-    const maxSlots = () => (isPremium() ? 20 : 10);
-
-    function trapFocus(container, onClose) {
-      const focusable = container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (!focusable.length) return;
-      const first = focusable[0], last = focusable[focusable.length - 1];
-      function handle(e) {
-        if (e.key === 'Escape') { onClose(); }
-        if (e.key !== 'Tab') return;
-        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-      }
-      container.addEventListener('keydown', handle);
-      first.focus();
-      return () => container.removeEventListener('keydown', handle);
-    }
-
-    function openLayer(el) {
-      el.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      return trapFocus(el, () => closeLayer(el));
-    }
-    function closeLayer(el) {
-      el.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    function formatValue(value) {
-      if (typeof value === 'boolean') return value ? 'Включен' : 'Выключен';
-      return String(value);
-    }
-
-    function setDateFiltersVisible(v) {
-      dateFilters.setAttribute('data-visible', v ? 'true' : 'false');
-      if (!v) { dateFrom.value = ''; dateTo.value = ''; }
-    }
-    function setKeywordVisible(v) {
-      keywordFilter.setAttribute('data-visible', v ? 'true' : 'false');
-      if (!v) keywordInput.value = '';
-    }
-
-    function toggleControlsForZeroSlots(isZeroAndNoSearch) {
-      // Показываем только кнопку "Вернуться в меню" и блок empty
-      if (isZeroAndNoSearch) {
-        filtersSection.style.display = 'none';
-        statsSection.style.display = 'none';
-        clearBtn.style.display = 'none';
-        list.style.display = 'none';
-        noResults.hidden = true;
-        empty.hidden = false;
-      } else {
-        filtersSection.style.display = '';
-        statsSection.style.display = '';
-        clearBtn.style.display = '';
-        list.style.display = '';
-        // Пустой экран контролируется отдельно по условиям
-      }
-    }
-
-    // ====== RENDER ======
-    function renderStats() {
-      usedCount.textContent = cache.items.length; // ВСЕГО использовано слотов
-      maxCount.textContent = maxSlots();
-    }
-
-    function renderList(items, { allowEmptyScreen } = { allowEmptyScreen: false }) {
-      list.innerHTML = '';
-      noResults.hidden = true;
-      if (!items.length) {
-        // Пустой экран показываем ТОЛЬКО если разрещено и слотов 0
-        if (allowEmptyScreen) {
-          empty.hidden = false;
-        } else {
-          empty.hidden = true; // не показываем "Тут пусто" в других случаях
-        }
-        return;
-      }
-      empty.hidden = true;
-      const frag = document.createDocumentFragment();
-      items.forEach(({ index, description, createdAt }) => {
-        const li = document.createElement('li');
-        li.className = 'card';
-        li.role = 'listitem';
-        li.dataset.index = index;
-        const date = new Date(createdAt);
-        const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
-        li.innerHTML = `
-          <div class="row">
-            <div class="desc">${escapeHtml(description)}</div>
-            <span class="pill">${formattedDate}</span>
-          </div>
-          <div class="row" style="grid-template-columns:auto auto; gap:10px; justify-content:start">
-            <button class="btn" data-act="details">Подробнее</button>
-            <button class="btn btn--neutral" data-act="apply" style='background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));'>Применить</button>
-          </div>
-        `;
-        frag.appendChild(li);
-      });
-      list.appendChild(frag);
-    }
+    const $ = s => document.querySelector(s);
 
     function escapeHtml(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // ====== LOAD & FILTER ======
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
+    }
+
+    function getDatePeriod(dateStr) {
+      const d = new Date(dateStr);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const itemDate = new Date(dateStr);
+      itemDate.setHours(0, 0, 0, 0);
+      
+      const diff = Math.floor((today - itemDate) / (1000 * 60 * 60 * 24));
+      
+      if (diff === 0) return 'today';
+      if (diff === 1) return 'yesterday';
+      if (diff >= 2 && diff <= 7) return 'week';
+      if (diff > 7 && diff <= 30) return 'month';
+      if (diff > 30 && diff <= 365) return 'year';
+      return 'old';
+    }
+
+    function isPremium() {
+      return localStorage.getItem('premium') === 'true';
+    }
+
+    function maxSlots() {
+      return isPremium() ? 20 : 10;
+    }
+
+    // Рендер красивых чипов сортировки (без обработчиков)
+    function renderSortChips() {
+      const container = $('#sortChips');
+      const options = [
+        { id: 'today', label: 'Сегодня', icon: '<i class="fa-solid fa-calendar-days"></i>' },
+        { id: 'yesterday', label: 'Вчера', icon: '<i class="fa-solid fa-calendar-days"></i>' },
+        { id: 'week', label: 'На прошлой неделе', icon: '<i class="fa-solid fa-calendar-days"></i>' },
+        { id: 'month', label: 'В прошлом месяце', icon: '<i class="fa-solid fa-calendar-days"></i>' },
+        { id: 'year', label: 'В прошлом году', icon: '<i class="fa-solid fa-calendar-days"></i>' },
+        { id: 'date_desc', label: 'Новые', icon: '↑' },
+        { id: 'date_asc', label: 'Старые', icon: '↓' },
+        { id: 'length_desc', label: 'Длинные', icon: '↔' },
+        { id: 'length_asc', label: 'Короткие', icon: '↔' },
+        { id: 'alpha_asc', label: 'А → Я', icon: 'А' },
+        { id: 'alpha_desc', label: 'Я → А', icon: 'Я' }
+      ];
+
+      container.innerHTML = options.map(opt => `
+        <button data-sort="${opt.id}" 
+                class="chip flex-shrink-0 snap-center px-7 py-3 rounded-3xl text-base font-medium flex items-center gap-x-2">
+          <span class="text-xl">${opt.icon}</span>
+          ${opt.label}
+        </button>
+      `).join('');
+
+      // Активируем текущий
+      const activeBtn = container.querySelector(`[data-sort="${currentSort}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function renderList() {
+      const listEl = $('#list');
+      listEl.innerHTML = '';
+
+      if (cache.filtered.length === 0) return;
+
+      cache.filtered.forEach((item, i) => {
+        const li = document.createElement('li');
+        li.className = `card rounded-3xl p-7 list-item`;
+        li.style.animationDelay = `${i * 40}ms`;
+        li.dataset.index = item.index;
+
+        const date = formatDate(item.createdAt);
+
+        li.innerHTML = `
+          <div class="flex flex-col md:flex-row md:justify-between md:mb-5 mb-3 gap-2">
+            <p class="text-[17px] leading-tight text-white/95 line-clamp-4 flex-1">${escapeHtml(item.description)}</p>
+            <div class="text-xs font-mono bg-white/10 text-white/70 px-3 py-1 rounded-2xl h-fit whitespace-nowrap">${date}</div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <button onclick="showDetails(${item.index}); event.stopImmediatePropagation()" 
+                    class="flex items-center gap-x-2 text-cyan-300 hover:text-white text-sm font-medium order-2 sm:order-1">
+              <i class="fa-solid fa-circle-info"></i> Подробнее
+            </button>
+            
+            <div class="flex gap-x-2 order-1 sm:order-2">
+              <button onclick="deleteSingle(${item.index}); event.stopImmediatePropagation()" 
+                      class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-2xl text-lg sm:text-2xl flex-shrink-0"><i class="fa-solid fa-trash-can"></i></button>
+              
+              <button onclick="askConfirmApply(${item.index}); event.stopImmediatePropagation()" 
+                      class="flex-1 sm:flex-none sm:px-8 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-semibold rounded-3xl text-sm sm:text-base px-4 py-2">
+                Применить
+              </button>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(li);
+      });
+    }
+
+    function applyFiltersAndSort() {
+      let filtered = [...cache.items];
+      const q = $('#search').value.trim().toLowerCase();
+
+      if (q) {
+        filtered = filtered.filter(i => 
+          i.description.toLowerCase().includes(q) ||
+          (i.data?.text || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Фильтрация по периодам
+      if (['today', 'yesterday', 'week', 'month', 'year'].includes(currentSort)) {
+        filtered = filtered.filter(i => getDatePeriod(i.createdAt) === currentSort);
+      }
+
+      // Сортировка
+      if (currentSort === 'date_desc') filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      else if (currentSort === 'date_asc') filtered.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+      else if (currentSort === 'length_desc') filtered.sort((a,b) => b.description.length - a.description.length);
+      else if (currentSort === 'length_asc') filtered.sort((a,b) => a.description.length - b.description.length);
+      else if (currentSort === 'alpha_asc') filtered.sort((a,b) => a.description.localeCompare(b.description, 'ru'));
+      else if (currentSort === 'alpha_desc') filtered.sort((a,b) => b.description.localeCompare(a.description, 'ru'));
+      else if (['today', 'yesterday', 'week', 'month', 'year', 'date_custom'].includes(currentSort)) filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      cache.filtered = filtered;
+
+      // Показываем фильтры всегда для удобства (в т.ч. на мобильных)
+      const dateFiltersEl = $('#dateFilters');
+      if (dateFiltersEl) dateFiltersEl.classList.remove('hidden');
+      const keywordFilterEl = $('#keywordFilter');
+      if (keywordFilterEl) keywordFilterEl.classList.remove('hidden');
+
+      renderStats();
+      renderList();
+
+      // Состояния
+      const total = cache.items.length;
+      const isEmpty = total === 0;
+      $('#empty').classList.toggle('hidden', !isEmpty);
+      $('#noResults').classList.toggle('hidden', !(q && cache.filtered.length === 0));
+
+      // Скрываем элементы если список пустой
+      $('#topControls').style.display = isEmpty ? 'none' : 'flex';
+      $('#storiesHeader').style.display = isEmpty ? 'none' : 'block';
+      $('#searchBlock').style.display = isEmpty ? 'none' : 'block';
+      $('#sortBlock').style.display = isEmpty ? 'none' : 'block';
+      $('#search').parentElement.style.display = isEmpty ? 'none' : 'block';
+      $('#sortChips').parentElement.style.display = isEmpty ? 'none' : 'block';
+      $('#clearBtn').style.display = isEmpty ? 'none' : 'inline-flex';
+
+      if (q && cache.filtered.length === 0) {
+        $('#noResultsText').innerHTML = `По запросу «<span class="font-semibold">${escapeHtml(q)}</span>» ничего не найдено`;
+      }
+    }
+
+    function renderStats() {
+      $('#usedCount').textContent = cache.items.length;
+      $('#maxCount').textContent = maxSlots();
+    }
+
     function loadHistory() {
       const max = maxSlots();
       const items = [];
@@ -449,215 +517,217 @@
         const raw = localStorage.getItem(`saveDatas${i}`);
         if (!raw) continue;
         try {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.description) {
-            if (!parsed.createdAt) {
-              parsed.createdAt = new Date().toISOString();
-              localStorage.setItem(`saveDatas${i}`, JSON.stringify(parsed));
+          const data = JSON.parse(raw);
+          if (data?.description) {
+            if (!data.createdAt) {
+              data.createdAt = new Date().toISOString();
+              localStorage.setItem(`saveDatas${i}`, JSON.stringify(data));
             }
-            items.push({ index: i, raw, data: parsed, description: parsed.description, createdAt: parsed.createdAt });
+            items.push({ index: i, description: data.description, createdAt: data.createdAt, data });
           }
-        } catch (e) { /* ignore broken slot */ }
+        } catch(e) {}
       }
       cache.items = items;
       applyFiltersAndSort();
     }
 
-    function applyFiltersAndSort() {
-      let filtered = cache.items.slice();
-
-      // флаг поиска
-      const q = search.value.trim().toLowerCase();
-      const isSearching = q.length > 0;
-
-      // Фильтр по поиску (только по описанию)
-      if (isSearching) {
-        filtered = filtered.filter(x => String(x.description).toLowerCase().includes(q));
-      }
-
-      // Видимость контролов дат/слова
-      const sortVal = sortSelect.value;
-      setDateFiltersVisible(sortVal === 'date_custom');
-      setKeywordVisible(sortVal === 'keyword');
-
-      // Фильтр по дате (только для "date_custom")
-      if (sortVal === 'date_custom') {
-        const from = dateFrom.value ? new Date(dateFrom.value) : null;
-        const to = dateTo.value ? new Date(dateTo.value) : null;
-        if (from || to) {
-          filtered = filtered.filter(x => {
-            const d = new Date(x.createdAt);
-            if (from && d < from) return false;
-            if (to && d > to) return false;
-            return true;
-          });
-        }
-        // разумный дефолт сортировки по дате (новые сначала)
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      }
-
-      // Фильтр по слову (описание ИЛИ text)
-      if (sortVal === 'keyword') {
-        const kw = keywordInput.value.trim().toLowerCase();
-        if (kw) {
-          filtered = filtered.filter(x =>
-            (x.description && String(x.description).toLowerCase().includes(kw)) ||
-            (x.data && x.data.text && String(x.data.text).toLowerCase().includes(kw))
-          );
-        }
-      }
-
-      // Сортировка
-      if (sortVal === 'date_desc') {
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      } else if (sortVal === 'date_asc') {
-        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      } else if (sortVal === 'length_desc') {
-        filtered.sort((a, b) => b.description.length - a.description.length);
-      } else if (sortVal === 'length_asc') {
-        filtered.sort((a, b) => a.description.length - b.description.length);
-      } else if (sortVal === 'alpha_asc') {
-        filtered.sort((a, b) => a.description.localeCompare(b.description, 'ru'));
-      } else if (sortVal === 'alpha_desc') {
-        filtered.sort((a, b) => b.description.localeCompare(a.description, 'ru'));
-      }
-
-      cache.filtered = filtered;
-      renderStats();
-
-      const totalSlots = cache.items.length;
-      const zeroSlotsNoSearch = totalSlots === 0 && !isSearching;
-      toggleControlsForZeroSlots(zeroSlotsNoSearch);
-
-      // Сообщение о "Ничего не найдено" при поиске
-      if (isSearching && filtered.length === 0) {
-        noResults.hidden = false;
-        noResultsTitle.textContent = 'Ничего не найдено';
-        noResultsText.textContent = `По запросу "${search.value}" ничего не найдено.`;
-      } else {
-        noResults.hidden = true;
-      }
-
-      // Рендер списка. Пустой экран показываем только если слотов 0 и нет поиска
-      renderList(cache.filtered, { allowEmptyScreen: zeroSlotsNoSearch });
-    }
-
-    // ====== DETAILS ======
     function showDetails(slot) {
       currentIndex = slot;
-      detailsBox.innerHTML = '';
       const raw = localStorage.getItem(`saveDatas${slot}`);
       if (!raw) return;
-      let parsed = {};
-      try { parsed = JSON.parse(raw); } catch {}
-      const frag = document.createDocumentFragment();
-      Object.keys(parsed).forEach(k => {
-        if (k === 'sizeSelect' || k === 'createdAt') return;
-        const p = document.createElement('div');
-        p.className = 'detail';
-        p.textContent = `${(keysTranslation[k] || k)}: ${formatValue(parsed[k])}`;
-        frag.appendChild(p);
+      let parsed = JSON.parse(raw);
+
+      const container = $('#details');
+      container.innerHTML = Object.keys(parsed)
+        .filter(k => !['sizeSelect','createdAt'].includes(k))
+        .map(k => `
+          <div class="flex justify-between py-4 border-b border-white/10 last:border-none">
+            <span class="text-white/70">${keysTranslation[k] || k}</span>
+            <span class="font-medium text-right">${formatValue(parsed[k])}</span>
+          </div>
+        `).join('');
+
+      $('#modal').classList.remove('hidden');
+      $('#modal').classList.add('flex');
+    }
+
+    function closeModal() {
+      const m = $('#modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+      currentIndex = null;
+    }
+
+    function formatValue(v) {
+      if (typeof v === 'boolean') return v ? '<i class="fa-solid fa-check"></i> Включено' : '<i class="fa-solid fa-xmark"></i> Выключено';
+      return String(v);
+    }
+
+    function copyAllParams() {
+      if (!currentIndex) return;
+      const raw = localStorage.getItem(`saveDatas${currentIndex}`);
+      navigator.clipboard.writeText(raw).then(() => {
+        const toast = document.createElement('div');
+        toast.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#00e5ff;color:#0a1428;padding:14px 28px;border-radius:9999px;font-weight:700;box-shadow:0 20px 25px -5px rgb(0 229 255);z-index:99999`;
+        toast.innerHTML = '<i class="fa-solid fa-check"></i> Всё скопировано!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2200);
+      }).catch(() => {
+        const toast = document.createElement('div');
+        toast.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#f87171;color:white;padding:14px 28px;border-radius:9999px;font-weight:700;box-shadow:0 20px 25px -5px rgb(248 113 113);z-index:99999`;
+        toast.innerHTML = '<i class="fa-solid fa-xmark"></i> Не удалось скопировать';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2200);
       });
-      detailsBox.appendChild(frag);
-      openLayer(modal);
     }
 
     function applyParameters(slot) {
       const raw = localStorage.getItem(`saveDatas${slot}`);
-      if (!raw) return;
-      localStorage.setItem('savedDatasToLoad', raw);
-      window.location.href = 'index.html';
-    }
-
-    function askConfirm(actionText, cb) {
-      $('#confirmText').textContent = actionText;
-      // Заголовок: Подтвердите действие {действие}
-      const title = $('#confirmTitle');
-      title.textContent = `Подтвердите действие`;
-      confirmCallback = cb;
-      openLayer(confirmBox);
-    }
-
-    function clearHistory() {
-      const max = maxSlots();
-      for (let i = 1; i <= max; i++) localStorage.removeItem(`saveDatas${i}`);
-      loadHistory();
-    }
-
-    // ====== EVENTS (DELEGATION) ======
-    list.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
-      const card = e.target.closest('.card');
-      const slot = Number(card?.dataset.index);
-      if (!slot) return;
-      const act = btn.dataset.act;
-      if (act === 'details') showDetails(slot);
-      if (act === 'apply') askConfirm('Применить сохранённые параметры?', () => applyParameters(slot));
-    });
-    $('#closeModal').addEventListener('click', () => closeLayer(modal));
-    $('#applyBtn').addEventListener('click', () => askConfirm('Применить эти параметры?', () => applyParameters(currentIndex)));
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeLayer(modal); });
-    $('#confirmYes').addEventListener('click', () => { if (confirmCallback) confirmCallback(); closeLayer(confirmBox); });
-    $('#confirmNo').addEventListener('click', () => closeLayer(confirmBox));
-    confirmBox.addEventListener('click', (e) => { if (e.target === confirmBox) closeLayer(confirmBox); });
-    $('#backBtn').addEventListener('click', () => { window.location.href = 'menu.html'; });
-    $('#goBtn')?.addEventListener('click', () => { window.location.href = 'index.html'; });
-    $('#clearBtn').addEventListener('click', () => askConfirm('Удалить всю историю?', clearHistory));
-
-    // Поиск и фильтры
-    let tId;
-    [search, dateFrom, dateTo, keywordInput].forEach(el => {
-      el.addEventListener('input', () => {
-        clearTimeout(tId);
-        tId = setTimeout(applyFiltersAndSort, 120);
-      });
-    });
-
-    sortSelect.addEventListener('change', () => {
-      applyFiltersAndSort();
-    });
-
-    document.addEventListener('click', (event) => {
-    const target = event.target;
-
-    // Проверяем, что клик не по интерактивному элементу
-    if (
-        !target.closest('input') &&
-        !target.closest('textarea') &&
-        !target.closest('select') &&
-        !target.closest('button') &&
-        !target.isContentEditable
-    ) {
-        // Снимаем фокус со всех активных элементов
-        if (document.activeElement && typeof document.activeElement.blur === 'function') {
-        document.activeElement.blur();
-        }
-    }
-    });
-    if (/iPhone/i.test(navigator.userAgent)) {
-      if (localStorage.getItem('liquid') === 'Включен') {
-        const style = document.createElement('style');
-        style.textContent = `
-          button, .btn, .btn btn--danger, .btn--neutral {
-            border: 1px solid rgba(255, 255, 255, 0.8) !important;
-          }
-        `;
-        document.head.appendChild(style);
+      if (raw) {
+        localStorage.setItem('savedDatasToLoad', raw);
+        window.location.href = 'index.html';
       }
     }
 
-    // Initialize Telegram WebApp
-    const WebApp = window.Telegram?.WebApp;
-    if (WebApp) {
-      WebApp.ready();
-      WebApp.expand();
-      WebApp.enableClosingConfirmation();
-      // Removed Telegram BackButton usage for story.html (handled via HTML fallback)
+    function askConfirmApply(slot) {
+      askConfirm(
+        'Вы точно хотите ПРИМЕНИТЬ все эти параметры?',
+        () => applyParameters(slot),
+        'Подтвердите применение',
+        'Подтвердить'
+      );
     }
 
-    // ====== INIT ======
-    document.addEventListener('DOMContentLoaded', loadHistory);
+    function applyCurrent() {
+      if (currentIndex) {
+        const slot = currentIndex;
+        closeModal();
+        askConfirmApply(slot);
+      }
+    }
+
+    function deleteSingle(slot) {
+      askConfirm(
+        'Удалить эту генерацию навсегда?',
+        () => {
+          localStorage.removeItem(`saveDatas${slot}`);
+          loadHistory();
+        },
+        'Подтвердите',
+        'Удалить'
+      );
+    }
+
+    function clearHistory() {
+      askConfirm(
+        'Удалить <b>всю</b> историю?',
+        () => {
+          const max = maxSlots();
+          for (let i = 1; i <= max; i++) localStorage.removeItem(`saveDatas${i}`);
+          loadHistory();
+        },
+        'Подтвердите',
+        'Удалить'
+      );
+    }
+
+    function askConfirm(text, cb, title = 'Подтвердите', yesText = 'Да') {
+      confirmCallback = cb;
+      $('#confirmTitle').innerHTML = title;
+      $('#confirmText').innerHTML = text;
+      const btn = $('#confirmYesBtn');
+      btn.innerHTML = yesText;
+      $('#confirm').classList.remove('hidden');
+      $('#confirm').classList.add('flex');
+    }
+
+    function closeConfirm() {
+      const c = $('#confirm');
+      c.classList.add('hidden');
+      c.classList.remove('flex');
+      confirmCallback = null;
+      $('#confirmYesBtn').innerHTML = 'Да';
+    }
+
+    function handleConfirmYes() {
+      if (confirmCallback) confirmCallback();
+      closeConfirm();
+    }
+
+    function copyDescription(slot) {
+      const raw = localStorage.getItem(`saveDatas${slot}`);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      navigator.clipboard.writeText(parsed.description || '').then(() => {
+        const t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#10b981;color:white;padding:12px 24px;border-radius:9999px;z-index:99999;font-weight:600';
+        t.innerHTML = '<i class="fa-solid fa-check"></i> Описание скопировано';
+        document.body.append(t);
+        setTimeout(() => t.remove(), 1700);
+      }).catch(() => {
+        const t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#ef4444;color:white;padding:12px 24px;border-radius:9999px;z-index:99999;font-weight:600';
+        t.innerHTML = '<i class="fa-solid fa-xmark"></i> Не удалось скопировать';
+        document.body.append(t);
+        setTimeout(() => t.remove(), 1700);
+      });
+    }
+
+    function initialize() {
+      initTailwind();
+      renderSortChips();
+      loadHistory();
+
+      // Event delegation для чипов сортировки (один раз)
+      const sortChips = $('#sortChips');
+      if (sortChips) {
+        sortChips.addEventListener('click', e => {
+          const btn = e.target.closest('button[data-sort]');
+          if (!btn) return;
+          currentSort = btn.dataset.sort;
+          renderSortChips();
+          clearTimeout(window._sort);
+          window._sort = setTimeout(applyFiltersAndSort, 100);
+        });
+      }
+
+      const searchInput = $('#search');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          clearTimeout(window._t);
+          window._t = setTimeout(applyFiltersAndSort, 160);
+        });
+      }
+
+      const dateFrom = $('#dateFrom');
+      if (dateFrom) dateFrom.addEventListener('change', applyFiltersAndSort);
+      const dateTo = $('#dateTo');
+      if (dateTo) dateTo.addEventListener('change', applyFiltersAndSort);
+      const keywordInput = $('#keywordInput');
+      if (keywordInput) {
+        keywordInput.addEventListener('input', () => {
+          clearTimeout(window._k);
+          window._k = setTimeout(applyFiltersAndSort, 200);
+        });
+      }
+
+      const backBtn = $('#backBtn');
+      if (backBtn) backBtn.addEventListener('click', () => window.location.href = 'menu.html');
+      const goBtn = $('#goBtn');
+      if (goBtn) goBtn.addEventListener('click', () => window.location.href = 'index.html');
+      const clearBtn = $('#clearBtn');
+      if (clearBtn) clearBtn.addEventListener('click', clearHistory);
+
+      const WebApp = window.Telegram?.WebApp;
+      if (WebApp) {
+        WebApp.ready();
+        WebApp.expand();
+        WebApp.enableClosingConfirmation();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initialize);
   </script>
+  <script type="module" src="security.js"></script>
 </body>
 </html>

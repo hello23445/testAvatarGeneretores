@@ -1,6 +1,7 @@
 html, body {
   width: 100%;
   overflow-x: hidden;
+  overflow-y: visible;
   overscroll-behavior-x: none;
   overscroll-behavior-y: contain;
   touch-action: manipulation;
@@ -699,9 +700,11 @@ input:disabled, select:disabled, textarea:disabled{
 }
 
 .tg-option {
-  margin-left: -95%;
   display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
   align-items: center; /* ← ВАЖНО */
+  width: 100%;
   gap: 10px;
   cursor: pointer;
   color: #fff;
@@ -712,7 +715,7 @@ input:disabled, select:disabled, textarea:disabled{
   margin: 0; /* убирает стандартные смещения */
 }
 .tg-option span{
-  margin-left: -50%;
+  white-space: nowrap;
 }
 
 
@@ -720,4 +723,10 @@ input,
 textarea,
 select {
   font-size: 16px;
+}
+
+/* Всегда скрывать блок с Telegram ID, когда показан блок авторизации */
+#authMessage[style*="display:block"] ~ #userIdDisplay,
+#authMessage[style*="display: block"] ~ #userIdDisplay {
+  display: none !important;
 }

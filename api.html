@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta
     name="CrN PhotoAI API Бесплатный API для генерации изображений."
     content="Бесплатный API для генерации изображений с помощью CrN PhotoAI."
@@ -139,13 +139,15 @@
             overflow: hidden;
             border-radius: 10px;
             background: rgba(10, 13, 45, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-bottom: 1px solid rgba(128, 128, 128, 0.3);
         }
 
         th, td { 
             padding: 6px 8px; 
             text-align: left; 
             word-wrap: break-word;
+            border: 1px solid rgba(128, 128, 128, 0.3);
         }
 
         th { 
@@ -449,6 +451,15 @@
         .delete-btn {
             background-color: #e74c3c;
         }
+        h2{
+            margin-top: 8%;
+        }
+        h1{
+            margin-top: 12%;
+        }
+        table{
+            border-inline-start-color: white;
+        }
     </style>
 </head>
 <body>
@@ -461,6 +472,15 @@
             <p>Вы уверены что хотите удалить свой API-ключ?</p>
             <button class="modal-btn" onclick="showConfirmInputModal()">Да</button>
             <button class="modal-btn" onclick="closeModal('confirmDeleteModal')">Нет</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для подтверждения сброса -->
+    <div id="confirmResetModal" class="modal">
+        <div class="modal-content">
+            <p>Вы уверены что хотите сбросить свой API-ключ?</p>
+            <button class="modal-btn" onclick="resetApiKey()">Да</button>
+            <button class="modal-btn" onclick="closeModal('confirmResetModal')">Нет</button>
         </div>
     </div>
 
@@ -524,7 +544,7 @@
                         <i class="fa-solid fa-copy"></i>
                         Скопировать
                     </button>
-                    <button class="copy-btn reset-btn" onclick="resetApiKey()" title="Нажмите чтобы сбросить.">
+                    <button class="copy-btn reset-btn" onclick="showConfirmResetModal()" title="Нажмите чтобы сбросить.">
                         <i class="fa-solid fa-sync"></i>
                         Сбросить мой API-ключ
                     </button>
@@ -542,9 +562,12 @@
 
                 <h2>Параметры запроса <small>(HTTP-метод)</small></h2>
                 <table>
-                    <tr><th>Метод</th><th>Описание</th><th>Статус</th></tr>
-                    <tr><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
-                    <tr><td>POST</td><td>Используется для получения количества текущих лимитов.</td><td>Обязательный.</td></tr>
+                    <tr><th>API-методы</th><th>Методы запроса</th><th>Описание</th><th>Статус</th></tr>
+                    <tr><td>Генерация изображений</th><td>POST</td><td>Используется для отправки данных на сервер.</td><td>Обязательный.</td></tr>
+                    <tr><td>Получение лимитов</th><td>POST</td><td>Используется для получения количества текущих лимитов.</td><td>Обязательный.</td></tr>
+                    <tr><td>Получение информации</th><td>POST</td><td>Используется для получения дополнительной информации об API-ключе.</td><td>Обязательный.</td></tr>
+                    <tr><td>Заморозка ключа</th><td>POST</td><td>Используется для заморозки API-ключа.</td><td>Обязательный.</td></tr>
+                    <tr><td>Разморозка ключа</th><td>POST</td><td>Используется для разморозки API-ключа.</td><td>Обязательный.</td></tr>
                 </table>
 
                 <div style="margin-top: 40px;"></div>
@@ -560,6 +583,10 @@
                     <tr><td>photo_description</td><td>Описание фото.</td><td>Строка.</td><td>Обязательный.</td></tr>
                     <tr><td>width</td><td>Ширина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
                     <tr><td>height</td><td>Длина фото.<br>По умолчанию 512px (пикселей).</td><td>Число.</td><td>Необязательный.</td></tr>
+                    <tr><td>count</td><td>Количество изображений для генерации.<br>По умолчанию 1.</td><td>Число.</td><td>Необязательный.</td></tr>
+                    <tr><td>callback_url</td><td>URL для обратного вызова(Чтобы результат приходил на указанный URL сервер).</td><td>Строка.</td><td>Необязательный.</td></tr>
+                    <tr><td>blur</td><td>Передайте <code><i>true</i></code> если фото должно быть размыто.</td><td>Булево.</td><td>Необязательный.</td></tr>
+                    <tr><td>grayscale</td><td>Передайте <code><i>true</i></code> если фото должно быть черно-белым.</td><td>Булево.</td><td>Необязательный.</td></tr>
                 </table>
 
                 <h2>
@@ -719,6 +746,179 @@
   "message": "Invalid api_key"
 }</span></pre>
 
+                <center><h1>Получение информации</h1>
+                    <p style="margin-top: -2%; color: #d9d9d9;">Этот запрос позволяет получить дополнительную информацию об API-ключе.</p>
+                </center>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                    <tr><td>api_key</td><td>Ваш API-ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td>action</td><td>Передаем <code>get_info</code></td><td>Строка.</td><td>Обязательный.</td></tr>
+                </table>
+
+                <h2>
+                    Пример успешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('successInfoExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="successInfoExample"><span class="code-text">{
+  "status": "success", <span style="color: #4CAF50;">// Статус ответа (успех или ошибка)</span>
+  "usedLimitsToday": 3, <span style="color: #4CAF50;">// Количество использованных лимитов сегодня</span>
+  "lastPrompt": "ПОСЛЕДНИЙ_PROMPT", <span style="color: #4CAF50;">// Последний промпт, отправленный на генерацию фото</span>
+  "photosToday": 3 <span style="color: #4CAF50;">// Количество сгенерированных фото сегодня</span>
+}</span></pre>
+
+                <h2>
+                    Когда api_key не введен
+                    <button class="copy-btn" onclick="copyToClipboard('missingInfoApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="missingInfoApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Missing api_key"
+}</span></pre>
+
+                <h2>
+                    Когда api_key неверный или не найден
+                    <button class="copy-btn" onclick="copyToClipboard('invalidInfoApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="invalidInfoApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Invalid api_key"
+}</span></pre>
+
+                <center><h1>Заморозка API-ключа</h1>
+                    <p style="margin-top: -2%; color: #d9d9d9;">Этот запрос позволяет заморозить API-ключ.</p>
+                </center>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                    <tr><td>api_key</td><td>Ваш API-ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td>action</td><td>Передаем <code>freeze_my_api_key</code></td><td>Строка.</td><td>Обязательный.</td></tr>
+                </table>
+
+                <h2>
+                    Пример успешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('successFreezeExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="successFreezeExample"><span class="code-text">{
+  "status": "success",
+  "message": "API key frozen successfully"
+}</span></pre>
+
+                <h2>
+                    Когда api_key не введен
+                    <button class="copy-btn" onclick="copyToClipboard('missingFreezeApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="missingFreezeApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Missing api_key"
+}</span></pre>
+
+                <h2>
+                    Когда api_key неверный или не найден
+                    <button class="copy-btn" onclick="copyToClipboard('invalidFreezeApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="invalidFreezeApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Missing api_key"
+}</span></pre>
+
+                <h2>
+                    Когда API-ключ уже заморожен
+                    <button class="copy-btn" onclick="copyToClipboard('alreadyFrozenExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="alreadyFrozenExample"><span class="code-text">{
+  "status": "error",
+  "message": "ВАШ_API_КЛЮЧ: Has already been frozen."
+}</span></pre>
+
+                <h2>
+                    Если API-ключ заморожен
+                    <button class="copy-btn" onclick="copyToClipboard('frozenApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="frozenApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "API key is frozen"
+}</span></pre>
+
+                <center><h1>Разморозка API-ключа</h1>
+                    <p style="margin-top: -2%; color: #d9d9d9;">Этот запрос позволяет разморозить API-ключ.</p>
+                </center>
+                <table>
+                    <tr><th>Поле</th><th>Описание</th><th>Тип</th><th>Статус</th></tr>
+                    <tr><td>api_key</td><td>Ваш API-ключ.</td><td>Строка.</td><td>Обязательный.</td></tr>
+                    <tr><td>action</td><td>Передаем <code>unfreeze_my_api_key</code></td><td>Строка.</td><td>Обязательный.</td></tr>
+                </table>
+
+                <h2>
+                    Пример успешного ответа
+                    <button class="copy-btn" onclick="copyToClipboard('successUnfreezeExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="successUnfreezeExample"><span class="code-text">{
+  "status": "success",
+  "message": "API key unfrozen successfully"
+}</span></pre>
+
+                <h2>
+                    Когда api_key не введен
+                    <button class="copy-btn" onclick="copyToClipboard('missingUnfreezeApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="missingUnfreezeApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Missing api_key"
+}</span></pre>
+
+                <h2>
+                    Когда api_key неверный или не найден
+                    <button class="copy-btn" onclick="copyToClipboard('invalidUnfreezeApiKeyExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="invalidUnfreezeApiKeyExample"><span class="code-text">{
+  "status": "error",
+  "message": "Invalid api_key"
+}</span></pre>
+
+                <h2>
+                    Когда API-ключ уже разморожен или не был заморожен
+                    <button class="copy-btn" onclick="copyToClipboard('alreadyUnfrozenExample')" title="Нажмите чтобы скопировать.">
+                        <i class="fa-solid fa-copy"></i>
+                        Скопировать
+                    </button>
+                </h2>
+                <pre id="alreadyUnfrozenExample"><span class="code-text">{
+  "status": "error",
+  "message": "ВАШ_API_КЛЮЧ: Has already been unfrozen"
+}</span></pre>
+
                 <p class="limits-text">
                     Ваш текущий лимит: <span id="currentLimit">проверяем...</span><br>
                     Лимиты обновляются каждый день.<br>
@@ -799,6 +999,10 @@
 
         function showConfirmDeleteModal() {
             showModal('confirmDeleteModal');
+        }
+
+        function showConfirmResetModal() {
+            showModal('confirmResetModal');
         }
 
         function showConfirmInputModal() {
@@ -945,6 +1149,15 @@
         });
 
         async function resetApiKey() {
+            closeModal('confirmResetModal');
+
+            const todayKey = `resetApiKeyCount_${new Date().toISOString().slice(0, 10)}`;
+            const usedToday = parseInt(localStorage.getItem(todayKey) || '0', 10);
+            if (usedToday >= 3) {
+                showNotification('Сброс API-ключа доступен не более 3 раз в день', '#e74c3c');
+                return;
+            }
+
             showModalLoader(true);
             const oldToken = localStorage.getItem('user_Token');
             if (!oldToken) {
@@ -960,6 +1173,7 @@
                 const data = await response.json();
                 if (data.status === 'success') {
                     localStorage.setItem('user_Token', newToken);
+                    localStorage.setItem(todayKey, (usedToday + 1).toString());
                     showNotification('API-ключ успешно сброшен!');
                     await checkApiKey();
                 } else {
@@ -1035,5 +1249,6 @@
 
         // Removed Telegram BackButton usage for api.html (handled via HTML fallback)
     </script>
+    <script type="module" src="security.js"></script>
 </body>
 </html>

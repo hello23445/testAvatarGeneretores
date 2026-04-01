@@ -1,244 +1,180 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Часто задаваемые вопросы</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <style>
-        body {
-            touch-action: manipulation;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-                        radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-                        linear-gradient(180deg, #0f172a, #020617);
-            color: #ffffff;
-            overflow-y: auto; /* Прокрутка по вертикали, если контент превышает высоту экрана */
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Часто задаваемые вопросы</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<style>
+:root {
+    --bg1: #020617;
+    --bg2: #0f172a;
+    --accent: #3b82f6;
+    --accent2: #22d3ee;
+    --card-bg: rgba(255,255,255,0.08);
+    --card-border: rgba(255,255,255,0.1);
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.6);
+}
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
+        radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
+        linear-gradient(180deg, var(--bg2), var(--bg1));
+    min-height: 100vh;
+    overflow-y: auto;
+}
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
 
-        #search {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            box-sizing: border-box;
-        }
+.back-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7f1d1d, #ef4444);
+    border: 1px solid rgba(255,255,255,0.8);
+    transition: transform 0.2s;
+}
+.back-btn:hover { transform: scale(1.02); }
 
-        .faq-item {
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 5px;
-            overflow: hidden;
-        }
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        summary {
-            padding: 15px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            font-weight: bold;
-            word-wrap: break-word; /* Перенос длинных слов в вопросах */
-            white-space: normal; /* Нормальный перенос для вопросов */
-            list-style: none; /* Убрать стандартный маркер */
-        }
+#search {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    font-size: 15px;
+}
 
-        summary::-webkit-details-marker {
-            display: none;
-        }
+.faq-item {
+    margin-bottom: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: all 0.2s;
+    backdrop-filter: blur(6px);
+}
+.faq-item summary {
+    cursor: pointer;
+    padding: 14px 18px;
+    font-weight: 600;
+    list-style: none;
+    position: relative;
+}
+.faq-item summary::marker { content: none; }
 
-        summary::before {
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            content: "\f105"; /* fa-angle-right */
-            margin-right: 10px;
-            display: inline-block;
-            transition: transform 0.3s;
-        }
+.faq-item summary::before {
+    content: "\f105"; /* fa-angle-right */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: inline-block;
+    margin-right: 12px;
+    transition: transform 0.3s;
+}
+.faq-item[open] summary::before {
+    content: "\f107"; /* fa-angle-down */
+}
 
-        details[open] summary::before {
-            content: "\f107"; /* fa-angle-down */
-        }
+.answer {
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: rgba(0,0,0,0.25);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 
-        .answer {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            white-space: pre-wrap; /* Сохраняет \n и пробелы, но позволяет перенос длинных строк */
-            word-wrap: break-word; /* Перенос длинных слов */
-            overflow-wrap: break-word; /* Дополнительная поддержка для переноса */
-        }
-
-        .back-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));
-            color: #ffffff;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 5px;
-            margin-bottom: 20px; /* Отступ снизу для кнопки вверху */
-            box-sizing: border-box;
-        }
-
-        /* Оптимизация для мобильных: responsive */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 10px;
-            }
-        }
-    </style>
+@media (max-width: 600px) {
+    body { padding: 12px; }
+    #search { padding: 10px; }
+    .back-btn { padding: 12px; font-size: 14px; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <a href="menu.html" class="back-btn">Вернуться назад</a>
-        <h1>Часто задаваемые вопросы</h1>
-        <input type="text" id="search" placeholder="Поиск по вопросам...">
-        <div id="faq-list"></div>
-    </div>
+<div class="container">
+    <a href="menu.html" class="back-btn">← Вернуться назад</a>
+    <h1>Часто задаваемые вопросы</h1>
+    <input type="text" id="search" placeholder="Поиск по вопросам...">
+    <div id="faq-list"></div>
+</div>
 
-    <script>
-        // Массив вопросов и ответов (добавляйте сюда)
-        const faqData = [
-            {
-                question: "Почему фотографии долго генерируются?",
-                answer: `— Бот один, а пользователей много.\nИз-за этого генерация может занимать больше времени.
-Кроме того, бот проверяет, не нарушает ли запрос правила.
-Если запрос нарушает правила — изображение не генерируется.
-Максимальный срок генерации — до 2 дней.`
-            },
-            {
-                question: "Как купить премиум-подписку?",
-                answer: ` 1. Купите промокод на премиум у поддержки.
- 2. Откройте приложение бота.
- 3. Подпишитесь на канал, если бот попросит.
- 4. Если лимиты на генерацию исчерпаны — приобретите промокод на лимиты (см. следующий вопрос).
- 5. На экране параметров генерации нажмите «Premium».
- 6. Нажмите «Перейти к оплате», введите купленный промокод и нажмите «Отправить».`
-            },
-            {
-                question: "Как увеличить количество лимитов в день?",
-                answer: `Есть два способа:
+<script>
+const faqData = [
+    { question: "Почему фотографии долго генерируются?", answer: `— Бот один, а пользователей много.\nИз-за этого генерация может занимать больше времени.\nБот проверяет соблюдение правил.\nМаксимальный срок генерации — до 2 дней.` },
+    { question: "Как купить премиум-подписку?", answer: `Способ 1(Покупка у поддержки):\n1. Купите промокод у поддержки.\n2. Откройте приложение бота(тоесть это приложение).\n3. Подпишитесь на канал(если не подписаны).\n4. На экране генерации нажмите «Premium».\n5. Пролистайте вниз и введите промокод в нужном поле.\n\nСпособ 2(Покупка в самом приложении):\n1. Купите промокод у поддержки.\n2. Откройте приложение бота(тоесть это приложение).\n3. Подпишитесь на канал(если не подписаны).\n4. На экране генерации нажмите «Premium».\n5. Пролистайте вниз и выберите нужный вам тариф.` },
+    { question: "Как увеличить количество лимитов в день?", answer: `1. Купить промокод на лимиты у поддержки.\n2. Купить премиум (см. инструкцию выше).` },
+    { question: "Как получить свой API-ключ?", answer: `1. Главное меню → Мой API-ключ.\n2. Нажмите "Создать мой API-ключ".\n3. Копируйте ключ.` },
+    { question: "Как получить лимиты на генерацию?", answer: `1. Введите промокод.\n2. Посмотрите видео-рекламу.\n3. Через службу поддержки.` },
+    { question: 'Для чего нужен режим "Удиви меня"?', answer: `Применяет случайное описание и параметры.` },
+    { question: "Где можно увидеть цены на Premium?", answer: `Главное меню → Premium → Пролистайте вниз.\nИногда бывают скидки!` },
+    { question: "Для чего нужен параметр 'Тип освещения'?", answer: `Определяет, как свет падает на объект и какое настроение создаёт.` },
+    { question: 'Для чего нужна авторизация при "Отправить через Telegram бота"?', answer: `Чтобы бот точно отправлял изображения вам.` }
+];
 
-1. Купить промокод на лимиты у поддержки.
-Введите его на экране «Недостаточно лимитов».
+function renderFAQ(data) {
+    const faqList = document.getElementById('faq-list');
+    faqList.innerHTML = '';
+    data.forEach(item => {
+        const faqItem = document.createElement('details');
+        faqItem.className = 'faq-item';
+        const summary = document.createElement('summary');
+        summary.textContent = item.question;
+        const answer = document.createElement('div');
+        answer.className = 'answer';
+        answer.textContent = item.answer;
+        faqItem.appendChild(summary);
+        faqItem.appendChild(answer);
+        faqList.appendChild(faqItem);
+    });
+}
 
-2. Купить премиум.
-Инструкция о том как купить премиум указана выше.`
-            },
-            {
-                question: "Как получить свой API-ключ?",
-                answer: `
-1. Откройте главное меню приложения.
-2. В самом низу нажмите "Мой API-ключ".
-3. Нажмите "Создать мой API-ключ".
-4. В поле "Ваш API-ключ" появится ваш ключ.`
-            },
-            {
-                question: "Как получить лимиты на генерацию?",
-                answer: `Лимиты на генерацию можно получить следующими способами:
-1. Введя промокод, купленный у поддержки(если у вас нету лимитов).
-2. Посмотрев видео-рекламу (если у вас нету лимитов).
-3. Через службу поддержки.`
-            },
-            {
-                question: 'Для чего нужен режим "Удиви меня"?',
-                answer: `Режим "Удиви меня" применяет случайное описание и параметры.`
-            },
-            {
-                question: "Где можно увидить цены на Premium?",
-                answer: `Увидить цены на Premium можно так:
-1. Откройте главное меню приложения.
-2. Нажмите "Premium" в самом низу.
-3. Нажмите "Перейти к покупке".
-4. На экране появится таблица с ценами на Premium.
-(Псс! Иногда бывают скидки! Но чур никому об этом не слово!)`
-            },
-            {
-                question: "Для чего нужен параметр 'Тип освещения'?",
-                answer: `Тип освещения — это способ организации света в кадре (фото, видео, кино, дизайне), который определяет как именно свет падает на объект, какой он по характеру и какое настроение создаёт.`
-            },
-            {
-                question: 'Для чего нужно авторизовываться в сервисе если выбран "Отправить через Telegram бота"?',
-                answer: `Авторизация требуется для того чтобы мы могли убедиться, что сгенерированные изображения получаете именно вы.\nНо почему именно по Telegram ID? Ответ прост - по нему бот отправляет сгенерированные изображения.`
-            }
-        ];
+renderFAQ(faqData);
 
-        // Функция для рендеринга FAQ
-        function renderFAQ(data) {
-            const faqList = document.getElementById('faq-list');
-            faqList.innerHTML = '';
-            data.forEach(item => {
-                const faqItem = document.createElement('details');
-                faqItem.classList.add('faq-item');
+document.getElementById('search').addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    renderFAQ(faqData.filter(item => item.question.toLowerCase().includes(query)));
+});
 
-                const summary = document.createElement('summary');
-                summary.textContent = item.question;
-                faqItem.appendChild(summary);
+// iPhone liquid tweak
+if (/iPhone/i.test(navigator.userAgent)) {
+    if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `button, .btn { border: 1px solid rgba(255,255,255,0.8) !important; }`;
+        document.head.appendChild(style);
+    }
+}
 
-                const answer = document.createElement('div');
-                answer.classList.add('answer');
-                answer.textContent = item.answer;
-                faqItem.appendChild(answer);
-
-                faqList.appendChild(faqItem);
-            });
-        }
-
-        // Изначальный рендер
-        renderFAQ(faqData);
-
-        // Поиск
-        const searchInput = document.getElementById('search');
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase();
-            const filtered = faqData.filter(item => item.question.toLowerCase().includes(query));
-            renderFAQ(filtered);
-        });
-
-        // iPhone liquid border tweak
-        if (/iPhone/i.test(navigator.userAgent)) {
-            if (localStorage.getItem('liquid') === 'Включен') {
-                const style = document.createElement('style');
-                style.textContent = `
-                    button, .btn, .btn btn--danger, .btn--neutral {
-                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-
-                // Removed Telegram BackButton usage for oftenasks.html (handled via HTML fallback)
-
-        // Убираем клавиатуру при клике вне поля ввода
-        document.addEventListener('click', (event) => {
-            if (event.target !== searchInput) {
-                searchInput.blur();
-            }
-        });
-    </script>
+// Клик вне поля убирает клавиатуру
+document.addEventListener('click', e => {
+    if(e.target.id !== 'search') document.getElementById('search').blur();
+});
+</script>
+<script type="module" src="security.js"></script>
 </body>
 </html>

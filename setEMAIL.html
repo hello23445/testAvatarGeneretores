@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Подключение почты</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;width:100%;height:100%;
+  font-family:Inter,system-ui,sans-serif;
+  background:
+    radial-gradient(700px 400px at 20% 0%, rgba(56,189,248,.25), transparent 60%),
+    radial-gradient(700px 400px at 80% 10%, rgba(168,85,247,.25), transparent 60%),
+    linear-gradient(180deg,#020617,#020617);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+}
+.card{
+  width:100%;max-width:400px;padding:22px;
+  border-radius:22px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  text-align:center;
+}
+.back-btn{
+  width:100%;background:#251897;color:#fff;
+  border-radius:14px;padding:12px;
+  font-size:14px;font-weight:500;
+  margin-bottom:16px;cursor:pointer;
+}
+h2{margin:0 0 6px;font-weight:600}
+.subtitle{font-size:14px;opacity:.7;margin-bottom:12px}
+input{
+  width:100%;padding:14px 16px;border-radius:14px;
+  border:none;outline:none;
+  background:rgba(255,255,255,.15);
+  color:#fff;font-size:15px;
+}
+.domains{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:10px;justify-content:center;
+}
+.domain{
+  padding:6px 12px;font-size:13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.15);
+  cursor:pointer;
+}
+.domain.active{background:#2563eb}
+button{
+  width:100%;margin-top:14px;padding:14px;
+  border-radius:999px;border:none;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:#fff;font-size:15px;font-weight:600;
+  cursor:pointer;
+}
+button.secondary{background:rgba(255,255,255,.15)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.message{margin-top:12px;font-size:14px}
+.error{color:#f87171}
+.success{color:#4ade80}
+.hidden{display:none}
+
+/* Modal */
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:9999}
+.modal.hidden{display:none}
+.modal-box{background:#0b1020;color:#fff;padding:22px;border-radius:12px;max-width:320px;text-align:center}
+.modal-box p{margin:0 0 12px;white-space:pre-line}
+.modal-btn{padding:10px 14px;border-radius:10px;border:none;background:#2563eb;color:#fff;cursor:pointer}
+/* Preloader */
+.preloader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:10000}
+.preloader .loader-box{background:transparent;color:#fff;padding:16px;border-radius:12px;max-width:220px;text-align:center}
+.spinner{width:48px;height:48px;border:6px solid rgba(255,255,255,.12);border-top-color:#4f46e5;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.preloader.hidden{display:none}
+
+
+</style>
+</head>
+
+<body>
+
+<!-- EMAIL -->
+<div class="card" id="emailStep">
+  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</div>
+  <h2>Подключение почты</h2>
+  <div class="subtitle">Введите имя и выберите домен</div>
+
+  <input id="emailInput" placeholder="username">
+
+  <div class="domains">
+    <div class="domain" onclick="applyDomain(this,'@gmail.com')">@gmail.com</div>
+    <div class="domain" onclick="applyDomain(this,'@mail.ru')">@mail.ru</div>
+    <div class="domain" onclick="applyDomain(this,'@yandex.ru')">@yandex.ru</div>
+    <div class="domain" onclick="applyDomain(this,'@outlook.com')">@outlook.com</div>
+  </div>
+
+  <button onclick="sendCode()">Отправить код</button>
+  <button id="googleLoginBtn" onclick="window.open('https://hello23445.github.io/newImageGenerator/settingemail.html','_blank')">Войти через Google</button>
+  <div id="emailMsg" class="message"></div>
+</div>
+
+<!-- CODE -->
+<div class="card hidden" id="codeStep">
+  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</div>
+  <h2>Введите код</h2>
+  <div class="subtitle" id="emailPreview"></div>
+  <input id="codeInput" maxlength="6" placeholder="XXXXXX">
+  <button onclick="verifyCode()">Подтвердить</button>
+  <button class="secondary" id="resendBtn" onclick="resendCode()" disabled>
+    Отправить повторно (30)
+  </button>
+  <button class="secondary" onclick="changeEmail()">Изменить почту</button>
+  <div id="codeMsg" class="message"></div>
+</div>
+
+<!-- Global modal: only three messages allowed -->
+<div id="globalModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <p id="modalText"></p>
+    <button id="modalBtn" class="modal-btn">ОК</button>
+  </div>
+</div>
+
+<!-- Recaptcha modal for email verification -->
+<div id="recaptchaModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <p style="margin-bottom: 16px;">Проверка безопасности</p>
+    <div class="g-recaptcha" data-sitekey="6LdRJnwsAAAAAOMMnSDyNirpDCLzOJmC_03zah2U" data-callback="onRecaptchaSuccess"></div>
+    <button id="recaptchaContinue" class="modal-btn" disabled onclick="recaptchaContinueEmail();" style="margin-top: 12px;">Продолжить</button>
+  </div>
+</div>
+
+<!-- Preloader shown while startapp response is pending -->
+<div id="preloader" class="preloader hidden" aria-hidden="true">
+  <div class="loader-box">
+    <div class="spinner" aria-hidden="true"></div>
+    <div>Загрузка...</div>
+  </div>
+</div>
+<script type="module" src="security.js"></script>
+<script>
+const GAS_URL =
+'https://script.google.com/macros/s/AKfycbybbxKePXHLLcIlZ7ZrCx2L18X9sCPXGeX18AGYBlPP66lsre7wAcK3QY250w_nQ2bPcg/exec';
+
+let userEmail = '';
+let localCode = '';
+let resendTimer = 30;
+let timer = null;
+let needsSecurityCheck = false;
+let emailFromStartParam = '';
+
+const emailInput = document.getElementById('emailInput');
+const emailStep = document.getElementById('emailStep');
+const codeStep  = document.getElementById('codeStep');
+const emailPreview = document.getElementById('emailPreview');
+const resendBtn = document.getElementById('resendBtn');
+const emailMsg = document.getElementById('emailMsg');
+const codeMsg = document.getElementById('codeMsg');
+const globalModal = document.getElementById('globalModal');
+const modalText = document.getElementById('modalText');
+const modalBtn = document.getElementById('modalBtn');
+const preloader = document.getElementById('preloader');
+
+function hideModal(){
+  globalModal.classList.add('hidden');
+}
+
+modalBtn.addEventListener('click', hideModal);
+
+function showRecaptchaModal(){
+  const m = document.getElementById('recaptchaModal');
+  if(m){
+    m.classList.remove('hidden');
+    m.style.display = 'flex';
+  }
+  if(window.grecaptcha && typeof grecaptcha.reset === 'function'){
+    try{
+      grecaptcha.reset();
+    }catch(e){
+      console.warn('Не удалось сбросить reCAPTCHA', e);
+    }
+  }
+}
+
+function hideRecaptchaModal(){
+  const m = document.getElementById('recaptchaModal');
+  if(m){
+    m.classList.add('hidden');
+    m.style.display = 'none';
+  }
+  const btn = document.getElementById('recaptchaContinue');
+  if(btn) btn.disabled = true;
+}
+
+function onRecaptchaSuccess(token){
+  const btn = document.getElementById('recaptchaContinue');
+  if(btn) btn.disabled = false;
+}
+
+function recaptchaContinueEmail(){
+  hideRecaptchaModal();
+  // Отправляем код на почту после капчи
+  startEmailVerification();
+}
+
+function showModal(type){
+  // Only three modal types allowed
+  if (!globalModal) return;
+  let text = '';
+  if (type === 'codesMismatch') text = 'Коды не совпадают';
+  else if (type === 'emailsMismatch') text = 'Почты не совпадают';
+  else if (type === 'success') text = 'Почта привязана успешно!\nСкоро вы будете перенаправлены.';
+  else if (type === 'googleError') text = 'Ошибка входа через Google';
+  modalText.textContent = text;
+  globalModal.classList.remove('hidden');
+  if (type === 'success'){
+    setTimeout(()=>{
+      hideModal();
+      goHome();
+    }, 6000);
+  }
+}
+
+function showPreloader(){
+  if (!preloader) return;
+  preloader.classList.remove('hidden');
+}
+
+function hidePreloader(){
+  if (!preloader) return;
+  preloader.classList.add('hidden');
+}
+
+/* ───── STARTAPP (КЛЮЧЕВОЕ!) ───── */
+(async function handleStartApp(){
+  const sp = Telegram?.WebApp?.initDataUnsafe?.start_param;
+  showPreloader();
+  if (!sp){
+    hidePreloader();
+    return;
+  }
+
+  // Проверяем наличие _emailVerification в start_param
+  const hasEmailVerification = sp.includes('_emailVerification');
+  
+  if (!hasEmailVerification) {
+    // Обычный способ проверки почты через GAS
+    try{
+      const res = await fetch(
+        GAS_URL + '?startapp=' + encodeURIComponent(sp)
+      );
+      const json = await res.json();
+  
+      if (json.ok){
+        localStorage.setItem('email', json.email);
+        showModal('success');
+      } else {
+        showModal('emailsMismatch');
+      }
+    }catch{
+      showModal('emailsMismatch');
+    }finally{
+      hidePreloader();
+    }
+  }
+  else{
+    // Режим _emailVerification: проверяем security
+    const security = parseInt(localStorage.getItem('security') || '0', 10);
+    
+    // Извлекаем email из start_param
+    const input = sp;
+    const encoded = input.split("_")[0];
+    
+    function decodeBase64Url(str){
+      str = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (str.length % 4) str += '=';
+      return atob(str);
+    }
+    
+    try {
+      emailFromStartParam = decodeBase64Url(encoded);
+    } catch {
+      emailFromStartParam = '';
+    }
+    
+    hidePreloader();
+    
+    if (security >= 2) {
+      // Нужна капча и отправка кода
+      needsSecurityCheck = true;
+      showRecaptchaModal();
+    } else {
+      // Прямо привязываем без капчи и кода
+      if (emailFromStartParam) {
+        localStorage.setItem('email', emailFromStartParam);
+        showModal('success');
+      } else {
+        showModal('emailsMismatch');
+      }
+    }
+  }
+})();
+
+/* ───── ДОМЕН В INPUT ───── */
+function applyDomain(el, domain){
+  document.querySelectorAll('.domain').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+
+  let value = emailInput.value.trim();
+  if (value.includes('@')) value = value.split('@')[0];
+  emailInput.value = value + domain;
+}
+
+/* ───── ОТПРАВКА КОДА НА ПОЧТУ (ПОСЛЕ КАПЧИ) ───── */
+function startEmailVerification(){
+  userEmail = emailFromStartParam;
+  if (!userEmail) {
+    showModal('emailsMismatch');
+    return;
+  }
+  
+  localCode = Math.floor(100000 + Math.random()*900000).toString();
+
+  fetch(GAS_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ email:userEmail, code:localCode })
+  });
+
+  emailStep.classList.add('hidden');
+  codeStep.classList.remove('hidden');
+  emailPreview.textContent = userEmail;
+  emailMsg.textContent = '';
+  startTimer();
+}
+
+/* ───── ОТПРАВКА КОДА ───── */
+function sendCode(){
+  const email = emailInput.value.trim().toLowerCase();
+  if (!email.includes('@')){
+    emailMsg.textContent = 'Введите корректный email';
+    emailMsg.className = 'message error';
+    return;
+  }
+
+  userEmail = email;
+  localCode = Math.floor(100000 + Math.random()*900000).toString();
+
+  fetch(GAS_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ email:userEmail, code:localCode })
+  });
+
+  emailStep.classList.add('hidden');
+  codeStep.classList.remove('hidden');
+  emailPreview.textContent = userEmail;
+  emailMsg.textContent = '';
+  startTimer();
+}
+
+/* ───── ТАЙМЕР ───── */
+function startTimer(){
+  resendTimer = 30;
+  resendBtn.disabled = true;
+  resendBtn.textContent = `Отправить повторно (${resendTimer})`;
+
+  timer = setInterval(()=>{
+    resendTimer--;
+    resendBtn.textContent = `Отправить повторно (${resendTimer})`;
+    if (resendTimer <= 0){
+      clearInterval(timer);
+      resendBtn.disabled = false;
+      resendBtn.textContent = 'Отправить повторно';
+    }
+  },1000);
+}
+
+function resendCode(){
+  localCode = Math.floor(100000 + Math.random()*900000).toString();
+  fetch(GAS_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ email:userEmail, code:localCode })
+  });
+  startTimer();
+}
+
+/* ───── UX-ПРОВЕРКА КОДА ───── */
+function verifyCode(){
+  if (codeInput.value.trim() === localCode){
+    // Сохраняем email в localStorage после успешной проверки кода
+    const emailToStore = (needsSecurityCheck && emailFromStartParam) ? emailFromStartParam : userEmail;
+    if (emailToStore) {
+      localStorage.setItem('email', emailToStore);
+    }
+    showModal('success');
+  } else {
+    codeMsg.textContent = 'Неверный код';
+    codeMsg.className = 'message error';
+  }
+}
+
+function changeEmail(){
+  clearInterval(timer);
+  codeStep.classList.add('hidden');
+  emailStep.classList.remove('hidden');
+  codeInput.value = '';
+  codeMsg.textContent = '';
+}
+
+function goHome(){
+  window.location.href = 'index.html';
+}
+
+
+
+</script>
+</body>
+</html>

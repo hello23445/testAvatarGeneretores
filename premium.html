@@ -1,665 +1,1078 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Купить Premium</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            touch-action: manipulation;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>Купить Premium</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      --bg-0: #050816;
+      --bg-1: #0a1022;
+      --bg-2: rgba(255, 255, 255, 0.08);
+      --bg-3: rgba(255, 255, 255, 0.12);
+      --border: rgba(255, 255, 255, 0.14);
+      --text: #eef2ff;
+      --muted: rgba(238, 242, 255, 0.72);
+      --accent: #67e8f9;
+      --accent-2: #60a5fa;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --gold: #ffd76a;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
 
-        }
-        .prices {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            width: 100%;
-            text-align: left;
-            color: white;
-            font-size: 1em;
-            white-space: pre-line;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .payment-info {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #4CAF50;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-        input:focus {
-            border-color: #45a049;
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-        }
-        button {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            color: white;
-            font-size: 1em;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        th {
-            background: linear-gradient(135deg, #5563DE, #74ABE2);
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        tbody tr {
-            transition: background-color 0.3s ease;
-        }
-        tbody tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-        .discount {
-            color: #ffd700;
-            font-weight: bold;
-        }
-        s {
-            color: #d9d9d9;
-            text-decoration: line-through #e63946 2px;
-        }
-        h4{
-            color: white;
-        }
-        s {
-            color: #ccc;
-            text-decoration: line-through;
-        }
-        button{
-            background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(34,211,238,0.65));
-        }
-    </style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 0%, rgba(96, 165, 250, 0.28), transparent 58%),
+        radial-gradient(900px 600px at 90% 10%, rgba(103, 232, 249, 0.22), transparent 55%),
+        radial-gradient(700px 500px at 50% 100%, rgba(168, 85, 247, 0.16), transparent 50%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-0));
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 55%, transparent 100%);
+      opacity: 0.35;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .shell {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.16), rgba(96, 165, 250, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .title-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(103, 232, 249, 0.22);
+      background: rgba(103, 232, 249, 0.08);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, h4, p, li { position: relative; z-index: 1; }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .status-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .chip.gold {
+      border-color: rgba(255, 215, 106, 0.28);
+      background: rgba(255, 215, 106, 0.10);
+      color: #ffe8a0;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 22px;
+    }
+
+    .section + .section {
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .section-head > div {
+      width: 100%;
+      max-width: 780px;
+    }
+
+    .section-head .chip {
+      margin: 0 auto;
+      justify-content: center;
+    }
+
+    .section-head h2 {
+      font-size: 22px;
+      letter-spacing: 0.03em;
+      margin: 0 auto;
+      text-transform: uppercase;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .benefit {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      transition: transform .22s ease, border-color .22s ease, background .22s ease;
+    }
+
+    .benefit:hover {
+      transform: translateY(-2px);
+      border-color: rgba(103, 232, 249, 0.25);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .benefit-index {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #04111a;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 30px rgba(96, 165, 250, 0.28);
+    }
+
+    .benefit-text {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .purchase-area {
+      display: grid;
+      gap: 16px;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 215, 106, 0.22);
+      background: linear-gradient(180deg, rgba(255, 215, 106, 0.10), rgba(255, 255, 255, 0.05));
+      color: #fff3c4;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .promo-banner {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(103, 232, 249, 0.20);
+      background:
+        radial-gradient(600px 120px at 50% 0%, rgba(103,232,249,0.14), transparent 70%),
+        rgba(255,255,255,0.05);
+    }
+
+    .promo-banner h3 {
+      font-size: 40px;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .plan {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      width: 100%;
+      font: inherit;
+    }
+
+    .plan:hover {
+      transform: translateY(-3px);
+      border-color: rgba(103, 232, 249, 0.28);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.22);
+    }
+
+    .plan-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .plan-name {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .plan-duration {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .plan-price {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+    }
+
+    .plan-old {
+      color: rgba(255,255,255,0.68);
+      text-decoration: line-through;
+      text-decoration-color: #ff6b6b;
+      text-decoration-thickness: 2px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .plan-badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bdf7ca;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255,255,255,0.72);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.55), transparent);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+      display: block;
+      text-align: center;
+      margin-bottom: 1%;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      outline: none;
+      background: rgba(6, 10, 24, 0.56);
+      color: var(--text);
+      font-size: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .input::placeholder { color: rgba(238,242,255,0.40); }
+    .input:focus {
+      border-color: rgba(103, 232, 249, 0.55);
+      box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.10);
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .button {
+      appearance: none;
+      border: 0;
+      outline: 0;
+      width: 100%;
+      min-height: 50px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      transition: transform .2s ease, opacity .2s ease, box-shadow .2s ease, filter .2s ease;
+      background: linear-gradient(135deg, rgba(59,130,246,0.98), rgba(34,211,238,0.92));
+      box-shadow: 0 16px 32px rgba(34, 211, 238, 0.16);
+    }
+
+    .button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .button:active { transform: translateY(0); opacity: 0.95; }
+
+    .button.secondary {
+      background: linear-gradient(135deg, rgba(139,0,0,0.98), rgba(255,0,0,0.92));
+      box-shadow: 0 16px 32px rgba(255, 0, 0, 0.12);
+    }
+
+    .button.ghost {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: none;
+    }
+
+    .support {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .support a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .support a:hover {
+      text-decoration: underline;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .divider-space { height: 2px; }
+
+    .empty-state {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.05);
+      border: 1px dashed rgba(255,255,255,0.14);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    /* Modals */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      padding: 18px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      width: min(440px, 100%);
+      padding: 20px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        radial-gradient(1200px 400px at 15% 0%, rgba(59,130,246,0.22), transparent 50%),
+        radial-gradient(900px 320px at 85% 10%, rgba(34,211,238,0.16), transparent 48%),
+        linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.98));
+      box-shadow: 0 24px 100px rgba(0,0,0,0.48);
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-content p {
+      color: var(--text);
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal .input {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .button.danger { background: linear-gradient(135deg, #ef4444, #f97316); }
+
+    .desktop-only-br { display: none; }
+
+    @media (max-width: 880px) {
+      .benefits, .plans-grid { grid-template-columns: 1fr; }
+      .hero-top { align-items: start; }
+      .status-row { justify-content: flex-start; }
+    }
+
+    @media (max-width: 520px) {
+      .page { padding: 12px; }
+      .hero, .section { padding: 16px; }
+      h1 { font-size: 28px; }
+      .subtitle { font-size: 14px; }
+      .plan-price { font-size: 20px; }
+      .modal-actions { grid-template-columns: 1fr; }
+      .desktop-only-br { display: inline; }
+    }
+  </style>
 </head>
 <body>
-    <div id="div1" style="display: block;">
-        <h1 style="color: white; text-align: center;" id="voz">Возможности Premium-версии</h1>
-        <ul style="color: white; font-size: 1.15em; margin-top: 5%; padding-left: 0;">
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">1.</span>
-            Доступ к высоким разрешениям фото(2560x1440, 3840x2160, 4096x2160, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">2.</span>
-            Больше стилей (стимпанк, абстрактный, готический, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">3.</span>
-            Уровень детализации (высокий, ультра).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">4.</span>
-            Тон цвета (пастельный, сепия, неоновый, и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">5.</span>
-            Возможность писать в закрытых полях.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">6.</span>
-            Доступ к высоким качествам (2160p60(4K), 4320p(8K)).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">7.</span>
-            Описание фото увеличивается с 500 до 1000 символов.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">8.</span>
-            Текст на фото увеличивается с 250 до 500 символов.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">9.</span>
-            Возможность выбирать ИИ (Grok 4, ChatGPT 5 и другие).
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">10.</span>
-            Возможность выбирать другие фоны фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">11.</span>
-            Возможность выбирать другие соотношения сторон.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">12.</span>
-            Возможность получить фото по WhatsApp и Telegram.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">13.</span>
-            Возможность выбирать другие рамки для фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">14.</span>
-            Возможность выбирать другие ракурсы для фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">15.</span>
-            Возможность загружать до 6-ти фотографий.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">16.</span>
-            Возможность получить сгенерированное фото прямо в приложении.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">17.</span>
-            Доступ к быстрой генерации фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">18.</span>
-            Сохранение до 20 историй генераций.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">19.</span>
-            Возможность выбирать другие освещения для фото.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">20.</span>
-            До 50 лимитов генераций фото по API в день.
-            </li>
-            <li style="list-style-type: none; position: relative; margin-bottom: 12px;">
-            <span style="color: lightblue; font-weight: bold; margin-right: 8px;">21.</span>
-            Бесконечное количество генераций в день.
-            </li>
+  <div class="page">
+    <main class="shell">
+
+      <section class="card section">
+        <div class="section-head">
+          <div>
+            <h2>Что входит в Premium</h2>
+            <p>Ниже представлен полный список всех возможностей, включенных в Premium-версию.</p>
+          </div>
+        </div>
+
+        <ul class="benefits" id="benefitsList">
+          <li class="benefit"><div class="benefit-index">1</div><div class="benefit-text">Доступ к высоким разрешениям фото (2560×1440, 3840×2160, 4096×2160 <strong>и другие</strong>).</div></li>
+          <li class="benefit"><div class="benefit-index">2</div><div class="benefit-text">Больше стилей: стимпанк, абстрактный, готический <strong>и другие</strong>.</div></li>
+          <li class="benefit"><div class="benefit-index">3</div><div class="benefit-text">Уровень детализации: высокий и ультра.</div></li>
+          <li class="benefit"><div class="benefit-index">4</div><div class="benefit-text">Тон цвета: пастельный, сепия, неоновый <strong>и другие</strong>.</div></li>
+          <li class="benefit"><div class="benefit-index">5</div><div class="benefit-text">Возможность писать в закрытых полях.</div></li>
+          <li class="benefit"><div class="benefit-index">6</div><div class="benefit-text">Доступ к качеству 2160p60 (4K) и 4320p (8K).</div></li>
+          <li class="benefit"><div class="benefit-index">7</div><div class="benefit-text">Описание фото увеличивается с 500 до 1000 символов.</div></li>
+          <li class="benefit"><div class="benefit-index">8</div><div class="benefit-text">Текст на фото увеличивается с 250 до 500 символов.</div></li>
+          <li class="benefit"><div class="benefit-index">9</div><div class="benefit-text">Возможность выбирать ИИ: Grok 4, ChatGPT 5 <strong>и другие</strong>.</div></li>
+          <li class="benefit"><div class="benefit-index">10</div><div class="benefit-text">Возможность выбирать другие фоны фото.</div></li>
+          <li class="benefit"><div class="benefit-index">11</div><div class="benefit-text">Возможность выбирать другие соотношения сторон.</div></li>
+          <li class="benefit"><div class="benefit-index">12</div><div class="benefit-text">Получение фото по WhatsApp и Telegram.</div></li>
+          <li class="benefit"><div class="benefit-index">13</div><div class="benefit-text">Возможность выбирать другие рамки для фото.</div></li>
+          <li class="benefit"><div class="benefit-index">14</div><div class="benefit-text">Возможность выбирать другие ракурсы для фото.</div></li>
+          <li class="benefit"><div class="benefit-index">15</div><div class="benefit-text">Загрузка до 6 фотографий для примера.</div></li>
+          <li class="benefit"><div class="benefit-index">16</div><div class="benefit-text">Получение сгенерированного фото прямо в приложении.</div></li>
+          <li class="benefit"><div class="benefit-index">17</div><div class="benefit-text">Быстрая генерация фото.</div></li>
+          <li class="benefit"><div class="benefit-index">18</div><div class="benefit-text">Сохранение до 20 историй генераций.</div></li>
+          <li class="benefit"><div class="benefit-index">19</div><div class="benefit-text">Другие освещения для фото.</div></li>
+          <li class="benefit"><div class="benefit-index">20</div><div class="benefit-text">До 50 лимитов генераций фото по API в день.</div></li>
+          <li class="benefit"><div class="benefit-index">21</div><div class="benefit-text">Бесконечное количество генераций в день.</div></li>
         </ul>
-        <button onclick="removePremium()" id="removePremiumButton">Убрать премиум</button>
-        <h4>ℹ️Список со временем будет пополняться</h4>
-        <h4>ℹ️Если у вас уже есть премиум, все новые возможности для премиум, появляющиеся в будущих обновлениях, будут добавляться к вам автоматически.</h4>
-        <h2 id="promoCom" style="text-align: center; color: yellow; margin-top: 2%; margin-bottom: 5%;"></h2>
-        
-        <!-- Меню покупки премиума (показываем если нет премиума) -->
-        <div id="purchaseMenu" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
-            <h2 style="color: white; text-align: center;">Доступные тарифы</h2>
-            <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды(Telegram Stars)🌟</p>
-            <h1 style="color: white; text-align: center; margin-top: 3%; margin-bottom: 1%;">СКИДКИ!</h1>
-            <div id="purchaseButtonsContainer"></div>
-            
-            <style>
-                .or-divider {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    margin: 24px 0;
-                    color: #fff;
-                    font-weight: 700;
-                    letter-spacing: 1px;
-                }
-                .or-divider::before, .or-divider::after {
-                    content: "";
-                    flex: 1;
-                    height: 1px;
-                    background: linear-gradient(
-                        to right,
-                        transparent,
-                        rgba(255,255,255,0.6),
-                        transparent
-                    );
-                }
-                .or-divider span {
-                    padding: 4px 10px;
-                    border-radius: 20px;
-                    background: rgba(255,255,255,0.08);
-                    backdrop-filter: blur(4px);
-                }
-            </style>
-            <div style="text-align: center; margin: 20px 0;" class="or-divider">
-                <span style="color: white; font-size: 18px; font-weight: bold;">ИЛИ</span>
+
+        <div class="divider-space"></div>
+        <button onclick="removePremium()" id="removePremiumButton" class="button secondary" style="display:none;">
+          Убрать премиум
+        </button>
+
+        <div style="margin-top: 14px; display:grid; gap: 10px;">
+          <h4 style="color: #fff; font-size: 14px; font-weight: 700; line-height: 1.6;">ℹ️ Список со временем будет пополняться.</h4>
+          <h4 style="color: #fff; font-size: 14px; font-weight: 700; line-height: 1.6;">ℹ️ Если у вас уже есть премиум, все новые возможности будут добавляться автоматически.</h4>
+        </div>
+
+        <h2 id="promoCom" style="text-align:center; color: #facc15; margin-top: 18px; font-size: 18px;"></h2>
+      </section>
+
+      <section id="purchaseMenu" class="card section" style="display:none;">
+        <div class="section-head">
+          <div>
+            <h2>Доступные тарифы</h2>
+            <p>Оплата принимается только через Telegram Stars.</p>
+          </div>
+          <div class="chip gold">🌟 Принимаются только Телеграм звезды (Telegram Stars) 🌟</div>
+        </div>
+
+
+        <div class="promo-banner" style="margin: 2px 0 4px; border:2px solid #ffd700; box-shadow:0 0 25px rgba(255,215,0,0.35); position:relative;">
+          <h3>СКИДКИ!</h3>
+        </div>
+
+        <div id="purchaseButtonsContainer" class="plans-grid"></div>
+
+        <div class="or-divider" style="margin: 8px 0;">
+          <span>ИЛИ</span>
+        </div>
+
+        <div class="stack">
+          <div class="form-grid">
+            <div>
+              <label for="promoCodeInput">Введите промокод на Premium</label>
+              <input type="text" id="promoCodeInput" class="input" placeholder="Введите полученный промокод здесь" autocomplete="off" />
             </div>
-            
-            <h2 style="color: white; text-align: center; margin-top: 10px;">Введите промокод на Premium:</h2>
-            <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
-            <h5 style="color: white; margin-top: 2px; text-align: center;">За покупкой промокода на премиум или если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
-            <button onclick="CheckPromoCodeToPremium()" style="margin-top: 1%; width: 100%;">Отправить</button>
-            
+            <div class="support">
+              За покупкой промокода на премиум или если возникнут проблемы или вопросы, обращайтесь в службу поддержки:
+              <a href="https://t.me/Clickerstart_bot" target="_blank" rel="noopener">@Clickerstart_bot</a>
+            </div>
+            <button onclick="CheckPromoCodeToPremium()" class="button">Отправить</button>
+          </div>
         </div>
-        
-        <button onclick="goToMainMenu()" style="margin-top: 0.5%; width: 100%; background: linear-gradient(135deg, #8b0000, #ff0000);">Главное меню</button>
-    </div>
-    <div id="div2" style="display: none;">
-        <div id="purchaseButtonsContainer2"></div>
-        
-        <p style="color: #ffd700; font-weight: bold; text-align: center; margin: 15px 0;">Принимаются только Телеграм звезды или подарки(Telegram Stars)🌟</p>
-        <style>
-            span{
-                user-select: none;
-            }
-        </style>
-        <div style="text-align: center; margin: 20px 0;">
-            <span style="color: white; font-size: 18px; font-weight: bold;">ИЛИ</span>
+      </section>
+
+      <section id="div2" class="card section" style="display:none;">
+        <div class="section-head">
+          <div>
+            <h2>Покупка тарифа</h2>
+            <p>Выберите подходящий план или активируйте Premium по промокоду.</p>
+          </div>
         </div>
-        
-        <h2 style="color: white; text-align: center; margin-top: 10px;">Введите промокод на Premium:</h2>
-        <input type="text" id="promoCodeInput2" placeholder="Введите полученный промокод здесь." style="width: 100%; padding: 10px; border-radius: 5px; border: 2px solid #ccc; font-size: 16px; margin-top: 2%; margin-bottom: 2%;">
-        <button onclick="CheckPromoCodeToPremium()" style="margin-top: 2%; width: 100%;">Отправить</button>
-        
-        <h5 style="color: white; margin-top: 20px;">Если возникнут проблемы, обращайтесь в службу поддержки: <a href='https://t.me/Clickerstart_bot' style="color: #4CAF50;">@Clickerstart_bot</a></h5>
-        
-        <button onclick="GoBackToPremiumScreen()" style="margin-top: 2%; background: linear-gradient(135deg, #8b0000, #ff0000); width: 100%;">Назад</button>
-    </div>
-    </div>
-    <!-- Модалки -->
-    <div id="confirmModal" class="modal" style="display: none;">
-        <div class="modal-content" style="      background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617); color: white;">
-            <p id="confirmMessage" style="margin-bottom: 3%;"></p>
-            <button id="confirmYes">Да</button>
-            <button onclick="closeConfirmModal()" style="background-color: red;">Нет</button>
+
+        <div class="notice" style="margin-bottom: 14px;">
+          Принимаются только Телеграм звезды или подарки (Telegram Stars) 🌟
         </div>
-    </div>
-    <div id="promptModal" class="modal" style="display: none;">
-        <div class="modal-content" style="      background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);">
-            <p id="promptMessage" style="color: white;"></p>
-            <input type="text" id="promptInput">
-            <button id="promptSubmit">Отправить</button>
-            <button onclick="closePromptModal()" style="background-color: red;">Отмена</button>
+
+        <div id="purchaseButtonsContainer2" class="plans-grid"></div>
+
+        <div class="or-divider" style="margin: 16px 0;">
+          <span>ИЛИ</span>
         </div>
-    </div>
-    <div id="alertModal" class="modal" style="display: none;">
-        <div class="modal-content" style="      background:
-  radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,0.35), transparent 60%),
-  radial-gradient(900px 500px at 80% 10%, rgba(34,211,238,0.28), transparent 60%),
-  linear-gradient(180deg, #0f172a, #020617);">
-            <p id="alertMessage" style="color: white;"></p>
-            <button onclick="closeAlertModal()" id="alertCloseBtn" style="background-color: red;">Закрыть</button>
+
+        <div class="stack">
+          <div class="form-grid">
+            <div>
+              <label for="promoCodeInput2">Введите промокод на Premium</label>
+              <input type="text" id="promoCodeInput2" class="input" placeholder="Введите полученный промокод здесь" autocomplete="off" />
+            </div>
+            <button onclick="CheckPromoCodeToPremium()" class="button">Отправить</button>
+            <div class="support">
+              Если возникнут проблемы, обращайтесь в службу поддержки:
+              <a href="https://t.me/Clickerstart_bot" target="_blank" rel="noopener">@Clickerstart_bot</a>
+            </div>
+            <button onclick="GoBackToPremiumScreen()" class="button secondary">Назад</button>
+          </div>
         </div>
+      </section>
+
+      <section class="actions">
+        <button onclick="goToMainMenu()" class="button secondary">
+          Главное меню
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <!-- Confirm modal -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <p id="confirmMessage"></p>
+      <div class="modal-actions">
+        <button id="confirmYes" class="button">Да</button>
+        <button onclick="closeConfirmModal()" class="button danger">Нет</button>
+      </div>
     </div>
-    <script>
-        const premium_list = [
-            { name: 'Premium', duration: '1 месяц', price: 15, strikethrough_text: 'за 25🌟', after_strikethrough_text: '' },
-            { name: 'Premium на 3 месяца', duration: '3 месяца', price: 36, strikethrough_text: 'за 50🌟', after_strikethrough_text: '' },
-            { name: 'Premium на 6 месяцев', duration: '6 месяцев', price: 60, strikethrough_text: 'за 100🌟', after_strikethrough_text: '' },
-            { name: 'Premium на 1 год', duration: '1 год', price: 96, strikethrough_text: 'за 150🌟', after_strikethrough_text: '' },
-            { name: 'Premium навсегда', duration: 'none', price: 600, strikethrough_text: 'за 1000🌟', after_strikethrough_text: '' }
-        ];
-        const PAYMENT_BOT_TOKEN = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk'; // Токен для платежей (может быть другим)
-        const CHANNEL_USERNAME = '@NickNaymes2Bot';
+  </div>
 
-        // ===== PREMIUM PAYMENT FUNCTION =====
-        function sendPremiumInvoice(planIndex) {
-            const WebApp = window.Telegram?.WebApp;
-            if (!WebApp) {
-                showAlert('Эта функция доступна только в Telegram');
-                return;
-            }
+  <!-- Prompt modal -->
+  <div id="promptModal" class="modal">
+    <div class="modal-content">
+      <p id="promptMessage"></p>
+      <input type="text" id="promptInput" class="input" autocomplete="off" />
+      <div class="modal-actions">
+        <button id="promptSubmit" class="button">Отправить</button>
+        <button onclick="closePromptModal()" class="button danger">Отмена</button>
+      </div>
+    </div>
+  </div>
 
-            const plan = premium_list[planIndex];
-            if (!plan) return;
+  <!-- Alert modal -->
+  <div id="alertModal" class="modal">
+    <div class="modal-content">
+      <p id="alertMessage"></p>
+      <button onclick="closeAlertModal()" id="alertCloseBtn" class="button danger">Закрыть</button>
+    </div>
+  </div>
 
-            const payload = `${localStorage.getItem('user_Token') || ''}:premium:${planIndex}`;
-            const title = plan.name;
-            const description = `Покупка ${plan.name} за ${plan.price} Telegram Stars`;
+  <script>
+    const premium_list = [
+      { name: 'Premium', duration: '1 месяц', price: 15, strikethrough_text: 'за 25🌟', after_strikethrough_text: '' },
+      { name: 'Premium на 3 месяца', duration: '3 месяца', price: 36, strikethrough_text: 'за 50🌟', after_strikethrough_text: '' },
+      { name: 'Premium на 6 месяцев', duration: '6 месяцев', price: 60, strikethrough_text: 'за 100🌟', after_strikethrough_text: '' },
+      { name: 'Premium на 1 год', duration: '1 год', price: 96, strikethrough_text: 'за 150🌟', after_strikethrough_text: '' },
+      { name: 'Premium навсегда', duration: 'none', price: 600, strikethrough_text: 'за 1000🌟', after_strikethrough_text: '' }
+    ];
 
-            (async () => {
-                try {
-                    const res = await fetch(`https://api.telegram.org/bot${PAYMENT_BOT_TOKEN}/createInvoiceLink`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            title,
-                            description,
-                            payload,
-                            currency: 'XTR',
-                            prices: [{ label: 'Premium', amount: plan.price }]
-                        })
-                    });
-                    const data = await res.json();
-                    if (!data.ok) throw new Error(data.description || 'Не удалось создать счёт');
-                    const link = data.result;
-                    const tg = window.Telegram.WebApp;
-                    tg.openInvoice(link, async (status) => {
-                        if (status.status === 'paid') {
-                            // Выдаём премиум локально
-                            localStorage.setItem('premium', 'true');
-                            localStorage.setItem('premiumFromPromo', 'false');
-                            localStorage.setItem('premiumActivationDate', new Date().toISOString());
-                            localStorage.setItem('premiumDuration', plan.duration);
-                            
-                            // Рассчитать дату окончания
-                            const expiry = calculateExpiry(plan.duration);
-                            localStorage.setItem('premiumExpiry', expiry);
+    const PAYMENT_BOT_TOKEN = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk';
+    const CHANNEL_USERNAME = '@NickNaymes2Bot';
 
-                            showAlert(`Платёж успешен! Вам выдан премиум на ${expiry === 'none' ? 'навсегда' : plan.duration}.`);
-                            setTimeout(() => location.reload(), 1200);
-                        }
-                    });
-                } catch (e) {
-                    showAlert(`Не удалось создать счёт: ${e.message}`);
-                }
-            })();
-        }
+    const promoCodes = [
+      { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
+      { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяца' },
+      { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяцев' },
+      { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
+      { promo: 'ULTRACOVER2026', date_for_use: 'none', date: 'none' },
+    ];
 
-        const promoCodes = [
-            { promo: 'GETONEFIRSTNOW', date_for_use: 'none', date: '1 месяц' },
-            { promo: 'REDRIVER2025', date_for_use: 'none', date: '3 месяца' },
-            { promo: 'ADVICEONEMONTHS', date_for_use: 'none', date: '6 месяцев' },
-            { promo: 'UNAVAILABLEPROM0', date_for_use: 'none', date: '1 год' },
-            { promo: 'ULTRACOVER2025', date_for_use: 'none', date: 'none' },
-        ];
-        let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
-        let removeStep = 0;
-        let removeAnswers = ['', '', ''];
-        let clickCount = 0;
-        let clickTimer;
-            if (/iPhone/i.test(navigator.userAgent)) {
-                if (localStorage.getItem('liquid') === 'Включен') {
-                    const style = document.createElement('style');
-                    style.textContent = `
-                    button, .btn, .btn btn--danger, .btn--neutral {
-                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-                    }
-                    `;
-                    document.head.appendChild(style);
-                }
-            }
-        // 1. Активация режима админа по 50 кликам в пустое место
-        document.body.addEventListener('click', function(e) {
-            if (e.target === document.body || e.target.tagName === 'BODY') {
-                clickCount++;
-                clearTimeout(clickTimer);
-                clickTimer = setTimeout(() => {
-                    clickCount = 0;
-                }, 5000);
-                if (clickCount >= 50) {
-                    const current = localStorage.getItem('admin') === 'true';
-                    localStorage.setItem('admin', (!current).toString());
-                    showAlert(current ? 'Режим администратора отключён' : 'Режим администратора активирован!');
-                    location.reload();
-                }
-            }
-        });
-        function showAlert(message, hideClose = false) {
-            document.getElementById('alertMessage').textContent = message;
-            document.getElementById('alertModal').style.display = 'flex';
-            document.getElementById('alertCloseBtn').style.display = hideClose ? 'none' : 'block';
-        }
-        function closeAlertModal() {
-            document.getElementById('alertModal').style.display = 'none';
-        }
-        function goToMainMenu() {
-            window.location.href = 'index.html';
-        }
-        function Goto() {
-            document.getElementById('div1').style.display = 'none';
-            document.getElementById('div2').style.display = 'block';
-            document.getElementById('goto').style.display = 'none';
-            document.getElementById('promoCom').innerHTML = '';
-            // Removed Telegram BackButton usage here (handled via HTML fallback)
-        }
-        function GoBackToPremiumScreen() {
-            document.getElementById('div2').style.display = 'none';
-            document.getElementById('div1').style.display = 'block';
-            document.getElementById('goto').style.display = 'block';
-            document.getElementById('promoCom').innerHTML = '';
-            if (localStorage.getItem('premium') === 'true') {
-                document.getElementById('removePremiumButton').style.display = 'block';
-            } else {
-                document.getElementById('removePremiumButton').style.display = 'none';
-            }
-            // Обновляем заголовок
-            document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
-                ? 'Вы в режиме администратора!'
-                : 'Возможности Premium-версии';
-            if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
-                document.getElementById('promoCom').innerHTML = "Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!";
-                localStorage.setItem('premiumCongratsShown', 'true');
-            }
-            // Removed Telegram BackButton restoration here (handled via HTML fallback)
-        }
-        function calculateExpiry(duration) {
-            if (duration === 'none') return 'none';
-            const activation = new Date();
-            const parts = duration.split(' ');
-            const num = parseInt(parts[0]);
-            const unit = parts[1];
-            let expiryDate;
-            if (unit.includes('месяц')) {
-                expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
-            } else if (unit === 'год') {
-                expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
-            } else {
-                return 'none';
-            }
-            const day = expiryDate.getDate().toString().padStart(2, '0');
-            const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
-            const year = expiryDate.getFullYear();
-            return `${day}.${month}.${year}`;
-        }
-        function CheckPromoCodeToPremium() {
-            if (localStorage.getItem('premium') === 'true') {
-                showAlert('Вы уже купили премиум!');
-                return;
-            }
-            const inputPromo = document.getElementById('promoCodeInput2').value.trim();
-            if (!inputPromo) {
-                showAlert('Промокод не может быть пустым!');
-                return;
-            }
-            const promo = promoCodes.find(p => p.promo === inputPromo);
-            const isAdmin = localStorage.getItem('admin') === 'true';
-            if (!promo) {
-                showAlert('Неверный промокод');
-                return;
-            }
-            if (promo.date_for_use !== 'none') {
-                const [day, month, year] = promo.date_for_use.split('.');
-                const expiryDate = new Date(year, month - 1, day);
-                if (new Date() > expiryDate) {
-                    showAlert('Время действия данного промокода истёк');
-                    return;
-                }
-            }
-            if (!isAdmin && writtenPromos.includes(inputPromo)) {
-                showAlert('Вы уже использовали этот промокод');
-                return;
-            }
-            localStorage.setItem('premium', 'true');
-            localStorage.setItem('premiumFromPromo', 'true');
-            localStorage.setItem('premiumActivationDate', new Date().toISOString());
-            localStorage.setItem('premiumDuration', promo.date);
-            const expiry = calculateExpiry(promo.date);
-            localStorage.setItem('premiumExpiry', expiry);
-            if (!isAdmin) {
-                writtenPromos.push(inputPromo);
-                localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
-            }
-            document.getElementById('promoCodeInput2').style.background = '#d4edda';
-            document.getElementById('promoCodeInput2').style.borderColor = 'green';
-            let seconds = 4;
-            showAlert(`Промокод принят!\nВы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!\n\nВы будете перенаправлены через ${seconds} секунд...`, true);
-            const countdown = setInterval(() => {
-                seconds--;
-                document.getElementById('alertMessage').innerHTML = `Промокод принят!<br>Вы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!<br><br>Вы будете перенаправлены через ${seconds} секунд...`;
-                if (seconds <= 0) {
-                    clearInterval(countdown);
-                    window.location.href = 'index.html';
-                }
-            }, 1000);
-        }
-        // ───── ФУНКЦИИ ДЛЯ УДАЛЕНИЯ ПРЕМИУМА (перемещены вверх, чтобы избежать ошибок) ─────
-        function showConfirm(message, callbackYes) {
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmModal').style.display = 'flex';
-            const yesButton = document.getElementById('confirmYes');
-            yesButton.onclick = function() {
-                closeConfirmModal();
-                callbackYes(true);
-            };
-        }
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').style.display = 'none';
-        }
-        function showPrompt(message, callback) {
-            document.getElementById('promptMessage').textContent = message;
-            document.getElementById('promptModal').style.display = 'flex';
-            const submitButton = document.getElementById('promptSubmit');
-            submitButton.onclick = function() {
-                const input = document.getElementById('promptInput').value.trim();
-                closePromptModal();
-                callback(input);
-            };
-        }
-        function closePromptModal() {
-            document.getElementById('promptModal').style.display = 'none';
-            document.getElementById('promptInput').value = '';
-        }
-        function removePremium() {
-            removeStep = 0;
-            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
-        }
-        function removePremiumStep1(confirmed) {
-            if (!confirmed) return;
-            removeStep = 1;
-            showPrompt('Введите "Убрать"(2/4)', removePremiumStep2);
-        }
-        function removePremiumStep2(input) {
-            if (input !== 'Убрать') {
-                showAlert('Неверный ответ. Процесс отменён.');
-                return;
-            }
-            removeStep = 2;
-            showPrompt('Введите "ПОДТВЕРЖДАЮ"(3/4)', removePremiumStep3);
-        }
-        function removePremiumStep3(input) {
-            if (input !== 'ПОДТВЕРЖДАЮ') {
-                showAlert('Неверный ответ. Процесс отменён.');
-                return;
-            }
-            showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
-        }
-        function removePremiumFinal(confirmed) {
-            if (!confirmed) return;
-            localStorage.removeItem('premium');
-            localStorage.setItem('premium', 'false');
-            localStorage.removeItem('premiumCongratsShown');
-            localStorage.removeItem('premiumFromPromo');
-            localStorage.removeItem('premiumActivationDate');
-            localStorage.removeItem('premiumExpiry');
-            localStorage.removeItem('premiumDuration');
-            showAlert('Премиум успешно убран!');
-            setTimeout(() => location.reload(), 1500);
-        }
-        // Инициализация
-        window.onload = function() {
-            // Генерируем кнопки покупки из premium_list
-            const generatePremiumButtons = () => {
-                const container1 = document.getElementById('purchaseButtonsContainer');
-                const container2 = document.getElementById('purchaseButtonsContainer2');
-                if (container1) {
-                    container1.innerHTML = premium_list.map((plan, idx) => {
-                        let displayName = plan.name;
-                        if (plan.strikethrough_text) {
-                            displayName += ` <s>${plan.strikethrough_text}</s>`;
-                        }
-                        if (plan.after_strikethrough_text) {
-                            displayName += ` ${plan.after_strikethrough_text}`;
-                        }
-                        return `<button style="width: 100%; margin-bottom: ${idx === premium_list.length - 1 ? '20' : '10'}px;" onclick="sendPremiumInvoice(${idx})">${displayName} - ${plan.price}🌟</button>`;
-                    }).join('');
-                }
-                if (container2) {
-                    container2.innerHTML = premium_list.map((plan, idx) => {
-                        let displayName = plan.name;
-                        if (plan.strikethrough_text) {
-                            displayName += ` <s>${plan.strikethrough_text}</s>`;
-                        }
-                        if (plan.after_strikethrough_text) {
-                            displayName += ` ${plan.after_strikethrough_text}`;
-                        }
-                        return `<button style="width: 100%; margin-bottom: ${idx === premium_list.length - 1 ? '20' : '10'}px;" onclick="sendPremiumInvoice(${idx})">${displayName} - ${plan.price}🌟</button>`;
-                    }).join('');
-                }
-            };
-            generatePremiumButtons();
+    let writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
+    let removeStep = 0;
+    let removeAnswers = ['', '', ''];
+    let clickCount = 0;
+    let clickTimer;
 
-            if (localStorage.getItem('premium') === 'true') {
-                document.getElementById('purchaseMenu').style.display = 'none';
-                document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
-                document.getElementById('removePremiumButton').style.display = 'block';
-            } else {
-                document.getElementById('purchaseMenu').style.display = 'block';
-                document.getElementById('removePremiumButton').style.display = 'none';
+    if (/iPhone/i.test(navigator.userAgent)) {
+      if (localStorage.getItem('liquid') === 'Включен') {
+        const style = document.createElement('style');
+        style.textContent = `
+          button, .button {
+            border: 1px solid rgba(255, 255, 255, 0.7) !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    document.body.addEventListener('click', function(e) {
+      if (e.target === document.body || e.target.tagName === 'BODY') {
+        clickCount++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { clickCount = 0; }, 5000);
+        if (clickCount >= 50) {
+          const current = localStorage.getItem('admin') === 'true';
+          localStorage.setItem('admin', (!current).toString());
+          showAlert(current ? 'Режим администратора отключён' : 'Режим администратора активирован!');
+          location.reload();
+        }
+      }
+    });
+
+    function showAlert(message, hideClose = false) {
+      document.getElementById('alertMessage').textContent = message;
+      document.getElementById('alertMessage').style.textAlign = 'center';
+      document.getElementById('alertModal').style.display = 'flex';
+      document.getElementById('alertCloseBtn').style.display = hideClose ? 'none' : 'block';
+    }
+
+    function closeAlertModal() {
+      document.getElementById('alertModal').style.display = 'none';
+    }
+
+    function goToMainMenu() {
+      window.location.href = 'index.html';
+    }
+
+    function Goto() {
+      document.getElementById('div1').style.display = 'none';
+      document.getElementById('div2').style.display = 'block';
+      document.getElementById('promoCom').innerHTML = '';
+      document.getElementById('purchaseMenu').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function GoBackToPremiumScreen() {
+      document.getElementById('div2').style.display = 'none';
+      document.getElementById('div1').style.display = 'block';
+      document.getElementById('promoCom').innerHTML = '';
+      document.getElementById('purchaseMenu').style.display = localStorage.getItem('premium') === 'true' ? 'none' : 'block';
+      document.getElementById('removePremiumButton').style.display = localStorage.getItem('premium') === 'true' ? 'block' : 'none';
+      document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true' ? 'Вы в режиме администратора!' : 'Возможности Premium-версии';
+      if (localStorage.getItem('premium') === 'true' && !localStorage.getItem('premiumCongratsShown')) {
+        document.getElementById('promoCom').innerHTML = 'Спасибо за покупку премиума!<br>Поздравляем вас с покупкой!';
+        localStorage.setItem('premiumCongratsShown', 'true');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function calculateExpiry(duration) {
+      if (duration === 'none') return 'none';
+      const activation = new Date();
+      const parts = duration.split(' ');
+      const num = parseInt(parts[0]);
+      const unit = parts[1];
+      let expiryDate;
+      if (unit.includes('месяц')) {
+        expiryDate = new Date(activation.getFullYear(), activation.getMonth() + num, activation.getDate());
+      } else if (unit === 'год') {
+        expiryDate = new Date(activation.getFullYear() + num, activation.getMonth(), activation.getDate());
+      } else {
+        return 'none';
+      }
+      const day = expiryDate.getDate().toString().padStart(2, '0');
+      const month = (expiryDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = expiryDate.getFullYear();
+      return `${day}.${month}.${year}`;
+    }
+
+    function getPromoInputValue() {
+      const a = document.getElementById('promoCodeInput');
+      const b = document.getElementById('promoCodeInput2');
+      return (b && b.value.trim()) || (a && a.value.trim()) || '';
+    }
+
+    function CheckPromoCodeToPremium() {
+      if (localStorage.getItem('premium') === 'true') {
+        showAlert('Вы уже купили премиум!');
+        return;
+      }
+
+      const inputPromo = getPromoInputValue().trim();
+      if (!inputPromo) {
+        showAlert('Промокод не может быть пустым!');
+        return;
+      }
+
+      if (inputPromo === 'adminpannelon123') {
+        const isAdmin = localStorage.getItem('admin') === 'true';
+        localStorage.setItem('admin', (!isAdmin).toString());
+        showAlert(`Режим администратора ${isAdmin ? 'выключен' : 'включён'}!`);
+        return;
+      }
+
+      const promo = promoCodes.find(p => p.promo === inputPromo);
+      const isAdmin = localStorage.getItem('admin') === 'true';
+
+      if (!promo) {
+        showAlert('Неверный промокод');
+        return;
+      }
+
+      if (promo.date_for_use !== 'none') {
+        const [day, month, year] = promo.date_for_use.split('.');
+        const expiryDate = new Date(year, month - 1, day);
+        if (new Date() > expiryDate) {
+          showAlert('Время действия данного промокода истёк');
+          return;
+        }
+      }
+
+      if (!isAdmin && writtenPromos.includes(inputPromo)) {
+        showAlert('Вы уже использовали этот промокод');
+        return;
+      }
+
+      localStorage.setItem('premium', 'true');
+      localStorage.setItem('premiumFromPromo', 'true');
+      localStorage.setItem('premiumActivationDate', new Date().toISOString());
+      localStorage.setItem('premiumDuration', promo.date);
+      const expiry = calculateExpiry(promo.date);
+      localStorage.setItem('premiumExpiry', expiry);
+
+      if (!isAdmin) {
+        writtenPromos.push(inputPromo);
+        localStorage.setItem('writtenPromos', JSON.stringify(writtenPromos));
+      }
+
+      const inputA = document.getElementById('promoCodeInput');
+      const inputB = document.getElementById('promoCodeInput2');
+      if (inputA) {
+        inputA.style.background = '#d4edda';
+        inputA.style.borderColor = 'green';
+      }
+      if (inputB) {
+        inputB.style.background = '#d4edda';
+        inputB.style.borderColor = 'green';
+      }
+
+      let seconds = 4;
+      showAlert(`Промокод принят!\nВы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!\n\nВы будете перенаправлены через ${seconds} секунд...`, true);
+      const countdown = setInterval(() => {
+        seconds--;
+        document.getElementById('alertMessage').innerHTML = `Промокод принят!<br>Вы получили премиум на ${expiry === 'none' ? 'навсегда' : promo.date}!<br><br>Вы будете перенаправлены через ${seconds} секунд...`;
+        if (seconds <= 0) {
+          clearInterval(countdown);
+          window.location.href = 'index.html';
+        }
+      }, 1000);
+    }
+
+    function showConfirm(message, callbackYes) {
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmModal').style.display = 'flex';
+      document.getElementById('confirmYes').onclick = function() {
+        closeConfirmModal();
+        callbackYes(true);
+      };
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function showPrompt(message, callback) {
+      document.getElementById('promptMessage').textContent = message;
+      document.getElementById('promptModal').style.display = 'flex';
+      document.getElementById('promptSubmit').onclick = function() {
+        const input = document.getElementById('promptInput').value.trim();
+        closePromptModal();
+        callback(input);
+      };
+    }
+
+    function closePromptModal() {
+      document.getElementById('promptModal').style.display = 'none';
+      document.getElementById('promptInput').value = '';
+    }
+
+    function removePremium() {
+      removeStep = 0;
+      showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(1/4)', removePremiumStep1);
+    }
+
+    function removePremiumStep1(confirmed) {
+      if (!confirmed) return;
+      removeStep = 1;
+      showPrompt('Введите "Убрать" (2/4)', removePremiumStep2);
+    }
+
+    function removePremiumStep2(input) {
+      if (input !== 'Убрать') {
+        showAlert('Неверный ответ. Процесс отменён.');
+        return;
+      }
+      removeStep = 2;
+      showPrompt('Введите "ПОДТВЕРЖДАЮ" (3/4)', removePremiumStep3);
+    }
+
+    function removePremiumStep3(input) {
+      if (input !== 'ПОДТВЕРЖДАЮ') {
+        showAlert('Неверный ответ. Процесс отменён.');
+        return;
+      }
+      showConfirm('Вы уверены, что хотите убрать премиум?\nЭто действие потом нельзя будет отменить!\nДля повторного получения вам придется заново оплачивать!(4/4)', removePremiumFinal);
+    }
+
+    function removePremiumFinal(confirmed) {
+      if (!confirmed) return;
+      localStorage.removeItem('premium');
+      localStorage.setItem('premium', 'false');
+      localStorage.removeItem('premiumCongratsShown');
+      localStorage.removeItem('premiumFromPromo');
+      localStorage.removeItem('premiumActivationDate');
+      localStorage.removeItem('premiumExpiry');
+      localStorage.removeItem('premiumDuration');
+      showAlert('Премиум успешно убран!');
+      setTimeout(() => location.reload(), 1500);
+    }
+
+    function sendPremiumInvoice(planIndex) {
+      const WebApp = window.Telegram?.WebApp;
+      if (!WebApp) {
+        showAlert('Эта функция доступна только в Telegram');
+        return;
+      }
+
+      const plan = premium_list[planIndex];
+      if (!plan) return;
+
+      const payload = `${localStorage.getItem('user_Token') || ''}:premium:${planIndex}`;
+      const title = plan.name;
+      const description = `Покупка ${plan.name} за ${plan.price} Telegram Stars`;
+
+      (async () => {
+        try {
+          const res = await fetch(`https://api.telegram.org/bot${PAYMENT_BOT_TOKEN}/createInvoiceLink`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title,
+              description,
+              payload,
+              currency: 'XTR',
+              prices: [{ label: 'Premium', amount: plan.price }]
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.description || 'Не удалось создать счёт');
+          const link = data.result;
+          const tg = window.Telegram.WebApp;
+          tg.openInvoice(link, async (status) => {
+            if (status === 'paid' || status?.status === 'paid') {
+              localStorage.setItem('premium', 'true');
+              localStorage.setItem('premiumFromPromo', 'false');
+              localStorage.setItem('premiumActivationDate', new Date().toISOString());
+              localStorage.setItem('premiumDuration', plan.duration);
+              const expiry = calculateExpiry(plan.duration);
+              localStorage.setItem('premiumExpiry', expiry);
+              showAlert(`Платёж успешен! Вам выдан премиум на ${expiry === 'none' ? 'навсегда' : plan.duration}.`);
+              setTimeout(() => location.reload(), 1200);
             }
-            document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
-                ? 'Вы в режиме администратора!'
-                : 'Возможности Premium-версии';
-            
-            // Removed Telegram BackButton initialization (handled via HTML fallback)
-        };
-    </script>
-    <script src="script.js"></script>
-    <script type="module" src="security.js"></script>
+          });
+        } catch (e) {
+          showAlert(`Не удалось создать счёт: ${e.message}`);
+        }
+      })();
+    }
+
+    function renderPlanCard(plan, idx) {
+      const oldText = plan.strikethrough_text ? `<div class="plan-old">${plan.strikethrough_text}</div>` : '';
+
+      // Особый стиль для 6 месяцев
+      const highlight = plan.duration === '6 месяцев';
+
+      return `
+        <button class="plan" onclick="sendPremiumInvoice(${idx})" type="button" style="${highlight ? 'border:2px solid #ffd700; box-shadow:0 0 25px rgba(255,215,0,0.35); position:relative;' : ''}">
+          ${highlight ? '<div style="position:absolute;top:8px;right:-28px;background:#ffd700;color:#000;padding:4px 28px;transform:rotate(45deg);font-weight:700;font-size:10px;border-radius:4px;">Выгодно</div>' : ''}
+          <div class="plan-top">
+            <div>
+              <div class="plan-name">${plan.name}</div>
+              <div class="plan-duration">${plan.duration === 'none' ? 'Бессрочно' : plan.duration}</div>
+            </div>
+            <div class="plan-price">${plan.price}🌟</div>
+          </div>
+          ${oldText}
+        </button>
+      `;
+    }
+
+    window.onload = function() {
+      const container1 = document.getElementById('purchaseButtonsContainer');
+      const container2 = document.getElementById('purchaseButtonsContainer2');
+      if (container1) container1.innerHTML = premium_list.map(renderPlanCard).join('');
+      if (container2) container2.innerHTML = premium_list.map(renderPlanCard).join('');
+
+      if (localStorage.getItem('premium') === 'true') {
+        document.getElementById('purchaseMenu').style.display = 'none';
+        document.getElementById('promoCom').innerHTML = 'Вы уже купили премиум!';
+        document.getElementById('removePremiumButton').style.display = 'block';
+      } else {
+        document.getElementById('purchaseMenu').style.display = 'block';
+        document.getElementById('removePremiumButton').style.display = 'none';
+      }
+
+      document.getElementById('voz').textContent = localStorage.getItem('admin') === 'true'
+        ? 'Вы в режиме администратора!'
+        : 'Возможности Premium-версии';
+    };
+  </script>
+  <script src="script.js"></script>
+  <script type="module" src="security.js"></script>
 </body>
 </html>

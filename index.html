@@ -1323,13 +1323,17 @@ text.addEventListener('input', function () {
 </div>
 
 <script>
+function shouldAskRecaptchaOnce(){
+  return localStorage.getItem('hasPassedRecaptcha') !== 'true';
+}
+
 function onGenerateClick(){
-  const securityLevel = parseInt(localStorage.getItem('security')||'0',10);
-  if(securityLevel>=3){
+  if (shouldAskRecaptchaOnce()) {
     showRecaptchaModal();
-  } else {
-    checkBadWords();
+    return;
   }
+
+  checkBadWords();
 }
 
 function showRecaptchaModal(){
@@ -1364,13 +1368,7 @@ function onRecaptchaSuccess(token){
 }
 
 function recaptchaContinue(){
-  let security = parseInt(localStorage.getItem("security")) || 0;
-
-  security = security - 1;
-
-  localStorage.setItem("security", security);
-
-  console.log("Новое значение:", security);
+  localStorage.setItem('hasPassedRecaptcha', 'true');
   hideRecaptchaModal();
   checkBadWords();
 }

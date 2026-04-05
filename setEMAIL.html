@@ -176,6 +176,10 @@ function hideModal(){
 
 modalBtn.addEventListener('click', hideModal);
 
+function shouldAskRecaptchaOnce(){
+  return localStorage.getItem('hasPassedRecaptcha') !== 'true';
+}
+
 function showRecaptchaModal(){
   const m = document.getElementById('recaptchaModal');
   if(m){
@@ -207,6 +211,7 @@ function onRecaptchaSuccess(token){
 }
 
 function recaptchaContinueEmail(){
+  localStorage.setItem('hasPassedRecaptcha', 'true');
   hideRecaptchaModal();
   // Отправляем код на почту после капчи
   startEmailVerification();
@@ -294,7 +299,7 @@ function hidePreloader(){
     
     hidePreloader();
     
-    if (security >= 2) {
+    if (security >= 2 && shouldAskRecaptchaOnce()) {
       // Нужна капча и отправка кода
       needsSecurityCheck = true;
       showRecaptchaModal();

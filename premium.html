@@ -33,10 +33,27 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     html {
       scroll-behavior: smooth;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    input,
+    textarea,
+    select {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
     }
 
     body {
@@ -243,10 +260,13 @@
       border: 1px solid rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.05);
       transition: transform .22s ease, border-color .22s ease, background .22s ease;
+      transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
+      transform-style: preserve-3d;
+      touch-action: pan-y;
     }
 
     .benefit:hover {
-      transform: translateY(-2px);
+      transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-2px);
       border-color: rgba(103, 232, 249, 0.25);
       background: rgba(255,255,255,0.08);
     }
@@ -322,10 +342,19 @@
       color: var(--text);
       width: 100%;
       font: inherit;
+      overflow: hidden;
+      transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
+      transform-style: preserve-3d;
+      touch-action: pan-y;
+    }
+
+    .plan-inner {
+      transition: none;
+      transform: none;
     }
 
     .plan:hover {
-      transform: translateY(-3px);
+      transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-3px);
       border-color: rgba(103, 232, 249, 0.28);
       box-shadow: 0 18px 38px rgba(0,0,0,0.22);
     }
@@ -1040,16 +1069,71 @@
       return `
         <button class="plan" onclick="sendPremiumInvoice(${idx})" type="button" style="${highlight ? 'border:2px solid #ffd700; box-shadow:0 0 25px rgba(255,215,0,0.35); position:relative;' : ''}">
           ${highlight ? '<div style="position:absolute;top:8px;right:-28px;background:#ffd700;color:#000;padding:4px 28px;transform:rotate(45deg);font-weight:700;font-size:10px;border-radius:4px;">Выгодно</div>' : ''}
-          <div class="plan-top">
-            <div>
-              <div class="plan-name">${plan.name}</div>
-              <div class="plan-duration">${plan.duration === 'none' ? 'Бессрочно' : plan.duration}</div>
+          <div class="plan-inner">
+            <div class="plan-top">
+              <div>
+                <div class="plan-name">${plan.name}</div>
+                <div class="plan-duration">${plan.duration === 'none' ? 'Бессрочно' : plan.duration}</div>
+              </div>
+              <div class="plan-price">${plan.price}🌟</div>
             </div>
-            <div class="plan-price">${plan.price}🌟</div>
+            ${oldText}
           </div>
-          ${oldText}
         </button>
       `;
+    }
+
+    function attachTiltEffect(selector) {
+      document.querySelectorAll(selector).forEach(card => {
+        let activeTouchId = null;
+
+        const updateTilt = (clientX) => {
+          const rect = card.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const offset = clientX - centerX;
+          const deadZone = rect.width * 0.08;
+          if (Math.abs(offset) <= deadZone) {
+            card.style.setProperty('--card-tilt', '0deg');
+            return;
+          }
+          card.style.setProperty('--card-tilt', offset > 0 ? '-3deg' : '3deg');
+        };
+
+        const resetTilt = () => {
+          activeTouchId = null;
+          card.style.setProperty('--card-tilt', '0deg');
+        };
+
+        card.addEventListener('mouseenter', () => {
+          card.style.setProperty('--card-tilt', '0deg');
+        });
+
+        card.addEventListener('mousemove', (event) => {
+          updateTilt(event.clientX);
+        });
+
+        card.addEventListener('mouseleave', resetTilt);
+
+        card.addEventListener('touchstart', (event) => {
+          const touch = event.changedTouches[0];
+          activeTouchId = touch.identifier;
+          updateTilt(touch.clientX);
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (event) => {
+          const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouchId) || event.changedTouches[0];
+          if (!touch) return;
+          updateTilt(touch.clientX);
+        }, { passive: true });
+
+        card.addEventListener('touchend', (event) => {
+          if (Array.from(event.changedTouches).some(t => t.identifier === activeTouchId)) {
+            resetTilt();
+          }
+        }, { passive: true });
+
+        card.addEventListener('touchcancel', resetTilt, { passive: true });
+      });
     }
 
     window.onload = function() {
@@ -1057,6 +1141,8 @@
       const container2 = document.getElementById('purchaseButtonsContainer2');
       if (container1) container1.innerHTML = premium_list.map(renderPlanCard).join('');
       if (container2) container2.innerHTML = premium_list.map(renderPlanCard).join('');
+      attachTiltEffect('.plan');
+      attachTiltEffect('.benefit');
 
       if (localStorage.getItem('premium') === 'true') {
         document.getElementById('purchaseMenu').style.display = 'none';

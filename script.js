@@ -289,28 +289,34 @@ function isValidEmail(email) {
 }
 let formData = JSON.parse(localStorage.getItem('formData')) || {};
 let contactData = JSON.parse(localStorage.getItem('contactData')) || { contact: '', messenger: '' };
+const check1 = document.getElementById('check1');
+const check2 = document.getElementById('check2');
 const checkSpoiler1 = document.getElementById('checkbox1');
 const checkSpoiler2 = document.getElementById('checkbox2');
-check1.addEventListener('change', () => {
-  if (check1.checked) {
-    checkSpoiler1.innerHTML += ' <i class="fa-solid fa-check" style="color: #00ff33;"></i>'
-    checkSpoiler1.style.color = 'green';
-    // тут твой код
-  } else {
-    checkSpoiler1.innerHTML = checkSpoiler1.innerHTML.replace(/<i class="fa-solid fa-check" style="color: #00ff33;"><\/i>/g, '');
-    checkSpoiler1.style.color = '';
-  }
-});
-check2.addEventListener('change', () => {
-  if (check2.checked) {
-    checkSpoiler2.innerHTML += ' <i class="fa-solid fa-check" style="color: #00ff33;"></i>'
-    checkSpoiler2.style.color = 'green';
-    // тут твой код
-  } else {
-    checkSpoiler2.innerHTML = checkSpoiler2.innerHTML.replace(/<i class="fa-solid fa-check" style="color: #00ff33;"><\/i>/g, '');
-    checkSpoiler2.style.color = '';
-  }
-});
+if (check1) {
+  check1.addEventListener('change', () => {
+    if (check1.checked) {
+      checkSpoiler1.innerHTML += ' <i class="fa-solid fa-check" style="color: #00ff33;"></i>'
+      checkSpoiler1.style.color = 'green';
+      // тут твой код
+    } else {
+      checkSpoiler1.innerHTML = checkSpoiler1.innerHTML.replace(/<i class="fa-solid fa-check" style="color: #00ff33;"><\/i>/g, '');
+      checkSpoiler1.style.color = '';
+    }
+  });
+}
+if (check2) {
+  check2.addEventListener('change', () => {
+    if (check2.checked) {
+      checkSpoiler2.innerHTML += ' <i class="fa-solid fa-check" style="color: #00ff33;"></i>'
+      checkSpoiler2.style.color = 'green';
+      // тут твой код
+    } else {
+      checkSpoiler2.innerHTML = checkSpoiler2.innerHTML.replace(/<i class="fa-solid fa-check" style="color: #00ff33;"><\/i>/g, '');
+      checkSpoiler2.style.color = '';
+    }
+  });
+}
 // --- Token ---
 function generateToken24() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';

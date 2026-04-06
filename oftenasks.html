@@ -48,7 +48,6 @@ body {
     text-decoration: none;
     border-radius: 12px;
     background: linear-gradient(135deg, #7f1d1d, #ef4444);
-    border: 1px solid rgba(255,255,255,0.8);
     transition: transform 0.2s;
 }
 .back-btn:hover { transform: scale(1.02); }
@@ -118,7 +117,7 @@ h1 {
 </head>
 <body>
 <div class="container">
-    <a href="menu.html" class="back-btn">← Вернуться назад</a>
+    <a href="menu.html" class="back-btn" id="backBtn">← Вернуться назад</a>
     <h1>Часто задаваемые вопросы</h1>
     <input type="text" id="search" placeholder="Поиск по вопросам...">
     <div id="faq-list"></div>
@@ -165,8 +164,9 @@ document.getElementById('search').addEventListener('input', (e) => {
 if (/iPhone/i.test(navigator.userAgent)) {
     if (localStorage.getItem('liquid') === 'Включен') {
         const style = document.createElement('style');
-        style.textContent = `button, .btn { border: 1px solid rgba(255,255,255,0.8) !important; }`;
+        style.textContent = `button, input[type="button"], input[type="submit"], input[type="reset"], input[type="image"], .btn, [role="button"] { border: 1px solid rgba(255,255,255,0.8) !important; }`;
         document.head.appendChild(style);
+        backBtn.style.border = '1px solid rgba(255,255,255,0.8)';
     }
 }
 

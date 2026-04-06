@@ -28,14 +28,14 @@
     <section class="card card--primary">
       <div class="section-title">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span style="font-size: larger;">Генерация фото</span>
+        <span style="font-size: larger; user-select: none;">Параметры для генерации фото</span>
       </div>
       <!-- {Поле описание(большого размера)} -->
       <div class="field">
         <label for="description">Описание фото (обязательно)</label>
         <textarea id="description" rows="8" required maxlength="500" oninput="updateDescriptionLimit()" placeholder="Пример: город будущего в неоне."></textarea>
         <div class="counter" id="descriptionCounter">0/500</div>
-        <div class="hint">Бесплатно до 500 символов, Premium — до 1000.</div>
+        <div class="hint">Бесплатно до 500 символов, Premium — до 1000.<br>Опишите каким должно быть изображение.</div>
       </div>
       <!-- {Поле ввода текста}{Поле ввода исключений}(Фон фото и галочка размытия) -->
       <div class="grid grid-2">
@@ -43,7 +43,7 @@
           <label for="text">Текст на фото (необязательно)</label>
           <input type="text" id="text" maxlength="30" oninput="updateTextLimit()" placeholder="Например: Hello!" />
           <div class="counter" id="textCounter">0/30</div>
-          <div class="hint">Premium — до 500 символов.</div>
+          <div class="hint">С премиумом можно вводить до 500 символов.</div>
           <!-- Автоматический выбор стиля текста -->
           <label class="checkbox" for="autoTextStyle" id="autoTextStyleLabel" style="margin-top: 12px; display: block;">
             <input type="checkbox" id="autoTextStyle" />
@@ -306,7 +306,7 @@
             <i class="fa-solid fa-upload"></i>
             <span>Загрузить</span>
           </button>
-          <div class="hint">Бесплатно до 3 фото, Premium до 6.</div>
+          <div class="hint">Бесплатно до 3 фото, Premium до 6. <br>Загрузите фото для примера и так далее, чтобы получить более точные результаты.</div>
           <div id="preloader" class="small-preloader" aria-live="polite">Загрузка...</div>
           <div id="result" class="result"></div>
         </div>
@@ -316,7 +316,7 @@
     <section class="card">
       <div class="section-title">
         <i class="fa-solid fa-sliders"></i>
-        <span style="font-size: larger;">Дополнительные параметры</span>
+        <span style="font-size: larger; user-select: none;">Дополнительные параметры</span>
       </div>
       <!-- ВАЖНО: Качество/Освещение/Уровень детализации сразу под "Параметры" -->
       <div class="grid grid-3">
@@ -334,7 +334,7 @@
             <option value="2160p60" disabled>(Premium)2160p60 (4K)</option>
             <option value="4320p" disabled>(Premium)4320p (8K)</option>
           </select>
-          <div class="hint">Чем выше — тем “тяжелее” генерация.</div>
+          <div class="hint">Качество фото — это то, насколько изображение выглядит чётким и приятным для восприятия.</div>
         </div>
         <div class="field">
           <label for="osvecheniye">Тип освещения</label>
@@ -712,10 +712,17 @@
               <option value="fabric">Тканевая</option>
               <option value="leather">Кожаная</option>
               <option value="crystal">Кристаллическая</option>
+              <option value="stained-glass">Витражная</option>
+              <option value="oil-paint">Масляная</option>
+              <option value="chalk">Меловая</option>
+              <option value="etched">Гравированная</option>
+              <option value="glossy">Глянцевая</option>
+              <option value="matte">Матовая</option>
               <option value="fire" disabled>(Premium)Огненная</option>
               <option value="ice">Ледяная</option>
               <option value="glowing" disabled>(Premium)Светящаяся</option>
               <option value="rustic">Рустикальная</option>
+              <option value="pastel">Пастельная</option>
               <option value="ornate" disabled>(Premium)Орнаментальная</option>
             </optgroup>
             <optgroup label="🖌 Кисти и штрихи">
@@ -789,6 +796,11 @@
               <option value="valentine">День святого Валентина (сердца, розы)</option>
               <option value="easter">Пасхальная (яйца, кролики)</option>
               <option value="mystical">Мистическая (рунные символы)</option>
+              <option value="safari">Сафари (пальмы и песок)</option>
+              <option value="midnight-garden">Ночной сад</option>
+              <option value="city-neon">Городской неон</option>
+              <option value="floral">Цветочная (розы, лепестки)</option>
+              <option value="night-sky">Ночное небо (луна, звёзды)</option>
               <option value="steampunk-ram" disabled>(Premium)Стимпанк-рамка</option>
               <option value="cyberpunk-ram">Киберпанк-рамка</option>
               <option value="fairy-tale" disabled>(Premium)Сказочная</option>
@@ -807,10 +819,16 @@
               <option value="engrave">Гравированная</option>
               <option value="outline">Контурная</option>
               <option value="shadow-drop">С тенью</option>
+              <option value="film-grain">Киноплёночная</option>
+              <option value="prismatic">Призматическая</option>
+              <option value="ripple">Рябь</option>
               <option value="bevel">Скошенная</option>
               <option value="gradient-glow">Градиентное свечение</option>
               <option value="neon-glow">Неоновое свечение</option>
               <option value="sparkle">Блестящий</option>
+              <option value="wave-edge">Волнообразная</option>
+              <option value="misty">Туманная</option>
+              <option value="pixelated">Пиксельная</option>
               <option value="distorted" disabled>(Premium)Искаженный</option>
               <option value="hologram">Голографический</option>
               <option value="embroidery" disabled>(Premium)Вышитый</option>

@@ -285,6 +285,13 @@
       overflow-y: auto;
     }
 
+    @media (max-width: 600px) {
+      .sheet {
+        max-height: 95vh;
+        width: calc(100% - 24px);
+      }
+    }
+
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -331,8 +338,10 @@
 <body>
   <main class="page" id="app" aria-live="polite">
     <header class="header">
-      <h1 class="title">История генераций</h1>
-      <p class="sub">Ваши сохраненные параметры и настройки</p>
+      <center>
+        <h1 class="title">История генераций</h1>
+        <p class="sub">Ваши сохраненные параметры и настройки</p>
+      </center>
     </header>
 
     <section class="actions" aria-label="Действия">
@@ -423,8 +432,8 @@
       <h2 id="confirmTitle">Подтвердите действие</h2>
       <p id="confirmText"></p>
       <div class="bar">
-        <button class="btn" id="confirmNo" type="button">Отмена</button>
         <button class="btn btn--neutral" id="confirmYes" type="button">Да</button>
+        <button class="btn" id="confirmNo" type="button">Отмена</button>
       </div>
     </div>
   </div>

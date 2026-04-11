@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Настройки</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<style>
+:root {
+    --bg1: #020617;
+    --bg2: #0f172a;
+    --accent: #22d3ee;
+    --accent2: #3b82f6;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.15);
+    --text: #f8fafc;
+    --muted: #cbd5e1;
+    --radius: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 20px 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(800px 600px at 15% 10%, rgba(34, 211, 238, 0.35), transparent 70%),
+        radial-gradient(900px 500px at 85% 25%, rgba(59, 130, 246, 0.32), transparent 70%),
+        linear-gradient(180deg, var(--bg2), var(--bg1));
+    min-height: 100vh;
+    overflow-y: auto;
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+/* Современная шапка с кнопкой назад */
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 8px 0;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(34, 211, 238, 0.2);
+}
+
+.back-btn i {
+    font-size: 18px;
+}
+
+/* Заголовок */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+}
+
+.header-subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+    opacity: 0.9;
+}
+
+/* Карточка настроек */
+.settings-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 10px 20px -4px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(16px);
+}
+
+/* Заголовок секции */
+.settings-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--text);
+}
+
+.settings-section p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Опции интерфейса */
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.option-item:last-child {
+    margin-bottom: 0;
+}
+
+.option-item:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+.option-item.selected {
+    border-color: var(--accent);
+    background: rgba(34, 211, 238, 0.12);
+    box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
+}
+
+.option-icon {
+    font-size: 28px;
+    width: 42px;
+    color: var(--accent);
+}
+
+.option-content {
+    flex: 1;
+}
+
+.option-content h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.option-content .desc {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.option-content small {
+    display: block;
+    color: var(--muted);
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.check-icon {
+    font-size: 24px;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.option-item.selected .check-icon {
+    opacity: 1;
+}
+
+/* Liquid Glass — современный toggle */
+.liquid-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    margin-top: 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+}
+
+.liquid-toggle .label {
+    flex: 1;
+}
+
+.liquid-toggle .label h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.liquid-toggle .label small {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.switch {
+    width: 52px;
+    height: 28px;
+    background: #334155;
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.switch.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+}
+
+.switch.active::after {
+    transform: translateX(24px);
+}
+
+/* Примечание внизу */
+.note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 24px;
+    opacity: 0.8;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+    body { padding: 16px 12px; }
+    h1 { font-size: 24px; }
+    .top-bar { margin-bottom: 24px; }
+    .settings-card { padding: 20px; }
+    .option-item { padding: 18px 20px; }
+    .liquid-toggle { padding: 18px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- Современная кнопка назад -->
+    <div class="top-bar">
+        <a href="menu.html" class="back-btn" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Вернуться назад</span>
+        </a>
+    </div>
+
+    <!-- Заголовок -->
+    <h1>Настройки</h1>
+
+    <!-- Основная карточка настроек -->
+    <div class="settings-card">
+        <div class="settings-section">
+            <h2>Интерфейс</h2>
+            <p>Выберите режим отображения приложения</p>
+
+            <!-- Опция 1 — Не полноэкранный -->
+            <div class="option-item" data-mode="normal" id="option-normal">
+                <div class="option-icon">
+                    <i class="fas fa-mobile-screen-button"></i>
+                </div>
+                <div class="option-content">
+                    <h3>Не полноэкранный</h3>
+                    <span class="desc">(Рекомендуется)</span>
+                </div>
+                <i class="fas fa-check-circle check-icon"></i>
+            </div>
+
+            <!-- Опция 2 — Полноэкранный -->
+            <div class="option-item" data-mode="fullscreen" id="option-fullscreen">
+                <div class="option-icon">
+                    <i class="fas fa-expand"></i>
+                </div>
+                <div class="option-content">
+                    <h3>Полноэкранный</h3>
+                </div>
+                <i class="fas fa-check-circle check-icon"></i>
+            </div>
+
+            <!-- Liquid Glass (только iPhone) -->
+            <div id="liquid-section" class="liquid-toggle" style="display: none;">
+                <div class="label">
+                    <h3>Liquid Glass</h3>
+                    <small>Эффект жидкого стекла с усиленными границами и красивым размытием</small>
+                </div>
+                <div id="liquidSwitch" class="switch"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const tg = window.Telegram.WebApp || {};
+
+// Готовим WebApp
+tg.ready();
+tg.expand();
+
+// ==================== FULLSCREEN ====================
+function applyFullscreen(mode) {
+    if (!tg.requestFullscreen || !tg.exitFullscreen) return;
+
+    if (mode === 'fullscreen') {
+        tg.requestFullscreen();
+    } else {
+        tg.exitFullscreen();
+    }
+}
+
+function saveAndApplyFullscreen(mode) {
+    localStorage.setItem('fullscreenPref', mode);
+    applyFullscreen(mode);
+}
+
+// ==================== LIQUID GLASS ====================
+const isIPhone = tg.platform === 'ios';
+const liquidSection = document.getElementById('liquid-section');
+const liquidSwitch = document.getElementById('liquidSwitch');
+
+function applyLiquid(enabled) {
+    if (enabled) {
+        // Размытие фона всего body
+        document.body.style.backdropFilter = "blur(20px)";
+
+        // Усиленные стеклянные границы (как было в menu.html)
+        if (!document.getElementById('liquid-style')) {
+            const style = document.createElement('style');
+            style.id = 'liquid-style';
+            style.textContent = `
+                button, 
+                .btn, 
+                .back-btn, 
+                .option-item, 
+                .liquid-toggle, 
+                .switch,
+                input, 
+                .faq-item summary,
+                [role="button"] { 
+                    border: 1px solid rgba(255,255,255,0.8) !important; 
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    } else {
+        document.body.style.backdropFilter = "";
+        const style = document.getElementById('liquid-style');
+        if (style) style.remove();
+    }
+}
+
+// Основная инициализация
+function initSettings() {
+    const options = document.querySelectorAll('.option-item');
+    
+    // === Fullscreen ===
+    let savedMode = localStorage.getItem('fullscreenPref') || 'normal';
+    options.forEach(option => {
+        if (option.dataset.mode === savedMode) {
+            option.classList.add('selected');
+        }
+        option.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+            saveAndApplyFullscreen(option.dataset.mode);
+        });
+    });
+    applyFullscreen(savedMode);
+
+    // === Liquid Glass (только iPhone) ===
+    if (tg.platform === 'ios') {
+        liquidSection.style.display = 'flex';
+
+        let state = localStorage.getItem('liquid');
+        if (!state) {
+            localStorage.setItem('liquid', 'Включен');
+            state = 'Включен';
+        }
+
+        const enabled = state === 'Включен';
+        if (enabled) liquidSwitch.classList.add('active');
+
+        applyLiquid(enabled);
+
+        // Переключатель
+        liquidSwitch.addEventListener('click', () => {
+            const currentEnabled = localStorage.getItem('liquid') === 'Включен';
+            const nextEnabled = !currentEnabled;
+            localStorage.setItem('liquid', nextEnabled ? 'Включен' : 'Выключен');
+            liquidSwitch.classList.toggle('active');
+            applyLiquid(nextEnabled);
+        });
+    }
+}
+
+// Запуск
+document.addEventListener('DOMContentLoaded', initSettings);
+</script>
+<script type="module" src="security.js"></script>
+</body>
+</html>

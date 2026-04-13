@@ -395,30 +395,24 @@ emailLink.querySelector('div div:last-child').textContent =
 
 // LIQUID (IPHONE ONLY)
 const isIPhone = /iPhone/i.test(navigator.userAgent);
-const liquidCard = document.getElementById('liquidCard');
-const liquidSwitch = document.getElementById('liquidSwitch');
 
 function applyLiquid(enabled){
  if(enabled){
  document.body.style.backdropFilter = "blur(20px)";
- liquidSwitch.classList.add('active');
  if(!document.getElementById('liquid-style')){
   const style = document.createElement('style');
   style.id = 'liquid-style';
-  style.textContent = `button, .btn, .back-center, .toggle, .switch { border: 1px solid rgba(255,255,255,0.8) !important; }`;
+  style.textContent = `button, .btn, .back-center { border: 1px solid rgba(255,255,255,0.8) !important; }`;
   document.head.appendChild(style);
  }
  }else{
  document.body.style.backdropFilter = "";
- liquidSwitch.classList.remove('active');
  const style = document.getElementById('liquid-style');
  if(style) style.remove();
  }
 }
 
 if(isIPhone){
- liquidCard.style.display='block';
-
  let state = localStorage.getItem('liquid');
  if(!state){
  localStorage.setItem('liquid','Включен');
@@ -426,13 +420,6 @@ if(isIPhone){
  }
 
  applyLiquid(state==='Включен');
-
- liquidSwitch.onclick=()=>{
- const enabled = localStorage.getItem('liquid')==='Включен';
- const next = enabled ? 'Выключен' : 'Включен';
- localStorage.setItem('liquid',next);
- applyLiquid(next==='Включен');
- }
 }
 </script>
 

@@ -12,6 +12,7 @@
     --bg2: #0f172a;
     --accent: #22d3ee;
     --accent2: #3b82f6;
+    --danger: #ef4444;
     --card-bg: rgba(255, 255, 255, 0.08);
     --card-border: rgba(255, 255, 255, 0.15);
     --text: #f8fafc;
@@ -43,40 +44,21 @@ body {
     margin: 0 auto;
 }
 
-/* Современная шапка с кнопкой назад */
-.top-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-    padding: 8px 0;
+.back-center{
+display:block;
+width:100%;
+text-align:center;
+text-decoration:none;
+color:white;
+font-weight:700;
+padding:12px 0;
+border-radius:12px;
+background:linear-gradient(135deg,#7f1d1d,var(--danger));
+box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
 
-.back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-    text-decoration: none;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--card-border);
-    backdrop-filter: blur(12px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
-}
-
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px rgba(34, 211, 238, 0.2);
-}
-
-.back-btn i {
-    font-size: 18px;
+.back-center:active{
+transform:scale(.98);
 }
 
 /* Заголовок */
@@ -275,13 +257,10 @@ h1 {
 </head>
 <body>
 <div class="container">
-    <!-- Современная кнопка назад -->
-    <div class="top-bar">
-        <a href="menu.html" class="back-btn" id="backBtn">
-            <i class="fas fa-arrow-left"></i>
-            <span>Вернуться назад</span>
-        </a>
-    </div>
+    <!-- Кнопка назад -->
+    <a href="menu.html" class="back-center">
+    ← Вернуться назад
+    </a>
 
     <!-- Заголовок -->
     <h1>Настройки</h1>
@@ -299,15 +278,6 @@ h1 {
                     <small>Включите для полноэкранного режима приложения</small>
                 </div>
                 <div id="fullscreenSwitch" class="switch"></div>
-            </div>
-
-            <!-- Liquid Glass (только iPhone) -->
-            <div id="liquid-section" class="liquid-toggle" style="display: none;">
-                <div class="label">
-                    <h3>Liquid Glass</h3>
-                    <small>Эффект жидкого стекла с усиленными границами и красивым размытием</small>
-                </div>
-                <div id="liquidSwitch" class="switch"></div>
             </div>
         </div>
     </div>
@@ -338,28 +308,25 @@ function saveAndApplyFullscreen(enabled) {
 }
 
 // ==================== LIQUID GLASS ====================
-const isIPhone = tg.platform === 'ios';
-const liquidSection = document.getElementById('liquid-section');
-const liquidSwitch = document.getElementById('liquidSwitch');
+const isIPhone = /iPhone/i.test(navigator.userAgent);
 
 function applyLiquid(enabled) {
     if (enabled) {
         // Размытие фона всего body
         document.body.style.backdropFilter = "blur(20px)";
 
-        // Усиленные стеклянные границы (как было в menu.html)
+        // Усиленные стеклянные границы
         if (!document.getElementById('liquid-style')) {
             const style = document.createElement('style');
             style.id = 'liquid-style';
             style.textContent = `
                 button, 
                 .btn, 
-                .back-btn, 
-                .option-item, 
+                .back-center, 
+                .settings-card,
                 .liquid-toggle, 
                 .switch,
                 input, 
-                .faq-item summary,
                 [role="button"] { 
                     border: 1px solid rgba(255,255,255,0.8) !important; 
                 }
@@ -391,28 +358,14 @@ function initSettings() {
     });
 
     // === Liquid Glass (только iPhone) ===
-    if (tg.platform === 'ios') {
-        liquidSection.style.display = 'flex';
-
+    if (isIPhone) {
         let state = localStorage.getItem('liquid');
         if (!state) {
             localStorage.setItem('liquid', 'Включен');
             state = 'Включен';
         }
 
-        const enabled = state === 'Включен';
-        if (enabled) liquidSwitch.classList.add('active');
-
-        applyLiquid(enabled);
-
-        // Переключатель
-        liquidSwitch.addEventListener('click', () => {
-            const currentEnabled = localStorage.getItem('liquid') === 'Включен';
-            const nextEnabled = !currentEnabled;
-            localStorage.setItem('liquid', nextEnabled ? 'Включен' : 'Выключен');
-            liquidSwitch.classList.toggle('active');
-            applyLiquid(nextEnabled);
-        });
+        applyLiquid(state === 'Включен');
     }
 }
 

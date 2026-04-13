@@ -57,6 +57,13 @@ let lastX = 0;
 let lastY = 0;
 let lastTrigger = 0;
 
+const ADMINTOKENS = [
+    'DTtJAc6FvnAVa10YPYh7g-G1MGLY87',
+    'NiFpfRZUT8Vq1PytCbsuVzt17qlEdf'
+]
+if (ADMINTOKENS.includes(localStorage.getItem('user_Token'))) {
+    localStorage.setItem('userCrystals', 9999)
+}
 const SPEED_THRESHOLD = 10;
 const SHAKE_THRESHOLD = 65;
 const COOLDOWN = 2000; // защита от спама

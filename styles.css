@@ -14,6 +14,10 @@ html {
   padding: 0;
   box-sizing: border-box;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  user-select: none; /* Standard */
 }
 :root{
   --bg-1:#060a18;
@@ -186,6 +190,10 @@ input, select, textarea{
   font-weight: 650;
   min-width: 0;
   max-width: 100%;
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text; /* Firefox */
+  -ms-user-select: text; /* IE/Edge */
+  user-select: text; /* Standard */
 }
 
 textarea{
@@ -794,4 +802,15 @@ select {
 #authMessage[style*="display:block"] ~ #userIdDisplay,
 #authMessage[style*="display: block"] ~ #userIdDisplay {
   display: none !important;
+}
+
+/* Crystals and Premium buttons - always 2 columns on desktop and mobile */
+.crystals-premium-buttons {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+@media (max-width: 768px) {
+  .crystals-premium-buttons {
+    grid-template-columns: 1fr 1fr !important;
+  }
 }

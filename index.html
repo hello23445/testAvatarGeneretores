@@ -27,7 +27,10 @@
     </button>
     <div class="topbar-title">
       <div class="app-title">CrN PhotoAI </div>
-      <div class="app-subtitle">Настрой параметры и нажимай кнопку генерации.</div>
+    </div>
+    <div id="crystalsDisplay" class="crystals-display" style="display: flex; align-items: center; gap: 8px; margin-left: auto; font-weight: bold; color: #7eb3ff;">
+      <i class="fa-solid fa-gem"></i>
+      <span id="crystalCount">0</span>
     </div>
   </header>
   <!-- Main -->
@@ -68,6 +71,9 @@
           <input type="text" id="exclusions" disabled placeholder="Купите Premium, чтобы писать здесь" maxlength="250" oninput="if(this.value.length>250)this.value=this.value.slice(0,250);" />
           <div class="counter" id="exclusionsCounter">0/250</div>
           <div class="hint">Например: люди, животные, текст, логотипы и т.д.</div>
+          <button id="exclusionsUnlockBtn" class="btn btn--secondary" style="margin-top: 12px; width: 100%; display: none;" onclick="unlockFieldWithCrystals('exclusions', 50)">
+            <span>Открыть за 50<i class="fa-solid fa-gem" style="margin-left: 4px;"></i></span>
+          </button>
         </div>
       </div>
       <!-- Сжали расстояния между блоками: фон + размытие -->
@@ -384,6 +390,9 @@
             oninput="if (document.getElementById('sizeInput').value !== '' && document.getElementById('sizeSelect').value !== ''){document.getElementById('soot').disabled = true}else{document.getElementById('soot').disabled = false}"
           />
           <div class="hint">Можно вручную или выбрать из списка.</div>
+          <button id="sizeUnlockBtn" class="btn btn--secondary" style="margin-top: 12px; width: 100%; display: none;" onclick="unlockFieldWithCrystals('sizeInput', 50)">
+            <span>Открыть за 50<i class="fa-solid fa-gem" style="margin-left: 4px;"></i></span>
+          </button>
         </div>
         <div class="field">
           <label for="sizeSelect">Выбор размера</label>
@@ -912,7 +921,7 @@
           <span>Сгенерировать (Максимально быстро)</span>
         </button>
       </div>
-      <div class="grid grid-3" style="margin-top: 2%;">
+      <div class="grid grid-2" style="margin-top: 2%;">
         <button class="btn btn--secondary" onclick="surpriseMode()" title="Нажмите чтобы получить случайные параметры генерации.">
           <i class="fa-solid fa-dice"></i>
           <span>Удиви меня</span>
@@ -921,7 +930,13 @@
           <i class="fa-solid fa-key"></i>
           <span>Мой API-ключ</span>
         </button>
-        <button class="btn btn--secondary" onclick="BuyPremium()" title="Нажмите чтобы купить Premium-подписку и получить доступ ко всем функциям.">
+      </div>
+      <div class="grid grid-2 crystals-premium-buttons">
+        <button class="btn btn--secondary" style="margin-top: 4%;" onclick="window.location.href='crystals.html'" title="Нажмите чтобы открыть страницу покупки кристаллов.">
+          <i class="fa-solid fa-gem"></i>
+          <span>Кристаллы</span>
+        </button>
+        <button class="btn btn--secondary" style="margin-top: 4%;" onclick="BuyPremium()" title="Нажмите чтобы открыть страницу премиума.">
           <i class="fa-solid fa-crown"></i>
           <span>Premium</span>
         </button>
@@ -973,6 +988,16 @@
         <h2 style="color: #d9d9d9; text-align: center;">Ошибка</h2>
         <p id="validationErrorText" style="color: #d9d9d9; text-align: center;"></p>
         <button class="btn btn--primary" onclick="closeValidationModal()" style="width: 100%;" title="Закрыть.">Закрыть</button>
+      </div>
+    </div>
+    <!-- INSUFFICIENT CRYSTALS MODAL -->
+    <div id="insufficientCrystalsModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 400px;">
+        <h2 style="color: #ff6b6b; text-align: center;">
+          <i class="fa-solid fa-gem"></i> Недостаточно кристаллов!
+        </h2>
+        <p style="color: #d9d9d9; text-align: center;">У вас недостаточно кристаллов для выполнения этого действия.</p>
+        <button class="btn btn--primary" onclick="closeInsufficientCrystalsModal()" style="width: 100%;" title="Закрыть.">Закрыть</button>
       </div>
     </div>
     <!-- MESSENGER MODAL -->

@@ -121,6 +121,7 @@ function setupStoryModalObserver() {
 window.addEventListener('load', () => {
   try { setupPageBackButtonHandlers(); } catch (e) { console.warn(e); }
   try { setupStoryModalObserver(); } catch (e) { console.warn(e); }
+  try { initializeCrystals(); } catch (e) { console.warn(e); }
 });
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
 const SHEET_NAME = 'Sheet1';
@@ -777,6 +778,7 @@ function generateImage() {
     return;
   }
   if (!validateInputs()) return;
+  resetTempOpenedFields();
   if (!checkAttempts()) {
     noAttemptsModal.style.display = 'flex';
     return;
@@ -1294,19 +1296,26 @@ function checkPremium() {
     });
     writtenPromos = JSON.parse(localStorage.getItem('writtenPromos')) || [];
   } else {
+    const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
     const p22 = document.getElementById('p22');
     if (p22) p22.style.display = 'block';
     const appRadio = document.getElementById('app');
     if (appRadio) appRadio.disabled = true;
     if (exclusionsInput) {
-      exclusionsInput.disabled = true;
-      exclusionsInput.placeholder = 'Купите Premium, чтобы писать здесь';
-      exclusionsInput.value = '';
+      if (!tempOpenedFields.includes('exclusions')) {
+        exclusionsInput.disabled = true;
+        exclusionsInput.placeholder = 'Купите Premium, чтобы писать здесь';
+        exclusionsInput.value = '';
+      }
     }
     if (autoTextStyle) autoTextStyle.disabled = true;
     if (autoTextStyleLabel) autoTextStyleLabel.classList.add('disabled-label');
-    if (sizeInput) sizeInput.disabled = true;
-    if (sizeInput) sizeInput.placeholder = 'Купите Premium, чтобы писать здесь';
+    if (sizeInput) {
+      if (!tempOpenedFields.includes('sizeInput')) {
+        sizeInput.disabled = true;
+        sizeInput.placeholder = 'Купите Premium, чтобы писать здесь';
+      }
+    }
     document.querySelectorAll('option').forEach((opt) => {
       if (opt.textContent.includes('Premium') || opt.textContent.match(/^\(Premium\)/)) opt.disabled = true;
     });
@@ -1315,6 +1324,7 @@ function checkPremium() {
   updateDescriptionLimit();
   updateTextLimit();
   updateExclusionsLimit();
+  updateFieldUnlockButtons();
 }
 function handleDailyPremium(afterGeneration) {
   const data = getStoredData();
@@ -1469,6 +1479,7 @@ function fastGenerate() {
   if (textInput) textInput.style.background = '';
   if (!checkRulesAgree()) return;
   if (!validateInputs()) return;
+  resetTempOpenedFields();
   localStorage.removeItem('fastGenerationUsed');
   fastGenModal.style.display = 'flex';
   const WebApp = window.Telegram?.WebApp;
@@ -1946,6 +1957,156 @@ window.updateDescriptionLimit = updateDescriptionLimit;
 window.updateTextLimit = updateTextLimit;
 window.updateExclusionsLimit = updateExclusionsLimit;
 checkPremium();
+
+// --- CRYSTALS SYSTEM ---
+function initializeCrystals() {
+  if (!localStorage.getItem('userCrystals')) {
+    localStorage.setItem('userCrystals', '100'); // Начальное количество кристаллов
+  }
+  updateCrystalsDisplay();
+  restoreTempOpenedFields();
+  startUnlockButtonObservers();
+  updateFieldUnlockButtons();
+}
+
+function getCrystals() {
+  return parseInt(localStorage.getItem('userCrystals') || '0', 10);
+}
+
+function setCrystals(amount) {
+  localStorage.setItem('userCrystals', Math.max(0, amount).toString());
+  updateCrystalsDisplay();
+}
+
+function spendCrystals(amount) {
+  const current = getCrystals();
+  if (current >= amount) {
+    setCrystals(current - amount);
+    return true;
+  }
+  return false;
+}
+
+function updateCrystalsDisplay() {
+  const crystalCount = document.getElementById('crystalCount');
+  if (crystalCount) {
+    crystalCount.textContent = getCrystals();
+  }
+}
+
+function updateFieldUnlockButtons() {
+  const isPremium = localStorage.getItem('premium') === 'true';
+  const exclusionsBtn = document.getElementById('exclusionsUnlockBtn');
+  const exclusionsField = document.getElementById('exclusions');
+  const sizeBtn = document.getElementById('sizeUnlockBtn');
+  const sizeField = document.getElementById('sizeInput');
+
+  if (!isPremium) {
+    if (exclusionsBtn) {
+      exclusionsBtn.style.display = (exclusionsField && !exclusionsField.disabled && !exclusionsField.hidden) ? 'none' : 'block';
+    }
+    if (sizeBtn) {
+      sizeBtn.style.display = (sizeField && !sizeField.disabled && !sizeField.hidden) ? 'none' : 'block';
+    }
+  } else {
+    if (exclusionsBtn) exclusionsBtn.style.display = 'none';
+    if (sizeBtn) sizeBtn.style.display = 'none';
+  }
+}
+
+function startUnlockButtonObservers() {
+  ['exclusions', 'sizeInput'].forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+    const observer = new MutationObserver(() => updateFieldUnlockButtons());
+    observer.observe(field, { attributes: true, attributeFilter: ['disabled', 'hidden', 'style'] });
+  });
+}
+
+function restoreTempOpenedFields() {
+  const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
+  tempOpenedFields.forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+    field.disabled = false;
+    if (fieldId === 'exclusions') {
+      field.placeholder = '';
+    } else if (fieldId === 'sizeInput') {
+      field.placeholder = 'Например: 1920x1080';
+    }
+    const btn = document.getElementById(fieldId + 'UnlockBtn');
+    if (btn) btn.style.display = 'none';
+  });
+}
+
+function unlockFieldWithCrystals(fieldId, cost) {
+  if (spendCrystals(cost)) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.disabled = false;
+      field.placeholder = '';
+      
+      // Скрыть кнопку для этого поля
+      const btn = document.getElementById(fieldId + 'UnlockBtn');
+      if (btn) btn.style.display = 'none';
+      
+      // Фокус на поле
+      field.focus();
+      
+      // Сохраняем, что это поле открыто только для этой генерации
+      const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
+      if (!tempOpenedFields.includes(fieldId)) {
+        tempOpenedFields.push(fieldId);
+        localStorage.setItem('tempOpenedFields', JSON.stringify(tempOpenedFields));
+      }
+    }
+  } else {
+    showInsufficientCrystalsModal();
+  }
+}
+
+function showInsufficientCrystalsModal() {
+  const modal = document.getElementById('insufficientCrystalsModal');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+}
+
+function closeInsufficientCrystalsModal() {
+  const modal = document.getElementById('insufficientCrystalsModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function resetTempOpenedFields() {
+  const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
+  
+  tempOpenedFields.forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.disabled = true;
+      // Восстанавливаем placeholder
+      if (fieldId === 'exclusions') {
+        field.placeholder = 'Купите Premium, чтобы писать здесь';
+      } else if (fieldId === 'sizeInput') {
+        field.placeholder = 'Например: 1920x1080';
+      }
+      field.value = '';
+      
+      // Показываем кнопку снова
+      const btn = document.getElementById(fieldId + 'UnlockBtn');
+      if (btn) btn.style.display = 'block';
+    }
+  });
+  
+  localStorage.removeItem('tempOpenedFields');
+}
+
+window.unlockFieldWithCrystals = unlockFieldWithCrystals;
+window.showInsufficientCrystalsModal = showInsufficientCrystalsModal;
+window.closeInsufficientCrystalsModal = closeInsufficientCrystalsModal;
+window.initializeCrystals = initializeCrystals;
 
 // Initialize Telegram WebApp
 const WebAppInit = window.Telegram?.WebApp;

@@ -388,11 +388,13 @@ if (!tg || tg === null || tg === undefined || tg === ''){
 }
 tg.expand();
 tg.enableClosingConfirmation();
-tg.SettingsButton.show();
-tg.onEvent('settingsButtonClicked', () => {
-  window.location.href = 'settings.html';
-});
 
+setInterval(() => {
+  tg.SettingsButton.show();
+  tg.onEvent('settingsButtonClicked', () => {
+    window.location.href = 'settings.html';
+  });
+}, 1000);
 </script>
 
 <script type="module" src="security.js"></script>

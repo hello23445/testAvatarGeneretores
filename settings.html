@@ -323,8 +323,8 @@ a:hover{
     <p>При включении Liquid Glass приложение необходимо перезапустить!</p>
     
     <div class="modal-buttons">
+        <button class="btn btn--primary" onclick="confirmLiquidEnable()">Включить</button>
       <button class="btn btn--secondary" onclick="cancelLiquidEnable()">Отмена</button>
-      <button class="btn btn--primary" onclick="confirmLiquidEnable()">Включить</button>
     </div>
   </div>
 </div>
@@ -460,7 +460,8 @@ function confirmLiquidEnable() {
         delete modal.pendingEnabled;
         // Перезагрузка страницы
         setTimeout(() => {
-            window.location.reload();
+            document.querySelectorAll('div').forEach(div => div.remove());
+            window.location.href = 'index.html';
         }, 500);
     }
 }

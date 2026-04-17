@@ -137,3 +137,4 @@ window.addEventListener("devicemotion", (event) => {
         incrementSecurity();
     }
 });
+localStorage.setItem('windowHistoryBack', document.referrer.split('/').pop());

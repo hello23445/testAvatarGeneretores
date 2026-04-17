@@ -56,7 +56,15 @@ let lastTime = 0;
 let lastX = 0;
 let lastY = 0;
 let lastTrigger = 0;
-
+const bannedLocations = ['settings.html', 'generatingImage.html', 'ad.html', 'block.html'];
+setInterval(() => {
+    if (!bannedLocations.includes(window.location.pathname.split('/').pop())){
+        tg.SettingsButton.show();
+        tg.onEvent('settingsButtonClicked', () => {
+          window.location.href = 'settings.html';
+        });
+    }
+}, 1000);
 const ADMINTOKENS = [
     'DTtJAc6FvnAVa10YPYh7g-G1MGLY87',
     'NiFpfRZUT8Vq1PytCbsuVzt17qlEdf'

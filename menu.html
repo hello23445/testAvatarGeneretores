@@ -358,6 +358,41 @@ emailLink.querySelector('div div:last-child').textContent =
  : 'Подключить Email';
 })();
 
+// LIQUID GLASS EFFECT
+(function(){
+  const liquidState = localStorage.getItem('liquid');
+  if (liquidState === 'Включен') {
+    document.body.style.backdropFilter = "blur(20px)";
+    
+    const style = document.createElement('style');
+    style.id = 'liquid-style';
+    style.textContent = `
+      button, 
+      .btn, 
+      .back-btn, 
+      .back-center,
+      .option-item, 
+      .liquid-toggle, 
+      .switch,
+      input, 
+      .faq-item summary,
+      [role="button"] { 
+        border: 1px solid rgba(255,255,255,0.8) !important; 
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+if (!tg || tg === null || tg === undefined || tg === ''){
+  const tg = window.Telegram.WebApp;
+}
+tg.expand();
+tg.enableClosingConfirmation();
+tg.SettingsButton.show();
+tg.onEvent('settingsButtonClicked', () => {
+  window.location.href = 'settings.html';
+});
+
 </script>
 
 <script type="module" src="security.js"></script>

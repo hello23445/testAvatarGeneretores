@@ -129,7 +129,7 @@ function confirmLiquidEnable() {
         delete modal.pendingEnabled;
         // Перезагрузка страницы
         setTimeout(() => {
-            window.location.reload();
+            window.location.href = 'index.html';
         }, 500);
     }
 }

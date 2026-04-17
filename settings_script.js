@@ -92,13 +92,53 @@ function initSettings() {
         // Переключатель
         liquidSwitch.addEventListener('click', () => {
             const currentEnabled = localStorage.getItem('liquid') === 'Включен';
-            const nextEnabled = !currentEnabled;
-            localStorage.setItem('liquid', nextEnabled ? 'Включен' : 'Выключен');
-            liquidSwitch.classList.toggle('active');
-            applyLiquid(nextEnabled);
+            if (!currentEnabled) {
+                // Показать подтверждение перед включением
+                showLiquidConfirmModal();
+            } else {
+                // Выключение без подтверждения
+                const nextEnabled = false;
+                localStorage.setItem('liquid', 'Выключен');
+                liquidSwitch.classList.remove('active');
+                applyLiquid(nextEnabled);
+            }
         });
+    }
+}
+
+function showLiquidConfirmModal() {
+    const modal = document.getElementById('liquidConfirmModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function confirmLiquidEnable() {
+    const modal = document.getElementById('liquidConfirmModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    // Включить и перезапустить
+    localStorage.setItem('liquid', 'Включен');
+    liquidSwitch.classList.add('active');
+    applyLiquid(true);
+    // Перезагрузка страницы
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
+}
+
+function cancelLiquidEnable() {
+    const modal = document.getElementById('liquidConfirmModal');
+    if (modal) {
+        modal.style.display = 'none';
     }
 }
 
 // Запуск
 document.addEventListener('DOMContentLoaded', initSettings);
+
+// Экспорт функций
+window.showLiquidConfirmModal = showLiquidConfirmModal;
+window.confirmLiquidEnable = confirmLiquidEnable;
+window.cancelLiquidEnable = cancelLiquidEnable;

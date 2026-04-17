@@ -92,46 +92,53 @@ function initSettings() {
         // Переключатель
         liquidSwitch.addEventListener('click', () => {
             const currentEnabled = localStorage.getItem('liquid') === 'Включен';
-            if (!currentEnabled) {
-                // Показать подтверждение перед включением
-                showLiquidConfirmModal();
-            } else {
-                // Выключение без подтверждения
-                const nextEnabled = false;
-                localStorage.setItem('liquid', 'Выключен');
-                liquidSwitch.classList.remove('active');
-                applyLiquid(nextEnabled);
-            }
+            const nextEnabled = !currentEnabled;
+            showLiquidConfirmModal(nextEnabled);
         });
     }
 }
 
-function showLiquidConfirmModal() {
+function showLiquidConfirmModal(enabled) {
     const modal = document.getElementById('liquidConfirmModal');
-    if (modal) {
-        modal.style.display = 'flex';
+    const title = modal.querySelector('h2');
+    const message = modal.querySelector('p');
+    const button = modal.querySelector('.btn--primary');
+    
+    if (enabled) {
+        title.innerHTML = '<i class="fa-solid fa-droplet"></i> Подтвердите действие';
+        message.textContent = 'При включении Liquid Glass приложение необходимо перезапустить!';
+        button.textContent = 'Включить и перезапустить';
+    } else {
+        title.innerHTML = '<i class="fa-solid fa-droplet-slash"></i> Подтвердите действие';
+        message.textContent = 'При выключении Liquid Glass приложение необходимо перезапустить!';
+        button.textContent = 'Выключить и перезапустить';
     }
+    
+    modal.pendingEnabled = enabled;
+    modal.style.display = 'flex';
 }
 
 function confirmLiquidEnable() {
     const modal = document.getElementById('liquidConfirmModal');
-    if (modal) {
+    if (modal && modal.pendingEnabled !== undefined) {
+        const enabled = modal.pendingEnabled;
+        localStorage.setItem('liquid', enabled ? 'Включен' : 'Выключен');
+        liquidSwitch.classList.toggle('active', enabled);
+        applyLiquid(enabled);
         modal.style.display = 'none';
+        delete modal.pendingEnabled;
+        // Перезагрузка страницы
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     }
-    // Включить и перезапустить
-    localStorage.setItem('liquid', 'Включен');
-    liquidSwitch.classList.add('active');
-    applyLiquid(true);
-    // Перезагрузка страницы
-    setTimeout(() => {
-        window.location.reload();
-    }, 500);
 }
 
 function cancelLiquidEnable() {
     const modal = document.getElementById('liquidConfirmModal');
     if (modal) {
         modal.style.display = 'none';
+        delete modal.pendingEnabled;
     }
 }
 

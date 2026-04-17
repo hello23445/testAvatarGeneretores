@@ -1249,6 +1249,15 @@
 
         // Removed Telegram BackButton usage for api.html (handled via HTML fallback)
     </script>
+    <script>
+      // Telegram WebApp Settings Button
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.SettingsButton.show();
+        window.Telegram.WebApp.onEvent('settingsButtonClicked', () => {
+          window.location.href = 'settings.html';
+        });
+      }
+    </script>
     <script type="module" src="security.js"></script>
 </body>
 </html>

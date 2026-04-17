@@ -90,7 +90,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <!-- EMAIL -->
 <div class="card" id="emailStep">
-  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</div>
+  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ НАЗАД</div>
   <h2>Подключение почты</h2>
   <div class="subtitle">Введите имя и выберите домен</div>
 
@@ -110,7 +110,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <!-- CODE -->
 <div class="card hidden" id="codeStep">
-  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ</div>
+  <div class="back-btn" onclick="goHome()">ВЕРНУТЬСЯ НАЗАД</div>
   <h2>Введите код</h2>
   <div class="subtitle" id="emailPreview"></div>
   <input id="codeInput" maxlength="6" placeholder="XXXXXX">
@@ -427,11 +427,24 @@ function changeEmail(){
 }
 
 function goHome(){
-  window.location.href = 'index.html';
+  if (document.referrer) {
+    window.history.back();
+  } else {
+      window.location.href = 'index.html';
+  }
 }
 
 
 
+</script>
+<script>
+// Telegram WebApp Settings Button
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.SettingsButton.show();
+  window.Telegram.WebApp.onEvent('settingsButtonClicked', () => {
+    window.location.href = 'settings.html';
+  });
+}
 </script>
 </body>
 </html>

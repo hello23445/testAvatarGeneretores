@@ -613,15 +613,15 @@
           <li class="benefit"><div class="benefit-index">4</div><div class="benefit-text">Тон цвета: пастельный, сепия, неоновый <strong>и другие</strong>.</div></li>
           <li class="benefit"><div class="benefit-index">5</div><div class="benefit-text">Возможность писать в закрытых полях.</div></li>
           <li class="benefit"><div class="benefit-index">6</div><div class="benefit-text">Доступ к качеству 2160p60 (4K) и 4320p (8K).</div></li>
-          <li class="benefit"><div class="benefit-index">7</div><div class="benefit-text">Описание фото увеличивается с 500 до 1000 символов.</div></li>
-          <li class="benefit"><div class="benefit-index">8</div><div class="benefit-text">Текст на фото увеличивается с 250 до 500 символов.</div></li>
-          <li class="benefit"><div class="benefit-index">9</div><div class="benefit-text">Возможность выбирать ИИ: Grok 4, ChatGPT 5 <strong>и другие</strong>.</div></li>
+          <li class="benefit"><div class="benefit-index">7</div><div class="benefit-text">Количество символов в описании фото увеличивается с 500 до 1000 символов.</div></li>
+          <li class="benefit"><div class="benefit-index">8</div><div class="benefit-text">Количество символов в тексте на фото увеличивается с 250 до 500 символов.</div></li>
+          <li class="benefit"><div class="benefit-index">9</div><div class="benefit-text">Возможность выбирать более мощные ИИ: Grok 4, ChatGPT 5 <strong>и другие</strong>.</div></li>
           <li class="benefit"><div class="benefit-index">10</div><div class="benefit-text">Возможность выбирать другие фоны фото.</div></li>
           <li class="benefit"><div class="benefit-index">11</div><div class="benefit-text">Возможность выбирать другие соотношения сторон.</div></li>
           <li class="benefit"><div class="benefit-index">12</div><div class="benefit-text">Получение фото по WhatsApp и Telegram.</div></li>
           <li class="benefit"><div class="benefit-index">13</div><div class="benefit-text">Возможность выбирать другие рамки для фото.</div></li>
           <li class="benefit"><div class="benefit-index">14</div><div class="benefit-text">Возможность выбирать другие ракурсы для фото.</div></li>
-          <li class="benefit"><div class="benefit-index">15</div><div class="benefit-text">Загрузка до 6 фотографий для примера.</div></li>
+          <li class="benefit"><div class="benefit-index">15</div><div class="benefit-text">Возможность загружать до 6 фотографий для примера.</div></li>
           <li class="benefit"><div class="benefit-index">16</div><div class="benefit-text">Получение сгенерированного фото прямо в приложении.</div></li>
           <li class="benefit"><div class="benefit-index">17</div><div class="benefit-text">Быстрая генерация фото.</div></li>
           <li class="benefit"><div class="benefit-index">18</div><div class="benefit-text">Сохранение до 20 историй генераций.</div></li>
@@ -1160,5 +1160,14 @@
   </script>
   <script src="script.js"></script>
   <script type="module" src="security.js"></script>
+  <script>
+    // Telegram WebApp Settings Button
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.SettingsButton.show();
+      window.Telegram.WebApp.onEvent('settingsButtonClicked', () => {
+        window.location.href = 'settings.html';
+      });
+    }
+  </script>
 </body>
 </html>

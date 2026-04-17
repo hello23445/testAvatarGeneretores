@@ -2040,26 +2040,10 @@ function restoreTempOpenedFields() {
 }
 
 function unlockFieldWithCrystals(fieldId, cost) {
-  if (spendCrystals(cost)) {
-    const field = document.getElementById(fieldId);
-    if (field) {
-      field.disabled = false;
-      field.placeholder = '';
-      
-      // Скрыть кнопку для этого поля
-      const btn = document.getElementById(fieldId + 'UnlockBtn');
-      if (btn) btn.style.display = 'none';
-      
-      // Фокус на поле
-      field.focus();
-      
-      // Сохраняем, что это поле открыто только для этой генерации
-      const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
-      if (!tempOpenedFields.includes(fieldId)) {
-        tempOpenedFields.push(fieldId);
-        localStorage.setItem('tempOpenedFields', JSON.stringify(tempOpenedFields));
-      }
-    }
+  const currentCrystals = getCrystals();
+  if (currentCrystals >= cost) {
+    // Show confirmation modal
+    showCrystalSpendConfirmModal(fieldId, cost);
   } else {
     showInsufficientCrystalsModal();
   }
@@ -2076,6 +2060,58 @@ function closeInsufficientCrystalsModal() {
   const modal = document.getElementById('insufficientCrystalsModal');
   if (modal) {
     modal.style.display = 'none';
+  }
+}
+
+function showCrystalSpendConfirmModal(fieldId, cost) {
+  const modal = document.getElementById('crystalSpendConfirmModal');
+  const message = document.getElementById('crystalSpendMessage');
+  if (modal && message) {
+    message.textContent = `Потратить ${cost} кристаллов на разблокировку поля?`;
+    modal.pendingFieldId = fieldId;
+    modal.pendingCost = cost;
+    modal.style.display = 'flex';
+  }
+}
+
+function confirmCrystalSpend() {
+  const modal = document.getElementById('crystalSpendConfirmModal');
+  if (modal && modal.pendingFieldId && modal.pendingCost) {
+    const fieldId = modal.pendingFieldId;
+    const cost = modal.pendingCost;
+    if (spendCrystals(cost)) {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        field.disabled = false;
+        field.placeholder = '';
+        
+        // Скрыть кнопку для этого поля
+        const btn = document.getElementById(fieldId + 'UnlockBtn');
+        if (btn) btn.style.display = 'none';
+        
+        // Фокус на поле
+        field.focus();
+        
+        // Сохраняем, что это поле открыто только для этой генерации
+        const tempOpenedFields = JSON.parse(localStorage.getItem('tempOpenedFields') || '[]');
+        if (!tempOpenedFields.includes(fieldId)) {
+          tempOpenedFields.push(fieldId);
+          localStorage.setItem('tempOpenedFields', JSON.stringify(tempOpenedFields));
+        }
+      }
+    }
+    modal.style.display = 'none';
+    delete modal.pendingFieldId;
+    delete modal.pendingCost;
+  }
+}
+
+function cancelCrystalSpend() {
+  const modal = document.getElementById('crystalSpendConfirmModal');
+  if (modal) {
+    modal.style.display = 'none';
+    delete modal.pendingFieldId;
+    delete modal.pendingCost;
   }
 }
 
@@ -2106,6 +2142,9 @@ function resetTempOpenedFields() {
 window.unlockFieldWithCrystals = unlockFieldWithCrystals;
 window.showInsufficientCrystalsModal = showInsufficientCrystalsModal;
 window.closeInsufficientCrystalsModal = closeInsufficientCrystalsModal;
+window.showCrystalSpendConfirmModal = showCrystalSpendConfirmModal;
+window.confirmCrystalSpend = confirmCrystalSpend;
+window.cancelCrystalSpend = cancelCrystalSpend;
 window.initializeCrystals = initializeCrystals;
 
 // Initialize Telegram WebApp

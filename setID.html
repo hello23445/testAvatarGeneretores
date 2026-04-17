@@ -184,8 +184,8 @@
 </head>
 <body>
   <div class="container" role="main">
-    <button class="btn" onclick="window.location.href = 'index.html'" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
-ВЕРНУТЬСЯ В ГЛАВНОЕ МЕНЮ
+    <button class="btn" onclick="window.history.back()" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
+ВЕРНУТЬСЯ НАЗАД
 </button>
     <div id="step1" aria-hidden="false">
 
@@ -509,7 +509,11 @@
 
     function showSuccess() {
       setTimeout(() => {
-        window.location.href = 'index.html';
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = 'index.html';
+        }
       }, 4000);
       const successContainer = document.getElementById('success');
       const successCard = document.getElementById('successCard');
@@ -579,6 +583,15 @@
     }
     
     // Removed Telegram BackButton usage for setID.html (handled via HTML fallback)
+  </script>
+  <script>
+    // Telegram WebApp Settings Button
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.SettingsButton.show();
+      window.Telegram.WebApp.onEvent('settingsButtonClicked', () => {
+        window.location.href = 'settings.html';
+      });
+    }
   </script>
   <script type="module" src="security.js"></script>
 </body>

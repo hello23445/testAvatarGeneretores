@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Покупка кристаллов</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -23,6 +24,44 @@ body {
     background: radial-gradient(circle at top, #1e293b, #020617);
     color: #e2e8f0;
     padding: 20px;
+    position: relative;
+}
+
+.crystal-counter {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #f8fafc;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+.crystal-counter i {
+    font-size: 18px;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+    .crystal-counter {
+        top: 15px;
+        right: 15px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .crystal-counter i {
+        font-size: 16px;
+    }
 }
 
 .container {
@@ -36,6 +75,19 @@ body {
   justify-content:center;
   padding:20px 20px 0 20px;
   margin-bottom:20px;
+  gap: 10px;
+}
+
+/* На мобильных устройствах кнопки вертикально */
+@media (max-width: 767px) {
+    .header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .ad-center {
+        margin-left: 0 !important;
+    }
 }
 
 .back-center{
@@ -50,8 +102,22 @@ border-radius:12px;
 background:linear-gradient(135deg,#7f1d1d,var(--danger));
 box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
+.ad-center{
+display:block;
+width:100%;
+text-align:center;
+text-decoration:none;
+color:white;
+font-weight:700;
+font-size:14px;
+padding:12px 0;
+border-radius:12px;
+background: linear-gradient(135deg, #0f172a, #1e3a8a);
+box-shadow:0 6px 18px rgba(0,0,0,.25);
+transition: 0.2s;
+}
 
-.back-center:active{
+.back-center:active, .ad-center:active {
 transform:scale(.98);
 }
 
@@ -130,6 +196,90 @@ transform:scale(.98);
     font-size: 12px;
 }
 
+/* Стили для модального окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+    width: 320px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    color: #f8fafc;
+}
+
+.modal-icon {
+    font-size: 40px;
+    color: #3b82f6;
+    margin-bottom: 15px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white;
+}
+
+.modal-btn:active {
+    transform: scale(0.95);
+}
+
+.btn-yes {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.btn-no {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Большие экраны: 4 карточки в строку */
 @media (min-width: 1024px) {
     .container {
@@ -169,6 +319,10 @@ transform:scale(.98);
 </head>
 
 <body>
+<div class="crystal-counter">
+    <i class="fa-solid fa-gem"></i>
+    <span id="crystalCount">0</span>
+</div>
 <script>
 function goBack() {
     if (localStorage.getItem('windowHistoryBack') !== window.location.pathname.split('/').pop()) {
@@ -178,18 +332,56 @@ function goBack() {
         window.location.href = document.referrer.split('/').pop().split('?')[0] || 'menu.html';
     }
     else{
-        window.location.href = 'menu.html';
+        window.location.href = 'index.html';
     }
 }
+
+// Функция обновления счетчика кристаллов
+function updateCrystalCounter() {
+    const count = localStorage.getItem('userCrystals') || '0';
+    const counterElement = document.getElementById('crystalCount');
+    if (counterElement) {
+        counterElement.textContent = count;
+    }
+}
+
+// Функции модального окна
+function showAdModal() {
+    document.getElementById('adModalOverlay').classList.add('active');
+}
+
+function closeAdModal() {
+    document.getElementById('adModalOverlay').classList.remove('active');
+}
+
+function proceedToAd() {
+    localStorage.setItem('fromCrystals', 'true');
+    window.location.href = 'ad.html';
+}
 </script>
+
+<div class="modal-overlay" id="adModalOverlay">
+    <div class="modal-content">
+        <i class="fa-solid fa-gem modal-icon"></i>
+        <div class="modal-title">Хотите получить +25 кристаллов за просмотр рекламы?</div>
+        <div class="modal-buttons">
+            <button class="modal-btn btn-yes" onclick="proceedToAd()">Да</button>
+            <button class="modal-btn btn-no" onclick="closeAdModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="header">
         <a onclick="goBack()" class="back-center" style="cursor:pointer;">
         ← Вернуться назад
         </a>
+        <a onclick="showAdModal()" class="ad-center" style="cursor:pointer; margin-left:10px;">
+            <i class="fa-solid fa-circle-play"></i>
+            Получить +25 кристаллов
+            <i class="fa-solid fa-gem"></i>
+        </a>
     </div>
-
-    <div class="title">💎 Покупка кристаллов</div>
 
     <div class="grid" id="shop"></div>
 
@@ -206,38 +398,26 @@ if (!localStorage.getItem('userCrystals')) {
     localStorage.setItem('userCrystals', '0');
 }
 
+// Обновляем счетчик при загрузке страницы
+updateCrystalCounter();
+
 // Товары
 const products = [
     { crystals: 10, price: 5, buttonText: "" },
-
     { crystals: 25, price: 10, buttonText: "" },
-
     { crystals: 50, price: 18, buttonText: "" },
-
     { crystals: 80, price: 25, buttonText: "" },
-
     { crystals: 120, price: 35, buttonText: "Популярно" },
-
     { crystals: 200, price: 55, buttonText: "" },
-
     { crystals: 350, price: 85, buttonText: "" },
-
     { crystals: 500, price: 120, buttonText: "Выгодно" },
-
     { crystals: 800, price: 180, buttonText: "" },
-
     { crystals: 1200, price: 250, buttonText: "Лучшее предложение" },
-
     { crystals: 1800, price: 350, buttonText: "" },
-
     { crystals: 2500, price: 470, buttonText: "" },
-
     { crystals: 3500, price: 620, buttonText: "Макс. выгода" },
-
     { crystals: 5000, price: 850, buttonText: "" },
-
     { crystals: 7500, price: 1200, buttonText: "Супер выгода" },
-
     { crystals: 10000, price: 1500, buttonText: "Топ пакет" }
 ];
 
@@ -251,8 +431,8 @@ products.forEach((item, index) => {
 
     div.innerHTML = `
         ${item.buttonText ? `<div class="badge">${item.buttonText}</div>` : ""}
-        <div class="crystals">💎 ${item.crystals}</div>
-        <div class="price">${item.price} ⭐ Telegram Stars</div>
+        <div class="crystals"><i class="fa-solid fa-gem"></i> ${item.crystals}</div>
+        <div class="price">${item.crystals} кристаллов за ${item.price} Telegram звёзд</div>
     `;
 
     shop.appendChild(div);
@@ -263,6 +443,7 @@ function addCrystals(amount) {
     let current = Number(localStorage.getItem('userCrystals') || 0);
     current += amount;
     localStorage.setItem('userCrystals', current);
+    updateCrystalCounter(); // Обновляем отображение счетчика
     return current;
 }
 
@@ -272,7 +453,7 @@ async function createInvoiceLink(item) {
         const payload = `crystals_${item.crystals}_${Date.now()}`;
         
         const formData = new URLSearchParams();
-        formData.append('title', `💎 ${item.crystals} кристаллов`);
+        formData.append('title', `<i class="fa-solid fa-gem"></i> ${item.crystals} кристаллов`);
         formData.append('description', `Покупка ${item.crystals} кристаллов для Photo AI`);
         formData.append('payload', payload);
         formData.append('currency', 'XTR'); // Telegram Stars

@@ -226,7 +226,12 @@ continueBtn.addEventListener('click', async () => {
         localStorage.setItem('attemptsFromAd', attempts);
     }
     await incrementViewCount();
-    window.location.href = 'index.html';
+    if (localStorage.getItem('fromCrystals') === 'true'){
+        window.location.href = 'crystals.html';
+    }
+    else{
+        window.location.href = 'index.html';
+    }
 });
 
 // Остальные функции (жалобы, комментарии) остаются без изменений

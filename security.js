@@ -38,6 +38,9 @@ setInterval(() => {
     if (localStorage.getItem('enableconfirmation') === 'true') {
         window.Telegram.WebApp.enableClosingConfirmation();
     }
+    else{
+        window.Telegram.WebApp.disableClosingConfirmation();
+    }
     if (!localStorage.getItem('enableconfirmation')) {
         localStorage.setItem('enableconfirmation', 'false');
     }

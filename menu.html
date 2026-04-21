@@ -392,6 +392,9 @@ tg.expand();
 if (localStorage.getItem('enableconfirmation') === 'true') {
   tg.enableClosingConfirmation();
 }
+else{
+    window.Telegram.WebApp.disableClosingConfirmation();
+}
 
 setInterval(() => {
   tg.SettingsButton.show();

@@ -3,95 +3,359 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>В разработке</title>
+<title>Покупка кристаллов</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+:root {
+    --danger: #dc2626;
+}
+
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1e293b, #020617);
+    color: #e2e8f0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 20px 0 20px;
+  margin-bottom:20px;
+}
+
+.back-center{
+display:block;
+width:100%;
+text-align:center;
+text-decoration:none;
+color:white;
+font-weight:700;
+padding:12px 0;
+border-radius:12px;
+background:linear-gradient(135deg,#7f1d1d,var(--danger));
+box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+
+.back-center:active{
+transform:scale(.98);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 22px;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Мобильные: 2 карточки в строку */
+@media (min-width: 480px) {
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+.card {
+    position: relative;
+    padding: 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: 0.25s;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(59,130,246,0.6);
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(59,130,246,0.15), transparent);
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.crystals {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.price {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #3b82f6;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+/* Большие экраны: 4 карточки в строку */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1400px;
     }
 
-    body {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        color: #e2e8f0;
-        padding: 20px;
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
     }
 
-    .card {
-        background: rgba(255, 255, 255, 0.06);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 32px;
-        max-width: 420px;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    .title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+}
+
+/* Средние экраны: 3 карточки в строку */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        max-width: 900px;
     }
 
-    h1 {
-        font-size: 22px;
-        margin-bottom: 12px;
-        line-height: 1.4;
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
     }
 
-    p {
-        font-size: 14px;
-        color: #94a3b8;
-        margin-bottom: 24px;
+    .title {
+        font-size: 26px;
+        margin-bottom: 28px;
     }
-
-    button {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        padding: 12px 18px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.2s ease;
-    }
-
-    button:hover {
-        background: #2563eb;
-        transform: translateY(-2px);
-    }
-
-    button:active {
-        transform: scale(0.98);
-    }
-
-    .icon {
-        font-size: 40px;
-        margin-bottom: 12px;
-    }
+}
 </style>
 </head>
 
 <body>
+<script>
+function goBack() {
+    if (localStorage.getItem('windowHistoryBack') !== window.location.pathname.split('/').pop()) {
+        window.location.href = localStorage.getItem('windowHistoryBack') || 'menu.html';
+    }
+    else if (document.referrer.split('/').pop().split('?')[0] !== window.location.pathname.split('/').pop()){
+        window.location.href = document.referrer.split('/').pop().split('?')[0] || 'menu.html';
+    }
+    else{
+        window.location.href = 'menu.html';
+    }
+}
+</script>
+<div class="container">
+    <div class="header">
+        <a onclick="goBack()" class="back-center" style="cursor:pointer;">
+        ← Вернуться назад
+        </a>
+    </div>
 
-<div class="card">
-    <div class="icon">🚧</div>
-    <h1>Страница находится в разработке</h1>
-    <p>Мы уже работаем над этим разделом.<br>Скоро он станет доступен.</p>
-    <button onclick="window.history.back()">← Вернуться назад</button>
+    <div class="title">💎 Покупка кристаллов</div>
+
+    <div class="grid" id="shop"></div>
+
 </div>
 
 <script>
+// ⚠️ ВАЖНО: Добавьте ваш токен платежного бота
+const PAYMENT_BOT_TOKEN = '8110009554:AAHHqWor-TEgbvoi7kdeuW7J4da3M24FJGk';
+
 localStorage.setItem('fromCrystals', 'true');
-// Telegram WebApp Settings Button
+
+// Инициализация баланса кристаллов
+if (!localStorage.getItem('userCrystals')) {
+    localStorage.setItem('userCrystals', '0');
+}
+
+// Товары
+const products = [
+    { crystals: 10, price: 5, buttonText: "" },
+
+    { crystals: 25, price: 10, buttonText: "" },
+
+    { crystals: 50, price: 18, buttonText: "" },
+
+    { crystals: 80, price: 25, buttonText: "" },
+
+    { crystals: 120, price: 35, buttonText: "Популярно" },
+
+    { crystals: 200, price: 55, buttonText: "" },
+
+    { crystals: 350, price: 85, buttonText: "" },
+
+    { crystals: 500, price: 120, buttonText: "Выгодно" },
+
+    { crystals: 800, price: 180, buttonText: "" },
+
+    { crystals: 1200, price: 250, buttonText: "Лучшее предложение" },
+
+    { crystals: 1800, price: 350, buttonText: "" },
+
+    { crystals: 2500, price: 470, buttonText: "" },
+
+    { crystals: 3500, price: 620, buttonText: "Макс. выгода" },
+
+    { crystals: 5000, price: 850, buttonText: "" },
+
+    { crystals: 7500, price: 1200, buttonText: "Супер выгода" },
+
+    { crystals: 10000, price: 1500, buttonText: "Топ пакет" }
+];
+
+const shop = document.getElementById('shop');
+
+// Генерация карточек
+products.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.onclick = () => buy(index);
+
+    div.innerHTML = `
+        ${item.buttonText ? `<div class="badge">${item.buttonText}</div>` : ""}
+        <div class="crystals">💎 ${item.crystals}</div>
+        <div class="price">${item.price} ⭐ Telegram Stars</div>
+    `;
+
+    shop.appendChild(div);
+});
+
+// Добавление кристаллов в localStorage
+function addCrystals(amount) {
+    let current = Number(localStorage.getItem('userCrystals') || 0);
+    current += amount;
+    localStorage.setItem('userCrystals', current);
+    return current;
+}
+
+// Создание инвойса через Telegram Bot API
+async function createInvoiceLink(item) {
+    try {
+        const payload = `crystals_${item.crystals}_${Date.now()}`;
+        
+        const formData = new URLSearchParams();
+        formData.append('title', `💎 ${item.crystals} кристаллов`);
+        formData.append('description', `Покупка ${item.crystals} кристаллов для Photo AI`);
+        formData.append('payload', payload);
+        formData.append('currency', 'XTR'); // Telegram Stars
+        formData.append('prices', JSON.stringify([{ label: `${item.crystals} кристаллов`, amount: item.price }]));
+        
+        const response = await fetch(`https://api.telegram.org/bot${PAYMENT_BOT_TOKEN}/createInvoiceLink`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok && data.result) {
+            return data.result;
+        } else {
+            console.error('Ошибка API:', data);
+            alert('❌ Ошибка при создании инвойса. Свяжитесь с администратором.');
+            return null;
+        }
+    } catch (error) {
+        console.error('Ошибка запроса:', error);
+        alert('❌ Ошибка подключения. Проверьте интернет.');
+        return null;
+    }
+}
+
+// Покупка через Telegram Stars
+async function buy(index) {
+    const item = products[index];
+
+    if (!window.Telegram || !Telegram.WebApp) {
+        alert("Откройте в Telegram");
+        return;
+    }
+
+    if (PAYMENT_BOT_TOKEN === 'YOUR_PAYMENT_BOT_TOKEN_HERE') {
+        alert('❌ Платежи не настроены. Свяжитесь с администратором.');
+        return;
+    }
+    const tg = Telegram.WebApp;
+    
+    // Создаём инвойс через API
+    const invoiceUrl = await createInvoiceLink(item);
+    
+    if (!invoiceUrl) {
+        return;
+    }
+    
+    // Открываем инвойс
+    tg.openInvoice(invoiceUrl, function(status) {
+        console.log('Payment status:', status);
+        
+        if (status === 'paid' || status === 'success') {
+            const newTotal = addCrystals(item.crystals);
+            alert(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
+            
+            // Отправляем сигнал боту о успешной покупке
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    action: 'purchase_complete',
+                    crystals: item.crystals,
+                    stars: item.price,
+                    timestamp: new Date().toISOString()
+                }));
+            }
+        } else if (status === 'failed') {
+            alert('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
+        } else if (status === 'pending') {
+            alert('⏳ Платеж обрабатывается...');
+        } else {
+            alert('❌ Платёж отменён');
+        }
+    });
+}
+
+// Telegram кнопка настроек
 if (window.Telegram && window.Telegram.WebApp) {
-  window.Telegram.WebApp.SettingsButton.show();
-  window.Telegram.WebApp.onEvent('settingsButtonClicked', () => {
-    window.location.href = 'settings.html';
-  });
+    Telegram.WebApp.SettingsButton.show();
+    Telegram.WebApp.onEvent('settingsButtonClicked', () => {
+        window.location.href = 'settings.html';
+    });
 }
 </script>
+
 </body>
 </html>

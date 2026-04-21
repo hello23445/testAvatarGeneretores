@@ -350,6 +350,12 @@ a:hover{
 </div>
 
 <script>
+if (localStorage.getItem('enableconfirmation') === 'true') {
+    window.Telegram.WebApp.enableClosingConfirmation();
+}
+if (!localStorage.getItem('enableconfirmation')) {
+    localStorage.setItem('enableconfirmation', 'false');
+}
 const tg = window.Telegram.WebApp || {};
 
 // Готовим WebApp

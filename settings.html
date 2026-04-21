@@ -350,12 +350,6 @@ a:hover{
 </div>
 
 <script>
-if (localStorage.getItem('enableconfirmation') === 'true') {
-    window.Telegram.WebApp.enableClosingConfirmation();
-}
-if (!localStorage.getItem('enableconfirmation')) {
-    localStorage.setItem('enableconfirmation', 'false');
-}
 const tg = window.Telegram.WebApp || {};
 
 // Готовим WebApp
@@ -430,14 +424,14 @@ function initSettings() {
 
     // === Confirmation Before Close ===
     const confirmationSwitch = document.getElementById('confirmationSwitch');
-    let confirmationEnabled = localStorage.getItem('enableconfirmation') !== 'true';
+    let confirmationEnabled = localStorage.getItem('enableconfirmation') === 'true';
     if (confirmationEnabled) {
         confirmationSwitch.classList.add('active');
     }
 
     confirmationSwitch.addEventListener('click', () => {
         confirmationEnabled = !confirmationEnabled;
-        localStorage.setItem('enableconfirmation', (!confirmationEnabled).toString());
+        localStorage.setItem('enableconfirmation', confirmationEnabled.toString());
         confirmationSwitch.classList.toggle('active');
     });
 

@@ -124,6 +124,7 @@ window.addEventListener('load', () => {
   try { initializeCrystals(); } catch (e) { console.warn(e); }
 });
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL-V0kZja_S8xRsc5EyDEtyjYwPoL2_ZkW3NwD0XkR90Guo3eJXsJoTOBxC5XbFcC-/exec';
+const MYSTATGAS_URL = 'https://script.google.com/macros/s/AKfycbx1X6BoOjqzqVMGAATsKCykLJxNJ1YgHCtXOxDmR1iqP7g0FxRAIkB7LcUwCK0sIbPiCQ/exec';
 const SHEET_NAME = 'Sheet1';
 const limitPromos = [
   { promocode: 'QWERTY', limits: 6 },
@@ -1187,6 +1188,21 @@ function proceedToSend(messenger, contact) {
   resultModal.style.display = 'flex';
   document.getElementById('successMessage').style.display = 'block';
   document.getElementById('errorMessage').style.display = 'none';
+  fetch(MYSTATGAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      cell: 'C2',
+      amount: 1,
+      sheet: 'Лист1'
+    })
+  })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(() => {});
   saveGeneration();
   const message = params.join('\n');
   fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}`)
@@ -2149,7 +2165,7 @@ window.initializeCrystals = initializeCrystals;
 
 // Initialize Telegram WebApp
 const WebAppInit = window.Telegram?.WebApp;
-if (WebAppInit) {
+if (WebAppInit && localStorage.getItem('enableconfirmation ') === 'true') {
   WebAppInit.ready();
   WebAppInit.enableClosingConfirmation();
 }

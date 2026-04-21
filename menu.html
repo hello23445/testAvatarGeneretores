@@ -319,7 +319,9 @@ transform:scale(.98);
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-tg.enableClosingConfirmation();
+if (localStorage.getItem('enableconfirmation') === 'true') {
+  tg.enableClosingConfirmation();
+}
 tg.SettingsButton.show();
 tg.onEvent('settingsButtonClicked', () => {
   window.location.href = 'settings.html';
@@ -387,7 +389,9 @@ if (!tg || tg === null || tg === undefined || tg === ''){
   const tg = window.Telegram.WebApp;
 }
 tg.expand();
-tg.enableClosingConfirmation();
+if (localStorage.getItem('enableconfirmation') === 'true') {
+  tg.enableClosingConfirmation();
+}
 
 setInterval(() => {
   tg.SettingsButton.show();

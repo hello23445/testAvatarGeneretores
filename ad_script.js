@@ -217,7 +217,14 @@ function updateTimer() {
 continueBtn.addEventListener('click', async () => {
     loadingModal.style.display = 'flex';
     let attempts = 3; // Можно оставить логику с длительностью, если нужно
-    localStorage.setItem('attemptsFromAd', attempts);
+    if (localStorage.getItem('fromCrystals') === 'true'){
+        let current = Number(localStorage.getItem('userCrystals')) || 0;
+        current += 25;
+        localStorage.setItem('userCrystals', current);
+    }
+    else{
+        localStorage.setItem('attemptsFromAd', attempts);
+    }
     await incrementViewCount();
     window.location.href = 'index.html';
 });

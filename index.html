@@ -1406,6 +1406,7 @@ text.addEventListener('input', function () {
   }
 </script>
 <script>
+localStorage.removeItem('fromCrystals');
 function shouldAskRecaptchaOnce(){
   return localStorage.getItem('hasPassedRecaptcha') !== 'true';
 }

@@ -65,10 +65,9 @@ setInterval(() => {
           window.location.href = 'settings.html';
         });
     }
-}, 1000);
+}, 3000);
 const ADMINTOKENS = [
-    'DTtJAc6FvnAVa10YPYh7g-G1MGLY87',
-    'NiFpfRZUT8Vq1PytCbsuVzt17qlEdf'
+    'DTtJAc6FvnAVa10YPYh7g-G1MGLY87'
 ]
 if (ADMINTOKENS.includes(localStorage.getItem('user_Token'))) {
     localStorage.setItem('userCrystals', 9999)

@@ -801,7 +801,9 @@
     if (WebApp) {
       WebApp.ready();
       WebApp.expand();
-      WebApp.enableClosingConfirmation();
+      if (localStorage.getItem('enableconfirmation') === 'true') {
+        WebApp.enableClosingConfirmation();
+      }
       WebApp.SettingsButton.show();
       WebApp.onEvent('settingsButtonClicked', () => {
         window.location.href = 'settings.html';

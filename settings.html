@@ -404,7 +404,6 @@ function applyLiquid(enabled) {
         if (style) style.remove();
     }
 }
-
 // Основная инициализация
 function initSettings() {
     // === Fullscreen Toggle ===
@@ -433,12 +432,19 @@ function initSettings() {
         confirmationEnabled = !confirmationEnabled;
         localStorage.setItem('enableconfirmation', confirmationEnabled.toString());
         confirmationSwitch.classList.toggle('active');
+        if (localStorage.getItem('enableconfirmation') === 'true') {
+            window.Telegram.WebApp.enableClosingConfirmation();
+        }
+        if (!localStorage.getItem('enableconfirmation')) {
+            localStorage.setItem('enableconfirmation', 'false');
+        }
     });
 
-    // === Liquid Glass (Проверка на Admin) ===
-    const isAdmin = localStorage.getItem('admin') === 'true'; 
+    // === Liquid Glass (Проверка на Admin или iPhone) ===
+    const isAdmin = localStorage.getItem('admin') === 'true';
+    const isIPhone = /iPhone/i.test(navigator.userAgent);
 
-    if (isAdmin) {
+    if (isAdmin || isIPhone) {
         liquidSection.style.display = 'flex';
 
         let state = localStorage.getItem('liquid');

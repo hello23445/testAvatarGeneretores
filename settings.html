@@ -424,14 +424,14 @@ function initSettings() {
 
     // === Confirmation Before Close ===
     const confirmationSwitch = document.getElementById('confirmationSwitch');
-    let confirmationEnabled = localStorage.getItem('enableconfirmation') === 'true';
+    let confirmationEnabled = localStorage.getItem('enableconfirmation') === 'false';
     if (confirmationEnabled) {
         confirmationSwitch.classList.add('active');
     }
 
     confirmationSwitch.addEventListener('click', () => {
         confirmationEnabled = !confirmationEnabled;
-        localStorage.setItem('enableconfirmation', confirmationEnabled.toString());
+        localStorage.setItem('enableconfirmation', (!confirmationEnabled)ed).toString());
         confirmationSwitch.classList.toggle('active');
     });
 

@@ -326,10 +326,10 @@ transform:scale(.98);
 <script>
 function goBack() {
     if (localStorage.getItem('windowHistoryBack') !== window.location.pathname.split('/').pop()) {
-        window.location.href = localStorage.getItem('windowHistoryBack') || 'menu.html';
+        window.location.href = localStorage.getItem('windowHistoryBack') || 'index.html';
     }
     else if (document.referrer.split('/').pop().split('?')[0] !== window.location.pathname.split('/').pop()){
-        window.location.href = document.referrer.split('/').pop().split('?')[0] || 'menu.html';
+        window.location.href = document.referrer.split('/').pop().split('?')[0] || 'index.html';
     }
     else{
         window.location.href = 'index.html';

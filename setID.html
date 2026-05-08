@@ -183,6 +183,30 @@
   </style>
 </head>
 <body>
+<script>
+// LIQUID GLASS EFFECT - применяется при загрузке
+(function(){
+  const liquidState = localStorage.getItem('liquid');
+  if (liquidState === 'Включен') {
+    document.body.style.backdropFilter = "blur(20px)";
+    
+    const style = document.createElement('style');
+    style.id = 'liquid-style';
+    style.textContent = `
+      button, 
+      .btn, 
+      .back-btn, 
+      .back-center,
+      .container,
+      input, 
+      [role="button"] { 
+        border: 1px solid rgba(255,255,255,0.8) !important; 
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+</script>
   <div class="container" role="main">
     <button class="btn" onclick="window.location.href = 'index.html'" style="display: block; margin: 0 auto; padding: 12px 20px; border-radius: 10px; color: white; border: none; font-size: 1rem; cursor: pointer;">
 ВЕРНУТЬСЯ НАЗАД

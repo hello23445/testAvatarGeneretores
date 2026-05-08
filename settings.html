@@ -390,10 +390,17 @@ tg.SettingsButton.hide();
 function applyFullscreen(enabled) {
     if (!tg.requestFullscreen || !tg.exitFullscreen) return;
 
+    // Check current state to avoid re-applying
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    
     if (enabled) {
-        tg.requestFullscreen();
+        if (!isFullscreen) {
+            tg.requestFullscreen();
+        }
     } else {
-        tg.exitFullscreen();
+        if (isFullscreen) {
+            tg.exitFullscreen();
+        }
     }
 }
 
@@ -445,9 +452,8 @@ function initSettings() {
 
     fullscreenSwitch.addEventListener('click', () => {
         fullscreenEnabled = !fullscreenEnabled;
-        localStorage.setItem('fullscreenEnabled', fullscreenEnabled);
+        saveAndApplyFullscreen(fullscreenEnabled);
         fullscreenSwitch.classList.toggle('active');
-        applyFullscreen(fullscreenEnabled);
     });
 
     // === Confirmation Before Close ===

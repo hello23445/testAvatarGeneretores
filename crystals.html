@@ -208,8 +208,8 @@ transform:scale(.98);
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     display: flex;
@@ -395,6 +395,17 @@ function proceedToAd() {
     localStorage.setItem('fromCrystals', 'true');
     window.location.href = 'ad.html';
 }
+
+// Универсальная функция для показа сообщений
+function showMessageModal(message) {
+    const messageText = document.getElementById('messageModalText');
+    messageText.textContent = message;
+    document.getElementById('messageModalOverlay').classList.add('active');
+}
+
+function closeMessageModal() {
+    document.getElementById('messageModalOverlay').classList.remove('active');
+}
 </script>
 
 <div class="modal-overlay" id="adModalOverlay">
@@ -404,6 +415,16 @@ function proceedToAd() {
         <div class="modal-buttons">
             <button class="modal-btn btn-yes" onclick="proceedToAd()">Да</button>
             <button class="modal-btn btn-no" onclick="closeAdModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для сообщений -->
+<div class="modal-overlay" id="messageModalOverlay">
+    <div class="modal-content">
+        <div class="modal-title" id="messageModalText">Сообщение</div>
+        <div class="modal-buttons">
+            <button class="modal-btn btn-yes" style="width: 100%;" onclick="closeMessageModal()">ОК</button>
         </div>
     </div>
 </div>
@@ -507,12 +528,12 @@ async function createInvoiceLink(item) {
             return data.result;
         } else {
             console.error('Ошибка API:', data);
-            alert('❌ Ошибка при создании инвойса. Свяжитесь с администратором.');
+            showMessageModal('❌ Ошибка при создании инвойса. Свяжитесь с администратором.');
             return null;
         }
     } catch (error) {
         console.error('Ошибка запроса:', error);
-        alert('❌ Ошибка подключения. Проверьте интернет.');
+        showMessageModal('❌ Ошибка подключения. Проверьте интернет.');
         return null;
     }
 }
@@ -522,12 +543,12 @@ async function buy(index) {
     const item = products[index];
 
     if (!window.Telegram || !Telegram.WebApp) {
-        alert("Откройте в Telegram");
+        showMessageModal("Откройте в Telegram");
         return;
     }
 
     if (PAYMENT_BOT_TOKEN === 'YOUR_PAYMENT_BOT_TOKEN_HERE') {
-        alert('❌ Платежи не настроены. Свяжитесь с администратором.');
+        showMessageModal('❌ Платежи не настроены. Свяжитесь с администратором.');
         return;
     }
     const tg = Telegram.WebApp;
@@ -545,7 +566,7 @@ async function buy(index) {
         
         if (status === 'paid' || status === 'success') {
             const newTotal = addCrystals(item.crystals);
-            alert(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
+            showMessageModal(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
             
             // Отправляем сигнал боту о успешной покупке
             if (tg.sendData) {
@@ -557,11 +578,11 @@ async function buy(index) {
                 }));
             }
         } else if (status === 'failed') {
-            alert('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
+            showMessageModal('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
         } else if (status === 'pending') {
-            alert('⏳ Платеж обрабатывается...');
+            showMessageModal('⏳ Платеж обрабатывается...');
         } else {
-            alert('❌ Платёж отменён');
+            showMessageModal('❌ Платёж отменён');
         }
     });
 }

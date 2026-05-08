@@ -67,19 +67,21 @@ function applyLiquid(enabled) {
 function initSettings() {
     const options = document.querySelectorAll('.option-item');
     
-    // === Fullscreen ===
-    let savedMode = localStorage.getItem('fullscreenPref') || 'normal';
-    options.forEach(option => {
-        if (option.dataset.mode === savedMode) {
-            option.classList.add('selected');
-        }
-        option.addEventListener('click', () => {
-            options.forEach(o => o.classList.remove('selected'));
-            option.classList.add('selected');
-            saveAndApplyFullscreen(option.dataset.mode);
+    // === Fullscreen === (применяется только на странице settings.html)
+    if (options.length > 0) {
+        let savedMode = localStorage.getItem('fullscreenPref') || 'normal';
+        options.forEach(option => {
+            if (option.dataset.mode === savedMode) {
+                option.classList.add('selected');
+            }
+            option.addEventListener('click', () => {
+                options.forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                saveAndApplyFullscreen(option.dataset.mode);
+            });
         });
-    });
-    applyFullscreen(savedMode);
+        applyFullscreen(savedMode);
+    }
 
     // === Liquid Glass (только iPhone) ===
     if (tg.platform === 'ios') {

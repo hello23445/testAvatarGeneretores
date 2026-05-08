@@ -193,6 +193,11 @@ transform:scale(.98);
     color: #94a3b8;
 }
 
+.price strong {
+    font-weight: 600;
+    color: #aab4c4;
+}
+
 .badge {
     position: absolute;
     top: 10px;
@@ -207,17 +212,18 @@ transform:scale(.98);
 .modal-overlay {
     position: fixed;
     inset: 0;
+    width: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    padding: 16px;
-    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 .modal-overlay.active {
@@ -228,12 +234,13 @@ transform:scale(.98);
 .modal-content {
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 16px;
+    padding: 24px;
+    border-radius: 20px;
     text-align: center;
     width: 100%;
-    max-width: 340px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    max-width: 360px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    margin: 0 auto;
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -293,7 +300,8 @@ transform:scale(.98);
     }
     
     .modal-content {
-        max-width: 100%;
+        max-width: 320px;
+        width: 100%;
         padding: 16px;
     }
     
@@ -442,7 +450,7 @@ function closeMessageModal() {
         <div class="modal-title">Хотите получить +25 кристаллов за просмотр рекламы?</div>
         <div class="modal-buttons">
             <button class="modal-btn btn-yes" onclick="proceedToAd()">Да</button>
-            <button class="modal-btn btn-no" onclick="closeAdModal()">Отмена</button>
+            <button class="modal-btn btn-no" onclick="closeAdModal()">Нет</button>
         </div>
     </div>
 </div>
@@ -489,25 +497,34 @@ updateCrystalCounter();
 
 // Товары
 const products = [
-    { crystals: 10, price: 5, buttonText: "" },
-    { crystals: 25, price: 10, buttonText: "" },
-    { crystals: 50, price: 18, buttonText: "" },
-    { crystals: 80, price: 25, buttonText: "" },
-    { crystals: 120, price: 35, buttonText: "Популярно" },
-    { crystals: 200, price: 55, buttonText: "" },
-    { crystals: 350, price: 85, buttonText: "" },
-    { crystals: 500, price: 120, buttonText: "Выгодно" },
-    { crystals: 800, price: 180, buttonText: "" },
-    { crystals: 1200, price: 250, buttonText: "Лучшее предложение" },
-    { crystals: 1800, price: 350, buttonText: "" },
-    { crystals: 2500, price: 470, buttonText: "" },
-    { crystals: 3500, price: 620, buttonText: "Макс. выгода" },
-    { crystals: 5000, price: 850, buttonText: "" },
-    { crystals: 7500, price: 1200, buttonText: "Супер выгода" },
-    { crystals: 10000, price: 1500, buttonText: "Топ пакет" }
+    { crystals: 10, price: 5, buttonText: "5🌟" },
+    { crystals: 25, price: 10, buttonText: "10🌟" },
+    { crystals: 50, price: 18, buttonText: "18🌟" },
+    { crystals: 80, price: 25, buttonText: "25🌟" },
+    { crystals: 120, price: 35, buttonText: "35🌟(Популярно)" },
+    { crystals: 200, price: 55, buttonText: "55🌟" },
+    { crystals: 350, price: 85, buttonText: "85🌟" },
+    { crystals: 500, price: 120, buttonText: "120🌟" },
+    { crystals: 800, price: 180, buttonText: "180🌟" },
+    { crystals: 1200, price: 250, buttonText: "250🌟(Выгодно)" },
+    { crystals: 1800, price: 350, buttonText: "350🌟" },
+    { crystals: 2500, price: 470, buttonText: "470🌟" },
+    { crystals: 3500, price: 620, buttonText: "620🌟" },
+    { crystals: 5000, price: 850, buttonText: "850🌟" },
+    { crystals: 7500, price: 1200, buttonText: "1 200🌟" },
+    { crystals: 10000, price: 1500, buttonText: "1 500🌟" },
+    { crystals: 50000, price: 7500, buttonText: "7 500🌟" },
+    { crystals: 100000, price: 13500, buttonText: "13 500🌟" },
+    { crystals: 500000, price: 70000, buttonText: "70 000🌟" },
+    { crystals: 1000000, price: 120000, buttonText: "120 000🌟" }
 ];
 
 const shop = document.getElementById('shop');
+
+// Функция форматирования чисел с пробелами
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
 
 // Генерация карточек
 products.forEach((item, index) => {
@@ -517,8 +534,8 @@ products.forEach((item, index) => {
 
     div.innerHTML = `
         ${item.buttonText ? `<div class="badge">${item.buttonText}</div>` : ""}
-        <div class="crystals"><i class="fa-solid fa-gem"></i> ${item.crystals}</div>
-        <div class="price">${item.crystals} кристаллов за ${item.price} Telegram звёзд</div>
+        <div class="crystals"><i class="fa-solid fa-gem"></i> ${formatNumber(item.crystals)}</div>
+        <div class="price">${formatNumber(item.crystals)} кристаллов за <strong>${formatNumber(item.price)} Telegram звёзд</strong></div>
     `;
 
     shop.appendChild(div);

@@ -388,24 +388,42 @@ tg.SettingsButton.hide();
 
 // ==================== FULLSCREEN ====================
 function applyFullscreen(enabled) {
-    if (!tg.requestFullscreen || !tg.exitFullscreen) return;
-
-    // Check current state to avoid re-applying
-    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    const elem = document.documentElement;
     
     if (enabled) {
-        if (!isFullscreen) {
-            tg.requestFullscreen();
+        // Пытаемся применить полноэкранный режим
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(err => {
+                console.warn('Не удалось включить полноэкранный режим:', err);
+            });
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
         }
     } else {
-        if (isFullscreen) {
-            tg.exitFullscreen();
+        // Выходим из полноэкранного режима
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => {
+                    console.warn('Не удалось выключить полноэкранный режим:', err);
+                });
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
     }
 }
 
 function saveAndApplyFullscreen(enabled) {
-    localStorage.setItem('fullscreenEnabled', enabled);
+    const modeValue = enabled ? 'enabled' : 'disabled';
+    localStorage.setItem('fullscreenMode', modeValue);
     applyFullscreen(enabled);
 }
 
@@ -444,7 +462,7 @@ function applyLiquid(enabled) {
 function initSettings() {
     // === Fullscreen Toggle ===
     const fullscreenSwitch = document.getElementById('fullscreenSwitch');
-    let fullscreenEnabled = localStorage.getItem('fullscreenEnabled') === 'true';
+    let fullscreenEnabled = localStorage.getItem('fullscreenMode') === 'enabled';
     if (fullscreenEnabled) {
         fullscreenSwitch.classList.add('active');
     }

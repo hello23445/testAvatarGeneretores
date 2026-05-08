@@ -1395,12 +1395,6 @@ text.addEventListener('input', function () {
     setTimeout(() => {
       preloader.remove();
     }, 360);
-
-    // Проверка и применение полноэкранного режима
-    const fullscreenPref = localStorage.getItem('fullscreenPref') || 'normal';
-    if (typeof applyFullscreen === 'function') {
-      applyFullscreen(fullscreenPref);
-    }
   });
 
   // Telegram WebApp Settings Button
@@ -1463,6 +1457,82 @@ function recaptchaContinue(){
   checkBadWords();
 }
 </script>
+
+<!-- Fullscreen Mode Handler -->
+<script>
+// Функция для входа в полноэкранный режим (кроссбраузерная)
+function requestFullscreen() {
+  const elem = document.documentElement;
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen().catch(err => {
+      console.warn('Не удалось включить полноэкранный режим:', err);
+    });
+  } else if (elem.webkitRequestFullscreen) {
+    elem.webkitRequestFullscreen();
+  } else if (elem.mozRequestFullScreen) {
+    elem.mozRequestFullScreen();
+  } else if (elem.msRequestFullscreen) {
+    elem.msRequestFullscreen();
+  }
+}
+
+// Функция для выхода из полноэкранного режима (кроссбраузерная)
+function exitFullscreen() {
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(err => {
+        console.warn('Не удалось выключить полноэкранный режим:', err);
+      });
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+
+// Функция для переключения полноэкранного режима
+function toggleFullscreen() {
+  const currentMode = localStorage.getItem('fullscreenMode') || 'disabled';
+  const newMode = currentMode === 'enabled' ? 'disabled' : 'enabled';
+  localStorage.setItem('fullscreenMode', newMode);
+  applyFullscreenMode();
+}
+
+// Функция для применения режима на основе localStorage
+function applyFullscreenMode() {
+  const fullscreenMode = localStorage.getItem('fullscreenMode') || 'disabled';
+  
+  if (fullscreenMode === 'enabled') {
+    requestFullscreen();
+  } else {
+    exitFullscreen();
+  }
+}
+
+// Проверка и применение режима при загрузке страницы
+window.addEventListener('load', () => {
+  // Небольшая задержка для корректного применения
+  setTimeout(() => {
+    applyFullscreenMode();
+  }, 500);
+});
+
+// Инициализация: если значение не установлено, по умолчанию установить 'disabled'
+if (!localStorage.getItem('fullscreenMode')) {
+  localStorage.setItem('fullscreenMode', 'disabled');
+}
+
+// Слушаем изменения полноэкранного режима из других вкладок/окон
+window.addEventListener('storage', (event) => {
+  if (event.key === 'fullscreenMode') {
+    applyFullscreenMode();
+  }
+});
+</script>
+
 <style>body{overflow-y:auto !important; -webkit-overflow-scrolling: touch; touch-action: auto;}</style>
 </body>
 </html>

@@ -557,6 +557,39 @@ input:disabled, select:disabled, textarea:disabled{
 }
 
 /* Messenger options */
+#fastBackButton {
+  background: linear-gradient(135deg, #7f1d1d, var(--danger)) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 12px 0 !important;
+}
+
+#fastBackButton:active {
+  transform: scale(.98);
+}
+
+#cancelEdit {
+  background: linear-gradient(135deg, #7f1d1d, var(--danger)) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25) !important;
+  color: white !important;
+  border: none !important;
+}
+
+#cancelEdit:active {
+  transform: scale(.98);
+}
+
+#editModal .modal-content {
+  background-color: black !important;
+}
+
+#editModal {
+  background: black;
+}
+
 .radio-group{
   display: flex;
   flex-direction: column;

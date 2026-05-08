@@ -216,7 +216,8 @@ transform:scale(.98);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    padding: 20px;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .modal-overlay.active {
@@ -227,13 +228,11 @@ transform:scale(.98);
 .modal-content {
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 25px;
-    border-radius: 20px;
+    padding: 20px;
+    border-radius: 16px;
     text-align: center;
     width: 100%;
-    max-width: 320px;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-width: 340px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -244,17 +243,17 @@ transform:scale(.98);
 }
 
 .modal-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     line-height: 1.4;
     color: #f8fafc;
 }
 
 .modal-icon {
-    font-size: 40px;
+    font-size: 36px;
     color: #3b82f6;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .modal-buttons {
@@ -264,11 +263,11 @@ transform:scale(.98);
 
 .modal-btn {
     flex: 1;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 10px;
+    border-radius: 10px;
     border: none;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
     transition: 0.2s;
     color: white;
@@ -285,6 +284,33 @@ transform:scale(.98);
 .btn-no {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Оптимизация для мобильных устройств */
+@media (max-width: 480px) {
+    .modal-overlay {
+        padding: 12px;
+    }
+    
+    .modal-content {
+        max-width: 100%;
+        padding: 16px;
+    }
+    
+    .modal-title {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+    
+    .modal-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+    
+    .modal-btn {
+        padding: 9px;
+        font-size: 13px;
+    }
 }
 
 /* Большие экраны: 4 карточки в строку */
@@ -340,8 +366,10 @@ transform:scale(.98);
       .btn, 
       .back-btn, 
       .back-center,
+      .ad-center,
       .card,
       .crystal-card,
+      .modal-btn,
       input, 
       [role="button"] { 
         border: 1px solid rgba(255,255,255,0.8) !important; 

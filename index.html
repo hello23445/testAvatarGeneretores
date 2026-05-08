@@ -1395,6 +1395,16 @@ text.addEventListener('input', function () {
     setTimeout(() => {
       preloader.remove();
     }, 360);
+
+    // Проверяем и применяем полноэкранный режим
+    const fullscreenMode = localStorage.getItem('fullscreenMode');
+    if (window.Telegram && window.Telegram.WebApp) {
+      if (fullscreenMode === 'true') {
+        window.Telegram.WebApp.requestFullscreen();
+      } else {
+        window.Telegram.WebApp.exitFullscreen();
+      }
+    }
   });
 
   // Telegram WebApp Settings Button
@@ -1495,17 +1505,17 @@ function exitFullscreen() {
 
 // Функция для переключения полноэкранного режима
 function toggleFullscreen() {
-  const currentMode = localStorage.getItem('fullscreenMode') || 'disabled';
-  const newMode = currentMode === 'enabled' ? 'disabled' : 'enabled';
+  const currentMode = localStorage.getItem('fullscreenMode') || 'false';
+  const newMode = currentMode === 'true' ? 'false' : 'true';
   localStorage.setItem('fullscreenMode', newMode);
   applyFullscreenMode();
 }
 
 // Функция для применения режима на основе localStorage
 function applyFullscreenMode() {
-  const fullscreenMode = localStorage.getItem('fullscreenMode') || 'disabled';
+  const fullscreenMode = localStorage.getItem('fullscreenMode') || 'false';
   
-  if (fullscreenMode === 'enabled') {
+  if (fullscreenMode === 'true') {
     requestFullscreen();
   } else {
     exitFullscreen();
@@ -1520,9 +1530,9 @@ window.addEventListener('load', () => {
   }, 500);
 });
 
-// Инициализация: если значение не установлено, по умолчанию установить 'disabled'
+// Инициализация: если значение не установлено, по умолчанию установить 'false'
 if (!localStorage.getItem('fullscreenMode')) {
-  localStorage.setItem('fullscreenMode', 'disabled');
+  localStorage.setItem('fullscreenMode', 'false');
 }
 
 // Слушаем изменения полноэкранного режима из других вкладок/окон

@@ -386,47 +386,6 @@ tg.ready();
 tg.expand();
 tg.SettingsButton.hide();
 
-// ==================== FULLSCREEN ====================
-function applyFullscreen(enabled) {
-    const elem = document.documentElement;
-    
-    if (enabled) {
-        // Пытаемся применить полноэкранный режим
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(err => {
-                alert('Не удалось включить полноэкранный режим:', err);
-            });
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        } else if (elem.mozRequestFullScreen) {
-            elem.mozRequestFullScreen();
-        } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-        }
-    } else {
-        // Выходим из полноэкранного режима
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(err => {
-                    alert('Не удалось выключить полноэкранный режим:', err);
-                });
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-    }
-}
-
-function saveAndApplyFullscreen(enabled) {
-    const modeValue = enabled ? 'enabled' : 'disabled';
-    localStorage.setItem('fullscreenMode', modeValue);
-    applyFullscreen(enabled);
-}
-
 // ==================== LIQUID GLASS ====================
 const liquidSection = document.getElementById('liquid-section');
 const liquidSwitch = document.getElementById('liquidSwitch');
@@ -462,15 +421,25 @@ function applyLiquid(enabled) {
 function initSettings() {
     // === Fullscreen Toggle ===
     const fullscreenSwitch = document.getElementById('fullscreenSwitch');
-    let fullscreenEnabled = localStorage.getItem('fullscreenMode') === 'enabled';
+    let fullscreenEnabled = localStorage.getItem('fullscreenMode') === 'true';
     if (fullscreenEnabled) {
         fullscreenSwitch.classList.add('active');
+        // Применяем полноэкранный режим при инициализации
+        tg.requestFullscreen();
     }
-    applyFullscreen(fullscreenEnabled);
 
     fullscreenSwitch.addEventListener('click', () => {
         fullscreenEnabled = !fullscreenEnabled;
-        saveAndApplyFullscreen(fullscreenEnabled);
+        const modeValue = fullscreenEnabled ? 'true' : 'false';
+        localStorage.setItem('fullscreenMode', modeValue);
+        
+        // Применяем полноэкранный режим через Telegram WebApp API
+        if (fullscreenEnabled) {
+            tg.requestFullscreen();
+        } else {
+            tg.exitFullscreen();
+        }
+        
         fullscreenSwitch.classList.toggle('active');
     });
 

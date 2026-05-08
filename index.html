@@ -1243,11 +1243,21 @@
           <div id="editCounter" class="counter" style="color:white;"></div>
           <div id="editDesc" class="hint" style="color:white;"></div>
         </div>
-        <div class="modal-buttons" style="align-items: center; justify-content: center; display: flex;">
+        <div class="modal-buttons" style="align-items: center; justify-content: center; display: flex; gap: 10px; flex-wrap: wrap;">
           <button id="saveEdit" class="btn btn--primary" title="Сохранить изменения.">Сохранить</button>
-          <button id="cancelEdit" class="btn btn--secondary" title="Отменить изменения.">Отмена</button><br>
+          <button id="cancelEdit" class="btn btn--secondary" title="Отменить изменения.">Отмена</button>
           <button id="copy" class="btn btn--secondary" title="Скопировать текст из поля в буфер обмена."><i class="fa-solid fa-copy"></i></button>
           <button id="clearEdit" class="btn btn--secondary" title="Очистить поле.">Очистить</button>
+        </div>
+      </div>
+    </div>
+    <div id="cancelConfirmModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 400px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <h2 style="color: #7eb3ff; text-align: center;">Вы не сохранили текущие изменения</h2>
+        <p style="color: var(--text); text-align: center; margin-top: 10px;">Уверены, что хотите отменить?<br>Все несохраненные изменения будут отменены.</p>
+        <div class="modal-buttons" style="justify-content: center; display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+          <button id="confirmCancel" class="btn btn--primary" style="flex: 1;">Да, отменить</button>
+          <button id="denyCancel" class="btn btn--secondary" style="flex: 1;">Нет, продолжить</button>
         </div>
       </div>
     </div>

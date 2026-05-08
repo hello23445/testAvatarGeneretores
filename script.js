@@ -1812,6 +1812,9 @@ document.addEventListener('click', function (event) {
 });
 // --- Edit modal (без "Мнения пользователя") ---
 let currentEditFieldId = null;
+let currentEditOriginalValue = '';
+let currentEditHasChanges = false;
+let currentEditAutoExpand = null;
 const fieldData = {
   'description': {
     title: 'Описание фото (обязательно)',
@@ -1863,12 +1866,16 @@ function openEditModal(fieldId) {
   const modal = document.getElementById('editModal');
   if (modal) modal.style.display = 'flex';
   textarea.focus();
+  currentEditOriginalValue = textarea.value;
+  currentEditHasChanges = false;
   const autoExpand = () => {
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
     updateEditCounter();
+    currentEditHasChanges = textarea.value !== currentEditOriginalValue;
   };
-  textarea.addEventListener('input', autoExpand);
+  currentEditAutoExpand = autoExpand;
+  textarea.addEventListener('input', currentEditAutoExpand);
   autoExpand();
   document.getElementById('saveEdit').onclick = () => {
     const originalEl = document.getElementById(fieldId);
@@ -1876,12 +1883,15 @@ function openEditModal(fieldId) {
     if (fieldId === 'text') updateTextLimit();
     if (fieldId === 'exclusions') updateExclusionsLimit();
     if (fieldId === 'description') updateDescriptionLimit();
+    currentEditHasChanges = false;
     closeEditModal();
-    textarea.removeEventListener('input', autoExpand);
   };
   document.getElementById('cancelEdit').onclick = () => {
+    if (currentEditHasChanges) {
+      openCancelConfirm();
+      return;
+    }
     closeEditModal();
-    textarea.removeEventListener('input', autoExpand);
   };
   document.getElementById('clearEdit').onclick = () => {
     textarea.value = '';
@@ -1899,8 +1909,33 @@ function updateEditCounter() {
 function closeEditModal() {
   const modal = document.getElementById('editModal');
   if (modal) modal.style.display = 'none';
+  const textarea = document.getElementById('editTextarea');
+  if (textarea && currentEditAutoExpand) {
+    textarea.removeEventListener('input', currentEditAutoExpand);
+  }
+  currentEditAutoExpand = null;
   currentEditFieldId = null;
+  currentEditHasChanges = false;
 }
+function openCancelConfirm() {
+  const modal = document.getElementById('cancelConfirmModal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeCancelConfirm() {
+  const modal = document.getElementById('cancelConfirmModal');
+  if (modal) modal.style.display = 'none';
+}
+function confirmCancelEdit() {
+  closeEditModal();
+  closeCancelConfirm();
+}
+function denyCancelEdit() {
+  closeCancelConfirm();
+}
+const confirmCancelButton = document.getElementById('confirmCancel');
+if (confirmCancelButton) confirmCancelButton.onclick = confirmCancelEdit;
+const denyCancelButton = document.getElementById('denyCancel');
+if (denyCancelButton) denyCancelButton.onclick = denyCancelEdit;
 // iPhone liquid border tweak (оставлено)
 if (/iPhone/i.test(navigator.userAgent)) {
   if (localStorage.getItem('liquid') === 'Включен') {

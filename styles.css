@@ -491,6 +491,7 @@ input:disabled, select:disabled, textarea:disabled{
 /* subscription + alert stay dark but readable */
 #fakeSubscriptionModal .modal-content,
 #alertModal .modal-content,
+#cancelConfirmModal .modal-content,
 #editModal .modal-content{
   border: 1px solid rgba(255,255,255,0.10);
   box-shadow: 0 22px 60px rgba(0,0,0,0.45);
@@ -548,6 +549,18 @@ input:disabled, select:disabled, textarea:disabled{
 
 #editModal .modal-content .modal-buttons button:first-child {
   margin-right: 10px;
+}
+
+@media (max-width: 767px) {
+  #editModal .modal-content .modal-buttons {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 14px;
+  }
+  #editModal .modal-content .modal-buttons button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
 }
 
 #editModal .edit-modal-body h2,

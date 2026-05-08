@@ -1395,6 +1395,12 @@ text.addEventListener('input', function () {
     setTimeout(() => {
       preloader.remove();
     }, 360);
+
+    // Проверка и применение полноэкранного режима
+    const fullscreenPref = localStorage.getItem('fullscreenPref') || 'normal';
+    if (typeof applyFullscreen === 'function') {
+      applyFullscreen(fullscreenPref);
+    }
   });
 
   // Telegram WebApp Settings Button

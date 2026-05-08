@@ -87,6 +87,31 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </head>
 
 <body>
+<script>
+// LIQUID GLASS EFFECT - применяется при загрузке
+(function(){
+  const liquidState = localStorage.getItem('liquid');
+  if (liquidState === 'Включен') {
+    document.body.style.backdropFilter = "blur(20px)";
+    
+    const style = document.createElement('style');
+    style.id = 'liquid-style';
+    style.textContent = `
+      button, 
+      .btn, 
+      .back-btn, 
+      .back-center,
+      .card,
+      .modal,
+      input, 
+      [role="button"] { 
+        border: 1px solid rgba(255,255,255,0.8) !important; 
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+</script>
 
 <!-- EMAIL -->
 <div class="card" id="emailStep">
@@ -427,15 +452,7 @@ function changeEmail(){
 }
 
 function goHome(){
-  if (document.referrer) {
-    window.history.back();
-  }
-  else if (localStorage.getItem('windowHistoryBack')) {
-    window.location.href = localStorage.getItem('windowHistoryBack');
-  }
-  else {
-      window.location.href = 'index.html';
-  }
+  window.location.href = 'index.html';
 }
 
 

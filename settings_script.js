@@ -8,10 +8,17 @@ tg.expand();
 function applyFullscreen(mode) {
     if (!tg.requestFullscreen || !tg.exitFullscreen) return;
 
+    // Check current state to avoid re-applying
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    
     if (mode === 'fullscreen') {
-        tg.requestFullscreen();
+        if (!isFullscreen) {
+            tg.requestFullscreen();
+        }
     } else {
-        tg.exitFullscreen();
+        if (isFullscreen) {
+            tg.exitFullscreen();
+        }
     }
 }
 

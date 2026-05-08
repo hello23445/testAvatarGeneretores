@@ -25,6 +25,13 @@ body {
     color: #e2e8f0;
     padding: 20px;
     position: relative;
+    backdrop-filter: blur(20px);
+}
+
+.back-center,
+.ad-center,
+.card {
+    border: 1px solid rgba(255,255,255,0.15) !important;
 }
 
 .crystal-counter {
@@ -319,19 +326,49 @@ transform:scale(.98);
 </head>
 
 <body>
+<script>
+// LIQUID GLASS EFFECT - применяется при загрузке
+(function(){
+  const liquidState = localStorage.getItem('liquid');
+  if (liquidState === 'Включен') {
+    document.body.style.backdropFilter = "blur(20px)";
+    
+    const style = document.createElement('style');
+    style.id = 'liquid-style';
+    style.textContent = `
+      button, 
+      .btn, 
+      .back-btn, 
+      .back-center,
+      .card,
+      .crystal-card,
+      input, 
+      [role="button"] { 
+        border: 1px solid rgba(255,255,255,0.8) !important; 
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+</script>
 <div class="crystal-counter">
     <i class="fa-solid fa-gem"></i>
     <span id="crystalCount">0</span>
 </div>
 <script>
 function goBack() {
-    if (localStorage.getItem('windowHistoryBack') !== window.location.pathname.split('/').pop()) {
-        window.location.href = localStorage.getItem('windowHistoryBack') || 'index.html';
+    // Сначала проверяем, есть ли сохраненная страница возврата
+    const returnPage = localStorage.getItem('crystalReturnPage');
+    if (returnPage) {
+        localStorage.removeItem('crystalReturnPage');
+        window.location.href = returnPage;
     }
-    else if (document.referrer.split('/').pop().split('?')[0] !== window.location.pathname.split('/').pop()){
-        window.location.href = document.referrer.split('/').pop().split('?')[0] || 'index.html';
+    // Fallback на history.back() для естественной навигации
+    else if (window.history.length > 1) {
+        window.history.back();
     }
-    else{
+    // Fallback на index.html
+    else {
         window.location.href = 'index.html';
     }
 }

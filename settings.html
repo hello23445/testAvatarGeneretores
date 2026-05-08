@@ -69,10 +69,12 @@ h1 {
 }
 
 .settings-card {
-    background: var(--card-bg);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius);
     padding: 0;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .liquid-toggle {
@@ -289,6 +291,33 @@ a:hover{
 </style>
 </head>
 <body>
+<script>
+// LIQUID GLASS EFFECT - применяется при загрузке
+(function(){
+  const liquidState = localStorage.getItem('liquid');
+  if (liquidState === 'Включен') {
+    document.body.style.backdropFilter = "blur(20px)";
+    
+    const style = document.createElement('style');
+    style.id = 'liquid-style';
+    style.textContent = `
+      button, 
+      .btn, 
+      .back-btn, 
+      .back-center,
+      .option-item, 
+      .liquid-toggle, 
+      .switch,
+      input, 
+      .faq-item summary,
+      [role="button"] { 
+        border: 1px solid rgba(255,255,255,0.8) !important; 
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+</script>
 <div class="container">
     <a onclick="goBack()" class="back-center">
 ← Вернуться назад
@@ -516,13 +545,16 @@ function cancelLiquidEnable() {
 }
 
 function goBack() {
-    if (localStorage.getItem('windowHistoryBack') !== window.location.pathname.split('/').pop()) {
-        window.location.href = localStorage.getItem('windowHistoryBack') || 'menu.html';
-    }
-    else if (document.referrer.split('/').pop().split('?')[0] !== window.location.pathname.split('/').pop()){
-        window.location.href = document.referrer.split('/').pop().split('?')[0] || 'menu.html';
-    }
-    else{
+    // Попытка вернуться в историю браузера
+    if (window.history.length > 1) {
+        window.history.back();
+    } 
+    // Fallback на сохраненное значение из localStorage
+    else if (localStorage.getItem('windowHistoryBack')) {
+        window.location.href = localStorage.getItem('windowHistoryBack');
+    } 
+    // Итоговый fallback
+    else {
         window.location.href = 'menu.html';
     }
 }

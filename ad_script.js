@@ -227,6 +227,7 @@ continueBtn.addEventListener('click', async () => {
     }
     await incrementViewCount();
     if (localStorage.getItem('fromCrystals') === 'true'){
+        localStorage.setItem('crystalReturnPage', 'index.html');
         window.location.href = 'crystals.html';
     }
     else{

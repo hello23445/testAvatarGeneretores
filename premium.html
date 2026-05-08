@@ -259,7 +259,7 @@
       border-radius: var(--radius-md);
       border: 1px solid rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.05);
-      transition: transform .22s ease, border-color .22s ease, background .22s ease;
+      transition: transform .3 ease, border-color .22s ease, background .22s ease;
       transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
       transform-style: preserve-3d;
       touch-action: pan-y;
@@ -1091,12 +1091,9 @@
           const rect = card.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const offset = clientX - centerX;
-          const deadZone = rect.width * 0.08;
-          if (Math.abs(offset) <= deadZone) {
-            card.style.setProperty('--card-tilt', '0deg');
-            return;
-          }
-          card.style.setProperty('--card-tilt', offset > 0 ? '-3deg' : '3deg');
+          const maxTilt = 4; // Максимальный угол наклона в градусах
+          const tilt = (offset / (rect.width / 2)) * maxTilt;
+          card.style.setProperty('--card-tilt', `${tilt}deg`);
         };
 
         const resetTilt = () => {

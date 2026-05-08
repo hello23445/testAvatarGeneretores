@@ -157,17 +157,24 @@ transform:scale(.98);
     border: 1px solid rgba(255,255,255,0.08);
     backdrop-filter: blur(10px);
     cursor: pointer;
-    transition: 0.25s;
+    transition: transform 0.3s ease;
     overflow: hidden;
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
+    transform-style: preserve-3d;
+    touch-action: pan-y;
 }
 
 .card:hover {
-    transform: translateY(-4px) scale(1.02);
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-3px) scale(1.02);
     border-color: rgba(59,130,246,0.6);
 }
 
 .card:active {
-    transform: scale(0.98);
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) scale(0.98);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 .card::before {
@@ -177,10 +184,6 @@ transform:scale(.98);
     background: linear-gradient(120deg, transparent, rgba(59,130,246,0.15), transparent);
     opacity: 0;
     transition: 0.3s;
-}
-
-.card:hover::before {
-    opacity: 1;
 }
 
 .crystals {
@@ -541,6 +544,60 @@ products.forEach((item, index) => {
     shop.appendChild(div);
 });
 
+// Функция для эффекта наклона карточек
+function attachTiltEffect(selector) {
+    document.querySelectorAll(selector).forEach(card => {
+        let activeTouchId = null;
+
+        const updateTilt = (clientX) => {
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const offset = clientX - centerX;
+            const maxTilt = 4; // Максимальный угол наклона в градусах
+            const tilt = (offset / (rect.width / 2)) * maxTilt;
+            card.style.setProperty('--card-tilt', `${tilt}deg`);
+        };
+
+        const resetTilt = () => {
+            activeTouchId = null;
+            card.style.setProperty('--card-tilt', '0deg');
+        };
+
+        card.addEventListener('mouseenter', () => {
+            card.style.setProperty('--card-tilt', '0deg');
+        });
+
+        card.addEventListener('mousemove', (event) => {
+            updateTilt(event.clientX);
+        });
+
+        card.addEventListener('mouseleave', resetTilt);
+
+        card.addEventListener('touchstart', (event) => {
+            const touch = event.changedTouches[0];
+            activeTouchId = touch.identifier;
+            updateTilt(touch.clientX);
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (event) => {
+            const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouchId) || event.changedTouches[0];
+            if (!touch) return;
+            updateTilt(touch.clientX);
+        }, { passive: true });
+
+        card.addEventListener('touchend', (event) => {
+            if (Array.from(event.changedTouches).some(t => t.identifier === activeTouchId)) {
+                resetTilt();
+            }
+        }, { passive: true });
+
+        card.addEventListener('touchcancel', resetTilt, { passive: true });
+    });
+}
+
+// Применяем эффект наклона к карточкам
+attachTiltEffect('.card');
+
 // Добавление кристаллов в localStorage
 function addCrystals(amount) {
     let current = Number(localStorage.getItem('userCrystals') || 0);
@@ -626,8 +683,6 @@ async function buy(index) {
             showMessageModal('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
         } else if (status === 'pending') {
             showMessageModal('⏳ Платеж обрабатывается...');
-        } else {
-            showMessageModal('❌ Платёж отменён');
         }
     });
 }

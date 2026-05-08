@@ -30,36 +30,39 @@ export const blockedUsers = [
   "UChpIovcDqcQG-iZj3gxz3SN0Gdhc-",
   "leTO44dN3Qjxxi2ImcwtACrcMx1WQX"
 ];
-if (localStorage.getItem('fullscreenMode') === 'enabled') {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(err => {
-            console.warn('Не удалось включить полноэкранный режим:', err);
-        });
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-        elem.mozRequestFullScreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
-}
-else{
-    // Выход из полноэкранного режима
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-        if (document.exitFullscreen) {
-            document.exitFullscreen().catch(err => {
-                console.warn('Не удалось выключить полноэкранный режим:', err);
+
+setInterval(() => {
+    if (localStorage.getItem('fullscreenMode') === 'enabled') {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(err => {
+                alert('Не удалось включить полноэкранный режим:', err);
             });
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
         }
     }
-}
+    else{
+        // Выход из полноэкранного режима
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => {
+                    alert('Не удалось выключить полноэкранный режим:', err);
+                });
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+}, 2000);
 const tg = window.Telegram.WebApp;
 // if (localStorage.getItem('user_Token') === '282e6391-ecd5-4691-bd8f-67842d47f950'){
 //   localStorage.setItem('user_Token', 'DTtJAc6FvnAVa10YPYh7g-G1MGLY87' );

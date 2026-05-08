@@ -394,7 +394,7 @@ function applyFullscreen(enabled) {
         // Пытаемся применить полноэкранный режим
         if (elem.requestFullscreen) {
             elem.requestFullscreen().catch(err => {
-                console.warn('Не удалось включить полноэкранный режим:', err);
+                alert('Не удалось включить полноэкранный режим:', err);
             });
         } else if (elem.webkitRequestFullscreen) {
             elem.webkitRequestFullscreen();
@@ -408,7 +408,7 @@ function applyFullscreen(enabled) {
         if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
             if (document.exitFullscreen) {
                 document.exitFullscreen().catch(err => {
-                    console.warn('Не удалось выключить полноэкранный режим:', err);
+                    alert('Не удалось выключить полноэкранный режим:', err);
                 });
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();

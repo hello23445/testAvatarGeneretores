@@ -504,34 +504,48 @@ input:disabled, select:disabled, textarea:disabled{
 #editModal .modal-content {
   width: 100%;
   max-width: none;
-  height: 100%;
-  max-height: 100%;
+  height: 100vh;
+  max-height: 100vh;
   border-radius: 0;
   display: flex;
   flex-direction: column;
-  padding: 18px;
-  overflow-y: auto;
+  padding: 0;
+  overflow: hidden;
 }
 
-#editModal .modal-content textarea {
+#editModal .edit-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#editModal .edit-modal-body textarea {
   flex: 1;
   min-height: 0;
   margin: 12px 0;
+  width: 100%;
 }
 
-#editModal .modal-content .modal-buttons {
+#editModal .modal-buttons {
   position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: inherit;
+  background: rgba(0, 0, 0, 0.95);
   z-index: 2;
-  padding-top: 12px;
+  padding: 14px 16px 18px;
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-#editModal .modal-content .modal-buttons button {
-  flex: 1;
-  min-width: 0;
+#editModal .modal-buttons button {
+  flex: 1 1 45%;
+  min-width: 120px;
 }
 
 /* Messenger options */

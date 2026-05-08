@@ -1237,14 +1237,16 @@
     <!-- Edit Modal -->
     <div id="editModal" class="modal" style="display: none;">
       <div class="modal-content" style="background-color: black;">
-        <h2 id="editTitle" style="color: white;"></h2>
-        <textarea id="editTextarea" style="width: 100%;"></textarea>
-        <div id="editCounter" class="counter" style="color:white;"></div>
-        <div id="editDesc" class="hint" style="color:white;"></div>
-        <div class="modal-buttons" style="align-items: center; justify-content: center; display: flex;">
+        <div class="edit-modal-body">
+          <h2 id="editTitle" style="color: white;"></h2>
+          <textarea id="editTextarea" style="width: 100%;"></textarea>
+          <div id="editCounter" class="counter" style="color:white;"></div>
+          <div id="editDesc" class="hint" style="color:white;"></div>
+        </div>
+        <div class="modal-buttons" style="align-items: center; justify-content: center; display: flex; gap: 10px; flex-wrap: wrap;">
           <button id="saveEdit" class="btn btn--primary" title="Сохранить изменения.">Сохранить</button>
           <button id="cancelEdit" class="btn btn--secondary" title="Отменить изменения.">Отмена</button>
-          <button id="copy" class="btn btn--secondary" title="Скопировать текст из поля в буфер обмена."><i class="fa-solid fa-copy"></i></button>
+          <button id="copy" class="btn btn--secondary" title="Скопировать текст из поля в буфер обмена.">Скопировать<i class="fa-solid fa-copy"></i></button>
           <button id="clearEdit" class="btn btn--secondary" title="Очистить поле.">Очистить</button>
         </div>
       </div>
@@ -1286,7 +1288,7 @@ text.addEventListener('input', function () {
       } else {
         try {
           await navigator.clipboard.writeText(textToCopy);
-          copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+          copyBtn.innerHTML = 'Скопировано<i class="fa-solid fa-check"></i>';
           document.getElementById('editTextarea').focus();
         } catch (err) {
           document.getElementById('editTextarea').focus();
@@ -1295,7 +1297,7 @@ text.addEventListener('input', function () {
       }
       // вернуть исходную надпись через 2 секунды
       setTimeout(() => {
-        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+        copyBtn.innerHTML = 'Скопировать<i class="fa-solid fa-copy"></i>';
       }, 2000);
     });
     </script>

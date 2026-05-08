@@ -77,12 +77,12 @@ setInterval(() => {
         });
     }
 }, 3000);
-const ADMINTOKENS = [
-    'DTtJAc6FvnAVa10YPYh7g-G1MGLY87'
-]
-if (ADMINTOKENS.includes(localStorage.getItem('user_Token'))) {
-    localStorage.setItem('userCrystals', 9999)
-}
+// const ADMINTOKENS = [
+//     'DTtJAc6FvnAVa10YPYh7g-G1MGLY87'
+// ]
+// if (ADMINTOKENS.includes(localStorage.getItem('user_Token'))) {
+//     localStorage.setItem('userCrystals', 9999)
+// }
 const SPEED_THRESHOLD = 10;
 const SHAKE_THRESHOLD = 65;
 const COOLDOWN = 2000; // защита от спама

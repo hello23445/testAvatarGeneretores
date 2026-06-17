@@ -466,11 +466,11 @@ function closeMessageModal() { document.getElementById('messageModalOverlay').cl
 
     <div class="grid" id="shop"></div>
 
-    <div class="tabs-container">
-        <button id="tab-all" class="tab-btn active" onclick="event.preventDefault(); switchCategory('all')">Все</button>
-        <button id="tab-popular" class="tab-btn" onclick="event.preventDefault(); switchCategory('popular')">Популярные</button>
-        <button id="tab-eco" class="tab-btn" onclick="event.preventDefault(); switchCategory('eco')">Выгодные</button>
-        <button id="tab-vip" class="tab-btn" onclick="event.preventDefault(); switchCategory('vip')">VIP</button>
+    <div class="tabs-container" id="tabs">
+        <button id="tab-all" class="tab-btn active" onclick="event.preventDefault(); switchCategory('all')"><i class="fa-solid fa-border-all"></i></button>
+        <button id="tab-popular" class="tab-btn" onclick="event.preventDefault(); switchCategory('popular')"><i class="fa-solid fa-fire"></i></button>
+        <button id="tab-eco" class="tab-btn" onclick="event.preventDefault(); switchCategory('eco')"><i class="fa-regular fa-thumbs-up"></i></button>
+        <button id="tab-vip" class="tab-btn" onclick="event.preventDefault(); switchCategory('vip')"><i class="fa-solid fa-crown"></i></button>
     </div>
 </div>
 
@@ -482,28 +482,32 @@ if (!localStorage.getItem('userCrystals')) {
 }
 updateCrystalCounter();
 
+// обычный - 'just',
+// популярный - 'popular,
+// Выгодный - 'cheaper',
+// VIP - 'VIP'
 // Товары
 const products = [
-    { crystals: 10, price: 5, buttonText: "5🌟" },
-    { crystals: 25, price: 10, buttonText: "10🌟" },
-    { crystals: 50, price: 18, buttonText: "18🌟" },
-    { crystals: 80, price: 25, buttonText: "25🌟" },
-    { crystals: 120, price: 35, buttonText: "35🌟(Популярно)" },
-    { crystals: 200, price: 55, buttonText: "55🌟" },
-    { crystals: 350, price: 85, buttonText: "85🌟" },
-    { crystals: 500, price: 120, buttonText: "120🌟" },
-    { crystals: 800, price: 180, buttonText: "180🌟" },
-    { crystals: 1200, price: 250, buttonText: "250🌟(Выгодно)" },
-    { crystals: 1800, price: 350, buttonText: "350🌟" },
-    { crystals: 2500, price: 470, buttonText: "470🌟" },
-    { crystals: 3500, price: 620, buttonText: "620🌟" },
-    { crystals: 5000, price: 850, buttonText: "850🌟" },
-    { crystals: 7500, price: 1200, buttonText: "1 200🌟" },
-    { crystals: 10000, price: 1500, buttonText: "1 500🌟" },
-    { crystals: 50000, price: 7500, buttonText: "7 500🌟" },
-    { crystals: 100000, price: 13000, buttonText: "13 000🌟" },
-    { crystals: 500000, price: 65000, buttonText: "65 000🌟" },
-    { crystals: 1000000, price: 90000, buttonText: "90 000🌟" }
+    { crystals: 10, price: 5, buttonText: "5🌟", type: 'just' },
+    { crystals: 25, price: 10, buttonText: "10🌟", type: 'just' },
+    { crystals: 50, price: 18, buttonText: "18🌟", type: 'just' },
+    { crystals: 80, price: 25, buttonText: "25🌟", type: 'just' },
+    { crystals: 120, price: 35, buttonText: "35🌟", type: 'popular' },
+    { crystals: 200, price: 55, buttonText: "55🌟", type: 'just' },
+    { crystals: 350, price: 85, buttonText: "85🌟", type: 'popular' },
+    { crystals: 500, price: 120, buttonText: "120🌟", type: 'just' },
+    { crystals: 800, price: 180, buttonText: "180🌟", type: 'popular' },
+    { crystals: 1200, price: 250, buttonText: "250🌟(Выгодно)", type: 'cheaper' },
+    { crystals: 1800, price: 350, buttonText: "350🌟", type: 'cheaper' },
+    { crystals: 2500, price: 470, buttonText: "470🌟", type: 'just' },
+    { crystals: 3500, price: 620, buttonText: "620🌟", type: 'just' },
+    { crystals: 5000, price: 850, buttonText: "850🌟", type: 'just' },
+    { crystals: 7500, price: 1200, buttonText: "1 200🌟", type: 'popular' },
+    { crystals: 10000, price: 1500, buttonText: "1 500🌟", type: 'just' },
+    { crystals: 50000, price: 7500, buttonText: "7 500🌟", type: 'VIP' },
+    { crystals: 100000, price: 13000, buttonText: "13 000🌟", type: 'VIP' },
+    { crystals: 500000, price: 65000, buttonText: "65 000🌟", type: 'VIP' },
+    { crystals: 1000000, price: 90000, buttonText: "90 000🌟", type: 'VIP' }
 ];
 
 const shop = document.getElementById('shop');
@@ -517,9 +521,9 @@ function generateCards() {
     shop.innerHTML = '';
     
     products.forEach((item, index) => {
-        const isPopular = item.buttonText && item.buttonText.includes('Популярно');
-        const isEco = item.buttonText && item.buttonText.includes('Выгодно');
-        const isVip = item.vip === true || item.crystals >= 100000;
+        const isPopular = item.type === 'popular';
+        const isEco = item.type === 'cheaper';
+        const isVip = item.type === 'VIP';
 
         if (currentCategory === 'popular' && !isPopular) return;
         if (currentCategory === 'eco' && !isEco) return;
@@ -531,11 +535,11 @@ function generateCards() {
         
         let badgeHTML = '';
         if (isPopular) {
-            badgeHTML = `<div class="badge" style="background: #2563eb; color: #fff;">Хит</div>`;
+            badgeHTML = `<div class="badge" style="background: #2563eb; color: #fff;"><i class="fa-solid fa-fire" style="margin-right:6px;"></i>Хит</div>`;
         } else if (isEco) {
-            badgeHTML = `<div class="badge" style="background: #0284c7; color: #fff;">Выгодно</div>`;
-        } else if (item.crystals >= 100000) {
-            badgeHTML = `<div class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3)">VIP</div>`;
+            badgeHTML = `<div class="badge" style="background: #0284c7; color: #fff;"><i class="fa-regular fa-thumbs-up" style="margin-right:6px;"></i>Выгодно</div>`;
+        } else if (isVip) {
+            badgeHTML = `<div class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3)"><i class="fa-solid fa-crown" style="margin-right:6px;"></i>VIP</div>`;
         }
         
         let iconColor = '#38bdf8';
@@ -551,7 +555,7 @@ function generateCards() {
         div.innerHTML = `
             ${badgeHTML}
             <div style="margin-top: 6px; ${glow}">
-                <i class="fa-solid fa-gem" style="font-size: 28px; color: ${iconColor};"></i>
+                <i class="fa-solid fa-gem" style="font-size: 28px; color: ${iconColor}; margin-top: 90%"></i>
             </div>
             <div class="crystals">${formatNumber(item.crystals)}</div>
             <div class="price">кристаллов</div>
@@ -592,7 +596,30 @@ window.switchCategory = function(category) {
             btn.classList.remove('active');
         }
     });
+
+    // Смена отступа панели под выбранную категорию
     setTabsMarginForCategory(category);
+
+    // Переключение иконки для вкладки "Выгодные" (tab-eco)
+    const ecoBtn = document.getElementById('tab-eco');
+    if (ecoBtn) {
+        if (category === 'eco') {
+            ecoBtn.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
+        } else {
+            ecoBtn.innerHTML = '<i class="fa-regular fa-thumbs-up"></i>';
+        }
+    }
+
+    // Отключаем прокрутку для всех категорий кроме 'all'
+    if (category === 'all') {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.classList.remove('no-scroll');
+    } else {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.classList.add('no-scroll');
+    }
+
     generateCards();
 }
 

@@ -620,6 +620,9 @@ window.switchCategory = function(category) {
         document.body.classList.add('no-scroll');
     }
 
+    // Прокручиваем страницу наверх при выборе категории
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
     generateCards();
 }
 

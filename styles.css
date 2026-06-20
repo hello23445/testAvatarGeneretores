@@ -292,7 +292,7 @@ input:disabled, select:disabled, textarea:disabled{
   color: var(--muted);
   padding: 6px 0;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -304,12 +304,12 @@ input:disabled, select:disabled, textarea:disabled{
 }
 
 .bottom-nav-fixed .tab-btn i {
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .bottom-nav-fixed .tab-btn .tab-label {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;

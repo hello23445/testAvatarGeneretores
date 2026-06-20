@@ -150,31 +150,29 @@ window.addEventListener("devicemotion", (event) => {
 localStorage.setItem('windowHistoryBack', document.referrer.split('/').pop());
 //Записываем Telegram ID пользователя в гугл таблицу через Google Apps Script
 // Вставь сюда URL, который ты получил после развертывания (Deploy) веб-приложения GAS
-const userID = Telegram?.WebApp?.initDataUnsafe?.user?.id || null
-if (localStorage.getItem('GASES') !== 'false' && userID !== null || userID !== '') {
+const userID = Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
+
+if (localStorage.getItem('GASES') !== 'false' && userID !== null && userID !== '') {
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxxPIm0H59QrViMtfd5rJKieh2DpxRdAAKLSGJ8g_s2YeXu6DSBQo01bmhKcJC_0P2H/exec';
-    
-    // Формируем данные в том виде, который ожидает GAS скрипт (объект с массивом users)
+
     const dataToSend = {
-      users: userID
+        users: userID
     };
-    
+
     fetch(webAppUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(dataToSend)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(dataToSend)
     })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Ответ от таблицы:', data);
-      })
-      .catch(error => {
-        console.error('Произошла ошибка при отправке:', error);
-      });
-      if(userID === null){
-        console.log('Ошибка! userID равен null. Данные не отправлены.');
-      }
+    .then(response => response.json())
+    .then(data => {
+        alert('Ответ от таблицы: ' + JSON.stringify(data));
+    })
+    .catch(error => {
+        alert('Произошла ошибка при отправке: ' + error);
+    });
+
 }
 alert(userID + ' -ID')

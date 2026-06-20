@@ -610,19 +610,6 @@ window.switchCategory = function(category) {
         }
     }
 
-    // Отключаем прокрутку для всех категорий кроме 'all'
-    if (category === 'all') {
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-        document.body.classList.remove('no-scroll');
-    } else {
-        document.documentElement.style.overflow = 'hidden';
-        document.body.classList.add('no-scroll');
-    }
-
-    // Прокручиваем страницу наверх при выборе категории
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-
     generateCards();
 }
 

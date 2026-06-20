@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="with-bottom-nav">
   <div id="pagePreloader" class="page-preloader" aria-live="polite" aria-label="Загрузка сайта">
     <div class="page-preloader__content">
       <div class="page-preloader__badge">CrN PhotoAI</div>
@@ -22,9 +22,6 @@
   </div>
   <!-- Top bar -->
   <header class="topbar">
-    <button id="menuButton" class="icon-btn" onclick="window.location.href='menu.html'" aria-label="Меню">
-      <i class="fa-solid fa-bars"></i>
-    </button>
     <div class="topbar-title">
       <div class="app-title">CrN PhotoAI </div>
     </div>
@@ -921,24 +918,10 @@
           <span>Сгенерировать (Максимально быстро)</span>
         </button>
       </div>
-      <div class="grid grid-2" style="margin-top: 2%;">
-        <button class="btn btn--secondary" onclick="surpriseMode()" title="Нажмите чтобы получить случайные параметры генерации.">
+      <div style="margin-top: 2%;">
+        <button class="btn btn--secondary" style="width: 100%;" onclick="surpriseMode()" title="Нажмите чтобы получить случайные параметры генерации.">
           <i class="fa-solid fa-dice"></i>
           <span>Удиви меня</span>
-        </button>
-        <button class="btn btn--secondary" onclick="window.location.href='api.html'" title="Перейти к вашему API-ключу.">
-          <i class="fa-solid fa-key"></i>
-          <span>Мой API-ключ</span>
-        </button>
-      </div>
-      <div class="grid grid-2 crystals-premium-buttons">
-        <button class="btn btn--secondary" style="margin-top: 4%;" onclick="localStorage.setItem('crystalReturnPage', 'index.html'); window.location.href='crystals.html'" title="Нажмите чтобы открыть страницу покупки кристаллов.">
-          <i class="fa-solid fa-gem"></i>
-          <span>Кристаллы</span>
-        </button>
-        <button class="btn btn--secondary" style="margin-top: 4%;" onclick="BuyPremium()" title="Нажмите чтобы открыть страницу премиума.">
-          <i class="fa-solid fa-crown"></i>
-          <span>Premium</span>
         </button>
       </div>
       <div id="attemptsDisplay" class="attempts" title="Количество ваших генераций.">
@@ -1261,6 +1244,16 @@
         </div>
       </div>
     </div>
+    <div id="sectionSwitchModal" class="modal" style="display: none;">
+      <div class="modal-content" style="background: var(--panel-bg); max-width: 400px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <h2 style="color: #7eb3ff; text-align: center;">Переключение раздела</h2>
+        <p id="sectionSwitchMessage" style="color: var(--text); text-align: center; margin-top: 10px;"></p>
+        <div class="modal-buttons" style="justify-content: center; display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+          <button class="btn btn--primary" onclick="confirmSectionSwitch()" style="flex: 1;">Да</button>
+          <button class="btn btn--secondary" onclick="closeSectionSwitchModal()" style="flex: 1;">Нет</button>
+        </div>
+      </div>
+    </div>
     <script>
 const text = document.getElementById('text');
 const copy = document.getElementById('copy');
@@ -1553,6 +1546,165 @@ window.addEventListener('storage', (event) => {
     applyFullscreenMode();
   }
 });
+
+// Функции управления видимостью нижнего меню
+function toggleBottomNav(show) {
+  const bottomNav = document.querySelector('.bottom-nav-fixed');
+  if (bottomNav) {
+    bottomNav.style.display = show ? 'flex' : 'none';
+  }
+}
+
+// Проверка изменений в форме
+let formChanges = {};
+let pendingSectionUrl = null;
+let pendingSectionName = null;
+
+function getFormInitialState() {
+  const inputs = document.querySelectorAll('input, select, textarea');
+  const state = {};
+  inputs.forEach(input => {
+    if (input.id) {
+      if (input.type === 'checkbox' || input.type === 'radio') {
+        state[input.id] = input.checked;
+      } else {
+        state[input.id] = input.value;
+      }
+    }
+  });
+  return state;
+}
+
+function hasFormChanges() {
+  const inputs = document.querySelectorAll('input, select, textarea');
+  let hasChanges = false;
+  
+  inputs.forEach(input => {
+    if (input.id && formChanges.hasOwnProperty(input.id)) {
+      const currentValue = input.type === 'checkbox' || input.type === 'radio' ? input.checked : input.value;
+      if (currentValue !== formChanges[input.id]) {
+        hasChanges = true;
+      }
+    }
+  });
+  
+  return hasChanges;
+}
+
+function trackFormChanges() {
+  formChanges = getFormInitialState();
+}
+
+function confirmSectionSwitch() {
+  if (pendingSectionUrl) {
+    // Скрываем модальное окно
+    const modal = document.getElementById('sectionSwitchModal');
+    if (modal) modal.style.display = 'none';
+    
+    // Сбрасываем форму и переходим
+    if (pendingSectionUrl === 'crystals.html') {
+      localStorage.setItem('crystalReturnPage', 'index.html');
+    }
+    window.location.href = pendingSectionUrl;
+  }
+}
+
+function closeSectionSwitchModal() {
+  const modal = document.getElementById('sectionSwitchModal');
+  if (modal) modal.style.display = 'none';
+  pendingSectionUrl = null;
+  pendingSectionName = null;
+}
+
+function handleSectionSwitch(url, sectionName) {
+  if (hasFormChanges()) {
+    pendingSectionUrl = url;
+    pendingSectionName = sectionName;
+    const messageEl = document.getElementById('sectionSwitchMessage');
+    if (messageEl) {
+      messageEl.innerHTML = `Вы уверены что хотите открыть раздел "${sectionName}"?<br>Внесенные изменения будут сброшены.`;
+    }
+    const modal = document.getElementById('sectionSwitchModal');
+    if (modal) modal.style.display = 'flex';
+  } else {
+    // Нет изменений, переходим сразу
+    if (url === 'crystals.html') {
+      localStorage.setItem('crystalReturnPage', 'index.html');
+    }
+    window.location.href = url;
+  }
+}
+
+// Инициализация отслеживания изменений при загрузке
+window.addEventListener('load', () => {
+  trackFormChanges();
+});
+
+// Наблюдатель за модальными окнами для управления меню
+document.addEventListener('DOMContentLoaded', () => {
+  const modalsContainer = document.body;
+  
+  // Инициальная проверка при загрузке
+  const anyModalOpen = document.querySelectorAll('.modal[style*="display: flex"], .modal[style*="display:flex"]').length > 0;
+  toggleBottomNav(!anyModalOpen);
+  
+  const observer = new MutationObserver(() => {
+    const anyModalOpen = document.querySelectorAll('.modal[style*="display: flex"], .modal[style*="display:flex"]').length > 0;
+    toggleBottomNav(!anyModalOpen);
+  });
+  
+  observer.observe(modalsContainer, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['style']
+  });
+});
+</script>
+
+<div class="tabs-container bottom-nav-fixed" id="bottomTabs" aria-label="Фиксированная навигационная панель">
+  <button title="Тут вы можете пополнить свой баланс кристаллов." type="button" class="tab-btn" aria-label="Кристаллы" onclick="handleSectionSwitch('crystals.html', 'Кристаллы')">
+    <i class="fa-solid fa-gem"></i>
+    <span class="tab-label">Кристаллы</span>
+  </button>
+  <button title="Данный раздел находится на этапе разработки..." type="button" class="tab-btn" aria-label="Друзья" onclick="showInfoModal('Данный раздел находится на этапе разработки...')">
+    <i class="fa-solid fa-user-friends"></i>
+    <span class="tab-label">Друзья</span>
+  </button>
+  <button title="Тут вы можете создавать свой API-ключ и подключить генерацию изображений к своим сайтам, ботам и приложениям." type="button" class="tab-btn" aria-label="API" onclick="handleSectionSwitch('api.html', 'API')">
+    <i class="fa-solid fa-key"></i>
+    <span class="tab-label">API-ключ</span>
+  </button>
+  <button title="Тут вы можете приобрести премиум и получить доступ к расширенным возможностям." type="button" class="tab-btn" aria-label="Премиум" onclick="handleSectionSwitch('premium.html', 'Премиум')">
+    <i class="fa-solid fa-crown"></i>
+    <span class="tab-label">Премиум</span>
+  </button>
+  <button title="Открыть дополнительные опции" type="button" class="tab-btn" aria-label="Меню" onclick="handleSectionSwitch('menu.html', 'Меню')">
+    <i class="fa-solid fa-bars"></i>
+    <span class="tab-label">Меню</span>
+  </button>
+</div>
+</div>
+
+<div id="infoModal" class="modal" style="display: none;">
+  <div class="modal-content" style="background: var(--panel-bg); max-width: 400px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <h2 style="color: #7eb3ff; text-align: center;">Внимание</h2>
+    <p id="infoModalText" style="color: var(--text); text-align: center; margin-top: 10px;"></p>
+    <button class="btn btn--primary" onclick="closeInfoModal()" style="margin-top: 20px; width: 100%;">Закрыть</button>
+  </div>
+</div>
+
+<script>
+function showInfoModal(message) {
+  const modal = document.getElementById('infoModal');
+  const text = document.getElementById('infoModalText');
+  if (text) text.textContent = message;
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeInfoModal() {
+  const modal = document.getElementById('infoModal');
+  if (modal) modal.style.display = 'none';
+}
 </script>
 
 <style>body{overflow-y:auto !important; -webkit-overflow-scrolling: touch; touch-action: auto;}</style>

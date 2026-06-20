@@ -1557,6 +1557,7 @@ function toggleBottomNav(show) {
 
 // Проверка изменений в форме
 let formChanges = {};
+let formDirty = false;
 let pendingSectionUrl = null;
 let pendingSectionName = null;
 
@@ -1576,23 +1577,26 @@ function getFormInitialState() {
 }
 
 function hasFormChanges() {
-  const inputs = document.querySelectorAll('input, select, textarea');
-  let hasChanges = false;
-  
-  inputs.forEach(input => {
-    if (input.id && formChanges.hasOwnProperty(input.id)) {
-      const currentValue = input.type === 'checkbox' || input.type === 'radio' ? input.checked : input.value;
-      if (currentValue !== formChanges[input.id]) {
-        hasChanges = true;
-      }
-    }
-  });
-  
-  return hasChanges;
+  return formDirty;
 }
 
 function trackFormChanges() {
   formChanges = getFormInitialState();
+  formDirty = false;
+}
+
+function markFormDirty() {
+  formDirty = true;
+}
+
+function bindFormChangeListeners() {
+  const inputs = document.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    const eventName = input.tagName.toLowerCase() === 'textarea' || input.type === 'text' || input.type === 'number' || input.type === 'email' || input.type === 'search' ? 'input' : 'change';
+    input.addEventListener(eventName, () => {
+      markFormDirty();
+    });
+  });
 }
 
 function confirmSectionSwitch() {
@@ -1638,6 +1642,7 @@ function handleSectionSwitch(url, sectionName) {
 // Инициализация отслеживания изменений при загрузке
 window.addEventListener('load', () => {
   trackFormChanges();
+  bindFormChangeListeners();
 });
 
 // Наблюдатель за модальными окнами для управления меню
@@ -1682,7 +1687,6 @@ document.addEventListener('DOMContentLoaded', () => {
     <i class="fa-solid fa-bars"></i>
     <span class="tab-label">Меню</span>
   </button>
-</div>
 </div>
 
 <div id="infoModal" class="modal" style="display: none;">

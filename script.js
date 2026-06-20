@@ -1939,6 +1939,7 @@ if (denyCancelButton) denyCancelButton.onclick = denyCancelEdit;
 // iPhone liquid border tweak (оставлено)
 if (/iPhone/i.test(navigator.userAgent)) {
   if (localStorage.getItem('liquid') === 'Включен') {
+    document.getElementById('bottomTabs').style.borderColor = 'rgba(255, 255, 255, 0.8)';
     const style = document.createElement('style');
     style.textContent = `
       button, .btn, .btn btn--danger, .btn--neutral {

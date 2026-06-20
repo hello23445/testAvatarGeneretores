@@ -33,16 +33,19 @@ const liquidSection = document.getElementById('liquid-section');
 const liquidSwitch = document.getElementById('liquidSwitch');
 
 function applyLiquid(enabled) {
-    if (enabled) {
-        // Размытие фона всего body
-        document.body.style.backdropFilter = "blur(20px)";
+    const bottomNav = document.querySelector('.bottom-nav-fixed');
 
-        // Усиленные стеклянные границы (как было в menu.html)
+    if (enabled) {
+        document.body.style.backdropFilter = "blur(20px)";
+        if (bottomNav) {
+            bottomNav.classList.add('liquid-glass-active');
+        }
+
         if (!document.getElementById('liquid-style')) {
             const style = document.createElement('style');
             style.id = 'liquid-style';
             style.textContent = `
-                button, 
+                button:not(.tab-btn), 
                 .btn, 
                 .back-btn, 
                 .option-item, 
@@ -58,6 +61,9 @@ function applyLiquid(enabled) {
         }
     } else {
         document.body.style.backdropFilter = "";
+        if (bottomNav) {
+            bottomNav.classList.remove('liquid-glass-active');
+        }
         const style = document.getElementById('liquid-style');
         if (style) style.remove();
     }
@@ -85,25 +91,27 @@ function initSettings() {
 
     // === Liquid Glass (только iPhone) ===
     if (tg.platform === 'ios') {
-        liquidSection.style.display = 'flex';
+        const state = localStorage.getItem('liquid') || 'Включен';
+        const enabled = state === 'Включен';
 
-        let state = localStorage.getItem('liquid');
-        if (!state) {
-            localStorage.setItem('liquid', 'Включен');
-            state = 'Включен';
+        if (liquidSection) {
+            liquidSection.style.display = 'flex';
         }
 
-        const enabled = state === 'Включен';
-        if (enabled) liquidSwitch.classList.add('active');
+        if (liquidSwitch) {
+            liquidSwitch.classList.toggle('active', enabled);
+            liquidSwitch.addEventListener('click', () => {
+                const currentEnabled = localStorage.getItem('liquid') === 'Включен';
+                const nextEnabled = !currentEnabled;
+                showLiquidConfirmModal(nextEnabled);
+            });
+        }
+
+        if (!localStorage.getItem('liquid')) {
+            localStorage.setItem('liquid', 'Включен');
+        }
 
         applyLiquid(enabled);
-
-        // Переключатель
-        liquidSwitch.addEventListener('click', () => {
-            const currentEnabled = localStorage.getItem('liquid') === 'Включен';
-            const nextEnabled = !currentEnabled;
-            showLiquidConfirmModal(nextEnabled);
-        });
     }
 }
 

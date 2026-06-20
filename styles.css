@@ -256,7 +256,8 @@ input:disabled, select:disabled, textarea:disabled{
 .bottom-nav-fixed {
   position: fixed;
   left: 50%;
-  bottom: 16px;
+  --bottom-nav-gap: 16px;
+  bottom: var(--bottom-nav-gap);
   transform: translateX(-50%);
   z-index: 999;
   width: min(100%, 440px);
@@ -269,6 +270,22 @@ input:disabled, select:disabled, textarea:disabled{
   border-radius: 18px;
   padding: 8px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+}
+
+.bottom-nav-fixed.liquid-glass-active {
+  border-color: rgba(255,255,255,0.8) !important;
+}
+
+.bottom-nav-fixed::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--bottom-nav-gap));
+  height: var(--bottom-nav-gap);
+  background: #020617;
+  border-radius: 0 0 18px 18px;
+  pointer-events: none;
 }
 
 .bottom-nav-fixed .tab-btn {

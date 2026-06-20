@@ -253,6 +253,18 @@ input:disabled, select:disabled, textarea:disabled{
   padding-bottom: 110px;
 }
 
+@media (max-width: 768px) {
+  .with-bottom-nav {
+    padding-bottom: 90px;
+  }
+}
+
+@media (max-width: 520px) {
+  .with-bottom-nav {
+    padding-bottom: 80px;
+  }
+}
+
 .bottom-nav-fixed {
   position: fixed;
   left: 50%;
@@ -336,7 +348,8 @@ input:disabled, select:disabled, textarea:disabled{
 @media (max-width: 520px) {
   .bottom-nav-fixed {
     width: calc(100% - 20px);
-    bottom: 12px;
+    --bottom-nav-gap: 12px;
+    bottom: var(--bottom-nav-gap);
     padding: 6px;
   }
   .bottom-nav-fixed .tab-btn {
@@ -551,17 +564,18 @@ input:disabled, select:disabled, textarea:disabled{
   align-items: center;
   padding: 16px;
   z-index: 999;
-  overflow-y: auto;
 }
 .modal-content{
   width: 100%;
   max-width: 520px;
+  max-height: 90vh;
   border-radius: 20px;
   background: rgba(255,255,255,0.92);
   color: #0b1220;
   border: 1px solid rgba(0,0,0,0.08);
   box-shadow: 0 22px 60px rgba(0,0,0,0.35);
   padding: 18px;
+  overflow-y: auto;
 }
 .modal-content h2, .modal-content h1{
   margin-bottom: 10px;

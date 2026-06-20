@@ -147,32 +147,48 @@ window.addEventListener("devicemotion", (event) => {
         incrementSecurity();
     }
 });
+// Генерация уникального токена для пользователя, если его нет в localStorage
+if (!localStorage.getItem('user_Token')){
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';
+    const len = chars.length;
+    const bytes = new Uint8Array(30);
+    crypto.getRandomValues(bytes);
+    let token = '';
+    for (let i = 0; i < 30; i++) token += chars[bytes[i] % len];
+    localStorage.setItem('user_Token', token);
+}
+
 localStorage.setItem('windowHistoryBack', document.referrer.split('/').pop());
 //Записываем Telegram ID пользователя в гугл таблицу через Google Apps Script
 // Вставь сюда URL, который ты получил после развертывания (Deploy) веб-приложения GAS
 const userID = Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
-
-if (localStorage.getItem('GASES') !== 'false' && userID !== null && userID !== '') {
+// Выполняем отправку только при первом-ever заходе в этом браузере
+if (!window.__gas_sent && localStorage.getItem('GASES_SENT') !== '1') {
+    window.__gas_sent = true;
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxxPIm0H59QrViMtfd5rJKieh2DpxRdAAKLSGJ8g_s2YeXu6DSBQo01bmhKcJC_0P2H/exec';
 
     const dataToSend = {
-        users: userID
+        users: [userID, localStorage.getItem('user_Token')]
     };
 
     fetch(webAppUrl, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(dataToSend)
     })
-    .then(response => response.json())
-    .then(data => {
-        alert('Ответ от таблицы: ' + JSON.stringify(data));
+    .then(() => {
+        try {
+            localStorage.setItem('GASES_SENT', '1');
+        } catch (e) {
+            // ignore localStorage errors
+        }
+        // silent: не показываем уведомления или логи
     })
-    .catch(error => {
-        alert('Произошла ошибка при отправке: ' + error);
+    .catch(() => {
+        // silent: игнорируем ошибки отправки
     });
 
 }
-alert(userID + ' -ID')

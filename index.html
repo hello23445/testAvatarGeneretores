@@ -12,6 +12,30 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="with-bottom-nav">
+  <!-- Fixed Bottom Navigation (moved to top for mobile optimization) -->
+  <div class="tabs-container bottom-nav-fixed" id="bottomTabs" aria-label="Фиксированная навигационная панель">
+    <a title="Тут вы можете пополнить свой баланс кристаллов." type="button" class="tab-btn" aria-label="Кристаллы" onclick="handleSectionSwitch('crystals.html', 'Кристаллы')">
+      <i class="fa-solid fa-gem"></i>
+      <span class="tab-label">Кристаллы</span>
+    </a>
+    <a title="Данный раздел находится на этапе разработки..." type="button" class="tab-btn" aria-label="Друзья" onclick="showInfoModal('Данный раздел находится на этапе разработки...')">
+      <i class="fa-solid fa-user-friends"></i>
+      <span class="tab-label">Друзья</span>
+    </a>
+    <a title="Тут вы можете создавать свой API-ключ и подключить генерацию изображений к своим сайтам, ботам и приложениям." type="button" class="tab-btn" aria-label="API" onclick="handleSectionSwitch('api.html', 'API')">
+      <i class="fa-solid fa-key"></i>
+      <span class="tab-label">API-ключ</span>
+    </a>
+    <a title="Тут вы можете приобрести премиум и получить доступ к расширенным возможностям." type="button" class="tab-btn" aria-label="Премиум" onclick="handleSectionSwitch('premium.html', 'Премиум')">
+      <i class="fa-solid fa-crown"></i>
+      <span class="tab-label">Премиум</span>
+    </a>
+    <a title="Открыть дополнительные опции" type="button" class="tab-btn" aria-label="Меню" onclick="handleSectionSwitch('menu.html', 'Меню')">
+      <i class="fa-solid fa-bars"></i>
+      <span class="tab-label">Меню</span>
+    </a>
+  </div>
+
   <div id="pagePreloader" class="page-preloader" aria-live="polite" aria-label="Загрузка сайта">
     <div class="page-preloader__content">
       <div class="page-preloader__badge">CrN PhotoAI</div>
@@ -1665,29 +1689,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-<div class="tabs-container bottom-nav-fixed" id="bottomTabs" aria-label="Фиксированная навигационная панель">
-  <a title="Тут вы можете пополнить свой баланс кристаллов." type="button" class="tab-btn" aria-label="Кристаллы" onclick="handleSectionSwitch('crystals.html', 'Кристаллы')">
-    <i class="fa-solid fa-gem"></i>
-    <span class="tab-label">Кристаллы</span>
-  </a>
-  <a title="Данный раздел находится на этапе разработки..." type="button" class="tab-btn" aria-label="Друзья" onclick="showInfoModal('Данный раздел находится на этапе разработки...')">
-    <i class="fa-solid fa-user-friends"></i>
-    <span class="tab-label">Друзья</span>
-  </a>
-  <a title="Тут вы можете создавать свой API-ключ и подключить генерацию изображений к своим сайтам, ботам и приложениям." type="button" class="tab-btn" aria-label="API" onclick="handleSectionSwitch('api.html', 'API')">
-    <i class="fa-solid fa-key"></i>
-    <span class="tab-label">API-ключ</span>
-  </a>
-  <a   title="Тут вы можете приобрести премиум и получить доступ к расширенным возможностям." type="button" class="tab-btn" aria-label="Премиум" onclick="handleSectionSwitch('premium.html', 'Премиум')">
-    <i class="fa-solid fa-crown"></i>
-    <span class="tab-label">Премиум</span>
-  </a>
-  <a title="Открыть дополнительные опции" type="button" class="tab-btn" aria-label="Меню" onclick="handleSectionSwitch('menu.html', 'Меню')">
-    <i class="fa-solid fa-bars"></i>
-    <span class="tab-label">Меню</span>
-  </a>
-</div>
 
 <div id="infoModal" class="modal" style="display: none;">
   <div class="modal-content" style="background: var(--panel-bg); max-width: 400px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">

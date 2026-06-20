@@ -253,18 +253,6 @@ input:disabled, select:disabled, textarea:disabled{
   padding-bottom: 110px;
 }
 
-@media (max-width: 768px) {
-  .with-bottom-nav {
-    padding-bottom: 90px;
-  }
-}
-
-@media (max-width: 520px) {
-  .with-bottom-nav {
-    padding-bottom: 80px;
-  }
-}
-
 .bottom-nav-fixed {
   position: fixed;
   left: 50%;
@@ -282,10 +270,6 @@ input:disabled, select:disabled, textarea:disabled{
   border-radius: 18px;
   padding: 8px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
-}
-
-.bottom-nav-fixed.liquid-glass-active {
-  border-color: rgba(255,255,255,0.8) !important;
 }
 
 .bottom-nav-fixed::after {
@@ -348,8 +332,7 @@ input:disabled, select:disabled, textarea:disabled{
 @media (max-width: 520px) {
   .bottom-nav-fixed {
     width: calc(100% - 20px);
-    --bottom-nav-gap: 12px;
-    bottom: var(--bottom-nav-gap);
+    bottom: 12px;
     padding: 6px;
   }
   .bottom-nav-fixed .tab-btn {
@@ -564,18 +547,78 @@ input:disabled, select:disabled, textarea:disabled{
   align-items: center;
   padding: 16px;
   z-index: 999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .modal-content{
   width: 100%;
   max-width: 520px;
-  max-height: 90vh;
   border-radius: 20px;
   background: rgba(255,255,255,0.92);
   color: #0b1220;
   border: 1px solid rgba(0,0,0,0.08);
   box-shadow: 0 22px 60px rgba(0,0,0,0.35);
   padding: 18px;
+  margin: auto 0;
+  max-height: 85vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 12px;
+    align-items: flex-start;
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px;
+    padding: 16px;
+    max-height: calc(100vh - 130px);
+  }
+  
+  .modal-content h1,
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .modal-content p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .btn {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .modal {
+    padding: 8px;
+    padding-top: max(8px, env(safe-area-inset-top));
+  }
+  
+  .modal-content {
+    max-height: calc(100vh - 120px);
+    padding: 14px;
+    border-radius: 14px;
+  }
+  
+  .modal-content h1,
+  .modal-content h2 {
+    font-size: 16px;
+  }
+  
+  .modal-content p {
+    font-size: 13px;
+  }
+}
+
 }
 .modal-content h2, .modal-content h1{
   margin-bottom: 10px;

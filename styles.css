@@ -311,10 +311,11 @@ input:disabled, select:disabled, textarea:disabled{
   display: block;
   font-size: 11px;
   line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  /* Показывать полную надпись без усечения */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: none;
 }
 
 .bottom-nav-fixed .tab-btn.active {

@@ -279,6 +279,36 @@ a:hover{
     color: #FFFFFF;
 }
 
+/* Spinner/Preloader */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #FFFFFF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.preloader-content {
+    display: none;
+    text-align: center;
+}
+
+.preloader-content.active {
+    display: block;
+}
+
+.preloader-content p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -359,6 +389,17 @@ a:hover{
                 </div>
                 <div id="confirmationSwitch" class="switch"></div>
             </div>
+
+            <div class="liquid-toggle">
+                <div class="icon-wrapper icon-orange">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div class="label">
+                    <h3>Получать уведомления по почте</h3>
+                    <small>Подписаться на рассылку с новостями, обновлениями приложения и системой безопасности.</small>
+                </div>
+                <div id="newsSubscriptionSwitch" class="switch"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -374,6 +415,41 @@ a:hover{
     <div class="modal-buttons">
         <button class="btn btn--primary" onclick="confirmLiquidEnable()">Включить</button>
       <button class="btn btn--secondary" onclick="cancelLiquidEnable()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div id="newsSubscriptionModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div id="newsModalForm">
+      <div class="modal-icon">
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+      <h2>Подтвердите действие</h2>
+      <p id="newsModalMessage">Эту функцию вы сможете включить через 2 часа после выключения, уверены что хотите её выключить?</p>
+      
+      <div class="modal-buttons">
+        <button class="btn btn--primary" id="newsConfirmBtn" onclick="confirmNewsSubscription()">Включить</button>
+        <button class="btn btn--secondary" onclick="cancelNewsSubscription()">Отмена</button>
+      </div>
+    </div>
+    <div id="newsModalPreloader" class="preloader-content">
+      <div class="spinner"></div>
+      <p id="newsModalPreloaderText">Обновляем ваши настройки...</p>
+    </div>
+  </div>
+</div>
+
+<div id="infoModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-icon" id="infoModalIcon">
+      <i class="fa-solid fa-info-circle"></i>
+    </div>
+    <h2 id="infoModalTitle">Информация</h2>
+    <p id="infoModalMessage">Сообщение</p>
+    
+    <div class="modal-buttons">
+      <button class="btn btn--primary" onclick="closeInfoModal()">Закрыть</button>
     </div>
   </div>
 </div>
@@ -465,6 +541,23 @@ function initSettings() {
         }
     });
 
+    // === News Subscription ===
+    const newsSubscriptionSwitch = document.getElementById('newsSubscriptionSwitch');
+    const userEmail = localStorage.getItem('email');
+    let newsSubscriptionEnabled = localStorage.getItem('newsSubscription') === 'true';
+    
+    // Отключаем toggle если нету email
+    if (!userEmail) {
+        newsSubscriptionSwitch.style.opacity = '0.5';
+        newsSubscriptionSwitch.style.cursor = 'not-allowed';
+        newsSubscriptionSwitch.parentElement.style.opacity = '0.5';
+    } else {
+        if (newsSubscriptionEnabled) {
+            newsSubscriptionSwitch.classList.add('active');
+        }
+        newsSubscriptionSwitch.addEventListener('click', handleNewsSubscriptionToggle);
+    }
+
     // === Liquid Glass (Проверка на Admin или iPhone) ===
     const isAdmin = localStorage.getItem('admin') === 'true';
     const isIPhone = /iPhone/i.test(navigator.userAgent);
@@ -552,6 +645,187 @@ function goBack() {
     }
 }
 
+// ==================== INFO MODAL ====================
+function showInfoModal(title, message, icon = 'fa-info-circle') {
+    const modal = document.getElementById('infoModal');
+    document.getElementById('infoModalTitle').textContent = title;
+    document.getElementById('infoModalMessage').textContent = message;
+    const iconElement = document.getElementById('infoModalIcon');
+    iconElement.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+    modal.style.display = 'flex';
+}
+
+function closeInfoModal() {
+    const modal = document.getElementById('infoModal');
+    modal.style.display = 'none';
+}
+
+// ==================== NEWS SUBSCRIPTION ====================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzM0dgfS4steAQiJ_xPKB7bc2EeC4N2qelLHiYoN2A7TcKcKiBpUkFsoGzk_OmRYyCS/exec';
+let pendingNewsAction = null; // 'enable' или 'disable'
+
+function showNewsSubscriptionModal(action) {
+    const modal = document.getElementById('newsSubscriptionModal');
+    const message = document.getElementById('newsModalMessage');
+    const confirmBtn = document.getElementById('newsConfirmBtn');
+    
+    pendingNewsAction = action;
+    
+    if (action === 'enable') {
+        message.textContent = 'Эту функцию вы сможете выключить через 2 часа после включения, уверены что хотите её включить?';
+        confirmBtn.textContent = 'Включить';
+    } else {
+        message.textContent = 'Эту функцию вы сможете включить через 2 часа после выключения, уверены что хотите её выключить?';
+        confirmBtn.textContent = 'Выключить';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function confirmNewsSubscription() {
+    const modal = document.getElementById('newsSubscriptionModal');
+    const newsSwitch = document.getElementById('newsSubscriptionSwitch');
+    const newsModalForm = document.getElementById('newsModalForm');
+    const newsModalPreloader = document.getElementById('newsModalPreloader');
+    const newsModalPreloaderText = document.getElementById('newsModalPreloaderText');
+    
+    if (!pendingNewsAction) return;
+    
+    const action = pendingNewsAction;
+    const userEmail = localStorage.getItem('email');
+    
+    // Проверка наличия email
+    if (!userEmail) {
+        showInfoModal('Ошибка', 'Пожалуйста, установите адрес электронной почты в настройках перед подпиской', 'fa-exclamation-circle');
+        modal.style.display = 'none';
+        pendingNewsAction = null;
+        return;
+    }
+    
+    // Проверка кулдауна
+    const lastToggleTime = localStorage.getItem('newsSubscriptionLastToggle');
+    if (lastToggleTime) {
+        const timePassed = Date.now() - parseInt(lastToggleTime);
+        const twoHours = 2 * 60 * 60 * 1000;
+        if (timePassed < twoHours) {
+            const remainingMinutes = Math.ceil((twoHours - timePassed) / 60000);
+            showInfoModal('Ограничение по времени', `Вы сможете изменить эту настройку через ${remainingMinutes} минут`, 'fa-hourglass-end');
+            modal.style.display = 'none';
+            pendingNewsAction = null;
+            return;
+        }
+    }
+    
+    // Проверка наличия GASES
+    if (localStorage.getItem('GASES') !== 'true') {
+        showInfoModal('Функция недоступна', 'В данный момент данная функция приостановлена. Пожалуйста, попробуйте позже.', 'fa-ban');
+        modal.style.display = 'none';
+        pendingNewsAction = null;
+        return;
+    }
+    
+    // Показываем прелоадер
+    newsModalForm.style.display = 'none';
+    newsModalPreloader.classList.add('active');
+    newsModalPreloaderText.textContent = action === 'enable' ? 'Включение...' : 'Отключение...';
+    
+    // Выполняем fetch запрос (пытаемся прочитать тело ответа и показывать ошибки от GAS)
+    const requestData = {
+        action: action === 'enable' ? 'add' : 'delete',
+        userToken: localStorage.getItem('user_Token'),
+        userID: Telegram?.WebApp?.initDataUnsafe?.user?.id || null,
+        userEmail: userEmail
+    };
+
+    const previousState = localStorage.getItem('newsSubscription') === 'true';
+
+    fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(requestData)
+    })
+    .then(async (res) => {
+        // Если ответ не OK — пробуем прочитать тело и выбросить ошибку
+        if (!res.ok) {
+            let text;
+            try { text = await res.text(); } catch (e) { text = `HTTP ${res.status}`; }
+            throw new Error(text || `HTTP ${res.status}`);
+        }
+
+        // Попытка распарсить JSON-ответ (если есть)
+        let data = null;
+        try { data = await res.json(); } catch (e) { /* не JSON — игнорируем */ }
+
+        if (data && data.error) {
+            throw new Error(typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
+        }
+
+        // Успех
+        const newState = action === 'enable' ? 'true' : 'false';
+        localStorage.setItem('newsSubscription', newState);
+        localStorage.setItem('newsSubscriptionLastToggle', Date.now().toString());
+
+        // Обновляем UI
+        newsSwitch.classList.toggle('active', action === 'enable');
+
+        // Скрываем прелоадер и закрываем модаль
+        setTimeout(() => {
+            modal.style.display = 'none';
+            newsModalForm.style.display = 'block';
+            newsModalPreloader.classList.remove('active');
+            pendingNewsAction = null;
+        }, 500);
+    })
+    .catch((err) => {
+        // Скрываем прелоадер и показываем ошибку от сервера
+        newsModalForm.style.display = 'block';
+        newsModalPreloader.classList.remove('active');
+        const message = err && err.message ? err.message : 'Ошибка при выполнении операции. Попробуйте позже.';
+        showInfoModal('Ошибка от сервера', message, 'fa-triangle-exclamation');
+
+        // Откатываем состояние переключателя к предыдущему
+        newsSwitch.classList.toggle('active', previousState);
+
+        modal.style.display = 'none';
+        pendingNewsAction = null;
+    });
+}
+
+function cancelNewsSubscription() {
+    const modal = document.getElementById('newsSubscriptionModal');
+    modal.style.display = 'none';
+    pendingNewsAction = null;
+}
+
+function handleNewsSubscriptionToggle() {
+    const newsSwitch = document.getElementById('newsSubscriptionSwitch');
+    const userEmail = localStorage.getItem('email');
+    
+    // Если нету email или он пустой - не даем включить
+    if (!userEmail) {
+        newsSwitch.classList.remove('active');
+        showInfoModal('Ошибка', 'Пожалуйста, установите адрес электронной почты перед подпиской', 'fa-exclamation-circle');
+        return;
+    }
+    
+    // Определяем текущее состояние
+    const isCurrentlyEnabled = localStorage.getItem('newsSubscription') === 'true';
+    const newAction = isCurrentlyEnabled ? 'disable' : 'enable';
+    
+    // Проверка кулдауна перед показом модали
+    const lastToggleTime = localStorage.getItem('newsSubscriptionLastToggle');
+    if (lastToggleTime) {
+        const timePassed = Date.now() - parseInt(lastToggleTime);
+        const twoHours = 2 * 60 * 60 * 1000;
+        if (timePassed < twoHours) {
+            const remainingMinutes = Math.ceil((twoHours - timePassed) / 60000);
+            showInfoModal('Ограничение по времени', `Вы сможете изменить эту настройку через ${remainingMinutes} минут`, 'fa-hourglass-end');
+            return;
+        }
+    }
+    
+    showNewsSubscriptionModal(newAction);
+}
 
 // Запуск
 document.addEventListener('DOMContentLoaded', initSettings);

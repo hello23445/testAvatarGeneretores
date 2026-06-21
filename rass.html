@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление рассылками</title>
+  <style>
+    :root {
+      --bg-color: #0b132b;
+      --panel-bg: #1c2541;
+      --primary-color: #3a506b;
+      --accent-color: #4ea8de;
+      --text-main: #e0e1dd;
+      --text-muted: #8d99ae;
+      --success: #2ecc71;
+      --danger: #e74c3c;
+      --btn-default: #2563eb;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: var(--panel-bg);
+      width: 100%;
+      max-width: 800px;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1, h2 { margin-top: 0; color: #ffffff; }
+
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--primary-color);
+    }
+
+    .btn-group { display: flex; gap: 15px; flex-wrap: wrap; }
+
+    button {
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    button:hover { background-color: var(--accent-color); }
+    button:active { transform: scale(0.98); }
+
+    .btn-active {
+      background-color: var(--accent-color);
+      box-shadow: 0 0 10px rgba(78, 168, 222, 0.5);
+    }
+
+    .form-container {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+    
+    label { margin-bottom: 5px; font-size: 13px; color: var(--text-muted); }
+
+    input[type="text"], .rich-editor {
+      width: 100%;
+      background-color: rgba(11, 19, 43, 0.6);
+      border: 1px solid var(--primary-color);
+      color: #fff;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus, .rich-editor:focus { border-color: var(--accent-color); }
+
+    .rich-editor {
+      min-height: 80px;
+      overflow-y: auto;
+    }
+
+    /* Панель инструментов (Toolbar) */
+    .toolbar {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 5px;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--primary-color);
+    }
+
+    .toolbar button {
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      background-color: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+    }
+
+    .toolbar button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary-color);
+    }
+
+    .add-btn {
+      background-color: transparent;
+      border: 1px dashed var(--accent-color);
+      color: var(--accent-color);
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .add-btn:hover { background-color: rgba(78, 168, 222, 0.1); }
+
+    /* Настройки кнопок */
+    .btn-row-wrapper {
+      background-color: rgba(0, 0, 0, 0.15);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid var(--primary-color);
+    }
+
+    .dynamic-row { display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+    .dynamic-row > div { flex: 1; min-width: 200px; }
+    
+    .color-picker-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(11, 19, 43, 0.6);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--primary-color);
+    }
+
+    input[type="color"] {
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+    }
+
+    .btn-reset-color {
+      background-color: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--primary-color);
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .btn-reset-color:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
+
+    .submit-btn {
+      background-color: #27ae60;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    .submit-btn:hover { background-color: var(--success); }
+
+    /* Модальные окна */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal {
+      background-color: var(--panel-bg); width: 90%; max-width: 600px;
+      border-radius: 8px; padding: 20px; border: 1px solid var(--primary-color); text-align: center;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .close-modal { background: none; color: var(--text-muted); font-size: 24px; cursor: pointer; padding: 0; }
+    .close-modal:hover { color: #fff; }
+    
+    .log-container {
+      background-color: var(--bg-color); padding: 15px; border-radius: 6px;
+      height: 300px; overflow-y: auto; font-family: monospace; font-size: 13px; line-height: 1.5; text-align: left;
+    }
+    .log-entry { margin-bottom: 8px; }
+    .log-time { color: var(--text-muted); margin-right: 10px; }
+    .log-info { color: var(--accent-color); }
+    .log-success { color: var(--success); }
+    .log-error { color: var(--danger); }
+    
+    .btn-close-val { background-color: var(--danger); width: 100%; font-size: 16px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="section">
+      <h2>Шаблоны рассылки</h2>
+      <label>Выберите тип письма:</label>
+      <div class="btn-group" style="margin-top: 10px;">
+        <button id="btn-news" onclick="selectTemplate('news')">Новости</button>
+        <button id="btn-update" onclick="selectTemplate('update')">Обновление</button>
+        <button id="btn-security" onclick="selectTemplate('security')">Безопасность</button>
+      </div>
+    </div>
+
+    <div id="main-toolbar" class="toolbar" style="display: none; position: sticky; top: 0; z-index: 10; background: var(--panel-bg);">
+      <button type="button" title="Жирный" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)"><b>Ж</b></button>
+      <button type="button" title="Курсив" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)"><i>К</i></button>
+      <button type="button" title="Подчеркнутый" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)"><u>Ч</u></button>
+      <button type="button" title="Зачеркнутый" onmousedown="event.preventDefault(); document.execCommand('strikeThrough', false, null)"><s>З</s></button>
+      <button type="button" title="Ссылка" onmousedown="event.preventDefault(); formatLink()">🔗</button>
+      <button type="button" title="Моноширный (Код)" onmousedown="event.preventDefault(); formatMonospace()"><code>&lt;/&gt;</code></button>
+    </div>
+
+    <div id="form-container" class="form-container">
+      <div class="section">
+        <div class="input-group">
+          <label>Тема письма</label>
+          <input type="text" id="subject" placeholder="Введите тему..." required>
+        </div>
+
+        <div id="texts-wrapper">
+          <div class="input-group">
+            <label>Текст 1 (обязательно)</label>
+            <div id="text-1" class="rich-editor" contenteditable="true" data-placeholder="Основной текст..."></div>
+          </div>
+          <div class="input-group">
+            <label>Текст 2 (не обязательно)</label>
+            <div id="text-2" class="rich-editor" contenteditable="true"></div>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addTextField()">+ Добавить дополнительный текст</button>
+      </div>
+
+      <div class="section">
+        <div id="buttons-wrapper">
+          <label>Кнопки в письме</label>
+          <div class="btn-row-wrapper" id="btn-row-1">
+            <div class="dynamic-row">
+              <div class="input-group">
+                <label>Надпись на кнопке (можно выделять)</label>
+                <div id="btn-text-1" class="rich-editor" contenteditable="true" style="min-height: 40px;"></div>
+              </div>
+              <div class="input-group">
+                <label>Ссылка URL</label>
+                <input type="text" id="btn-url-1" placeholder="https://...">
+              </div>
+            </div>
+            <div class="color-picker-group">
+              <label style="margin: 0;">Цвет:</label>
+              <input type="color" id="btn-color-1" value="#2563eb">
+              <button class="btn-reset-color" onclick="resetColor(1)">Сбросить</button>
+            </div>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addButtonField()">+ Добавить дополнительную кнопку</button>
+      </div>
+
+      <button class="submit-btn" onclick="sendNewsletter()">Отправить рассылку</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-logs">
+    <div class="modal" style="text-align: left;">
+      <div class="modal-header">
+        <h3 style="margin:0;">Логи системы</h3>
+        <button class="close-modal" onclick="closeModal('modal-logs')">&times;</button>
+      </div>
+      <div class="log-container" id="log-container"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-validation">
+    <div class="modal" style="max-width: 400px;">
+      <h3 style="color: var(--danger); margin-top: 0;">Ошибка отправки</h3>
+      <div class="validation-text" id="validation-msg" style="color:#fff; margin-bottom:20px;"></div>
+      <button class="btn-close-val" onclick="closeModal('modal-validation')">Закрыть</button>
+    </div>
+  </div>
+
+  <script>
+    // --- КОНФИГУРАЦИЯ ---
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyrhCSwMffwPvvr4xuptVVKVnvOtqxOLQQGVjycwFWnZYQMLA7SoENuQYwl8fNWGdGw/exec"; // ЗАМЕНИ НА СВОЙ URL
+    const TG_BOT_TOKEN = "6537497957:AAGZS4adwPVJSlx16YCCDrKjO96rDK7ZstI";
+    const TG_CHAT_ID = "6434781065";
+    const DEFAULT_BTN_COLOR = "#2563eb";
+    
+    let currentAction = "";
+    let textCount = 2;
+    let btnCount = 1;
+
+    // Форматирование (добавление ссылки)
+    function formatLink() {
+      const url = prompt('Введите ссылку (начиная с http:// или https://):');
+      if (url) { document.execCommand('createLink', false, url); }
+    }
+
+    // Форматирование (моноширный код)
+    function formatMonospace() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const html = `<code style="background:rgba(0,0,0,0.1); padding:2px 4px; border-radius:4px; font-family:monospace;">${selection.toString()}</code>`;
+      document.execCommand('insertHTML', false, html);
+    }
+
+    function selectTemplate(action) {
+      currentAction = action;
+      document.querySelectorAll('.btn-group button').forEach(b => b.classList.remove('btn-active'));
+      document.getElementById('btn-' + action).classList.add('btn-active');
+      document.getElementById('form-container').style.display = 'block';
+      document.getElementById('main-toolbar').style.display = 'flex';
+    }
+
+    function addTextField() {
+      textCount++;
+      const wrapper = document.getElementById('texts-wrapper');
+      const div = document.createElement('div');
+      div.className = 'input-group';
+      div.innerHTML = `
+        <label>Текст ${textCount} (не обязательно)</label>
+        <div id="text-${textCount}" class="rich-editor" contenteditable="true"></div>
+      `;
+      wrapper.appendChild(div);
+    }
+
+    function addButtonField() {
+      btnCount++;
+      const wrapper = document.getElementById('buttons-wrapper');
+      const div = document.createElement('div');
+      div.className = 'btn-row-wrapper';
+      div.id = `btn-row-${btnCount}`;
+      div.innerHTML = `
+        <div class="dynamic-row">
+          <div class="input-group">
+            <label>Надпись на кнопке</label>
+            <div id="btn-text-${btnCount}" class="rich-editor" contenteditable="true" style="min-height: 40px;"></div>
+          </div>
+          <div class="input-group">
+            <label>Ссылка URL</label>
+            <input type="text" id="btn-url-${btnCount}" placeholder="https://...">
+          </div>
+        </div>
+        <div class="color-picker-group">
+          <label style="margin: 0;">Цвет:</label>
+          <input type="color" id="btn-color-${btnCount}" value="${DEFAULT_BTN_COLOR}">
+          <button class="btn-reset-color" onclick="resetColor(${btnCount})">Сбросить</button>
+        </div>
+      `;
+      wrapper.appendChild(div);
+    }
+
+    function resetColor(id) {
+      document.getElementById(`btn-color-${id}`).value = DEFAULT_BTN_COLOR;
+    }
+
+    function addLog(message, type = 'info') {
+      const container = document.getElementById('log-container');
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'log-entry';
+      div.innerHTML = `<span class="log-time">[${time}]</span><span class="log-${type}">${message}</span>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function sendTelegramStats(subject, gasData) {
+      const tgUrl = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
+      let failedList = "";
+      if (gasData.failed_count > 0) {
+        failedList = "\n\n❌ *Кому не отправлено:*\n";
+        gasData.failed_emails.forEach((err, idx) => { failedList += `${idx + 1}. ${err.email}\n`; });
+      }
+      const message = `🔔 *Рассылка завершена:*\n\n*Тип:* ${currentAction}\n*Тема:* ${subject}\n\n📊 *Статистика:*\n✅ Отправлено: ${gasData.sent_count}\n❌ Не отправлено: ${gasData.failed_count}${failedList}`;
+
+      fetch(tgUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TG_CHAT_ID, text: message, parse_mode: 'Markdown' })
+      }).then(res => res.json()).then(data => {
+        if (data.ok) addLog("Статистика отправлена в Telegram.", "success");
+        else addLog("Ошибка Telegram: " + data.description, "error");
+      }).catch(err => addLog("Ошибка сети Telegram: " + err, "error"));
+    }
+
+    function sendNewsletter() {
+      const subject = document.getElementById('subject').value.trim();
+      const text1 = document.getElementById('text-1').innerHTML.trim();
+
+      // Валидация
+      let errors = [];
+      if (!currentAction) errors.push("Выберите тип письма (Новости, Обновление, Безопасность).");
+      if (!subject) errors.push("Введите тему письма.");
+      // Удаляем HTML теги для проверки, реально ли там есть текст
+      if (!text1.replace(/<[^>]*>?/gm, '')) errors.push("Заполните Текст 1 (основной текст сообщения).");
+
+      if (errors.length > 0) {
+        document.getElementById('validation-msg').innerHTML = errors.join('<br><br>');
+        openModal('modal-validation');
+        return;
+      }
+
+      openModal('modal-logs');
+      document.getElementById('log-container').innerHTML = ''; 
+      addLog(`Инициализация рассылки [Action: ${currentAction}]`, "info");
+
+      // Сборка текста (сохраняя HTML-форматирование)
+      let fullBodyHtml = "";
+      for (let i = 1; i <= textCount; i++) {
+        const t = document.getElementById('text-' + i);
+        if (t && t.innerHTML.trim() !== "" && t.innerHTML.trim() !== "<br>") {
+          fullBodyHtml += `<p style="margin-bottom: 15px;">${t.innerHTML.trim()}</p>`;
+        }
+      }
+
+      // Сборка кнопок в JSON массив
+      let buttonsArray = [];
+      for (let i = 1; i <= btnCount; i++) {
+        const btnTextElem = document.getElementById('btn-text-' + i);
+        const btnUrlElem = document.getElementById('btn-url-' + i);
+        const btnColorElem = document.getElementById('btn-color-' + i);
+        
+        if (btnTextElem && btnUrlElem) {
+          const btnText = btnTextElem.innerHTML.trim();
+          const btnUrl = btnUrlElem.value.trim();
+          const btnColor = btnColorElem ? btnColorElem.value : DEFAULT_BTN_COLOR;
+          
+          if (btnText && btnUrl) {
+            buttonsArray.push({ text: btnText, url: btnUrl, color: btnColor });
+          }
+        }
+      }
+
+      const formData = new URLSearchParams();
+      formData.append('action', currentAction);
+      formData.append('subject', subject);
+      formData.append('body', fullBodyHtml);
+      formData.append('buttons', JSON.stringify(buttonsArray)); // Отправляем кнопки отдельно
+
+      addLog(`Отправка данных на сервер...`, "info");
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Ошибка сети: ' + response.status);
+        return response.json();
+      })
+      .then(data => {
+        if (data.status === "success") {
+          addLog(`✅ Рассылка завершена. Успешно: ${data.sent_count}, Ошибок: ${data.failed_count}`, "success");
+          sendTelegramStats(subject, data);
+        } else {
+          addLog("Ошибка от сервера: " + data.message, "error");
+        }
+      })
+      .catch(err => {
+        addLog("Критическая ошибка: " + err.message, "error");
+      });
+    }
+  </script>
+</body>
+</html>

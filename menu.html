@@ -257,6 +257,14 @@ transform:scale(.98);
 <div class="right">›</div>
 </a>
 
+<a id="sendBroadcastBtn" href="rass.html" class="btn hidden">
+<div class="row">
+<div class="icon"><i class="fa-solid fa-bullhorn"></i></div>
+<div>Отправить рассылку</div>
+</div>
+<div class="right">›</div>
+</a>
+
 </div>
 </div>
 
@@ -333,6 +341,14 @@ const isAdmin = localStorage.getItem('admin') === 'true';
 if(isAdmin){
  document.getElementById('sendPhotoBtn').classList.remove('hidden');
 }
+})();
+// Показать кнопку рассылки для администратора
+(function(){
+  const isAdmin = localStorage.getItem('admin') === 'true';
+  if(isAdmin){
+    const el = document.getElementById('sendBroadcastBtn');
+    if (el) el.classList.remove('hidden');
+  }
 })();
 
 // UPDATE LINKS

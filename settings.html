@@ -729,45 +729,29 @@ function confirmNewsSubscription() {
     newsModalPreloader.classList.add('active');
     newsModalPreloaderText.textContent = action === 'enable' ? 'Включение...' : 'Отключение...';
     
-    // Выполняем fetch запрос (пытаемся прочитать тело ответа и показывать ошибки от GAS)
+    // Выполняем fetch запрос
     const requestData = {
         action: action === 'enable' ? 'add' : 'delete',
         userToken: localStorage.getItem('user_Token'),
         userID: Telegram?.WebApp?.initDataUnsafe?.user?.id || null,
         userEmail: userEmail
     };
-
-    const previousState = localStorage.getItem('newsSubscription') === 'true';
-
+    
     fetch(GAS_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(requestData)
     })
-    .then(async (res) => {
-        // Если ответ не OK — пробуем прочитать тело и выбросить ошибку
-        if (!res.ok) {
-            let text;
-            try { text = await res.text(); } catch (e) { text = `HTTP ${res.status}`; }
-            throw new Error(text || `HTTP ${res.status}`);
-        }
-
-        // Попытка распарсить JSON-ответ (если есть)
-        let data = null;
-        try { data = await res.json(); } catch (e) { /* не JSON — игнорируем */ }
-
-        if (data && data.error) {
-            throw new Error(typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
-        }
-
-        // Успех
+    .then(() => {
+        // Обновляем статус подписки
         const newState = action === 'enable' ? 'true' : 'false';
         localStorage.setItem('newsSubscription', newState);
         localStorage.setItem('newsSubscriptionLastToggle', Date.now().toString());
-
+        
         // Обновляем UI
         newsSwitch.classList.toggle('active', action === 'enable');
-
+        
         // Скрываем прелоадер и закрываем модаль
         setTimeout(() => {
             modal.style.display = 'none';
@@ -776,16 +760,11 @@ function confirmNewsSubscription() {
             pendingNewsAction = null;
         }, 500);
     })
-    .catch((err) => {
-        // Скрываем прелоадер и показываем ошибку от сервера
+    .catch(() => {
+        // Скрываем прелоадер и показываем ошибку
         newsModalForm.style.display = 'block';
         newsModalPreloader.classList.remove('active');
-        const message = err && err.message ? err.message : 'Ошибка при выполнении операции. Попробуйте позже.';
-        showInfoModal('Ошибка от сервера', message, 'fa-triangle-exclamation');
-
-        // Откатываем состояние переключателя к предыдущему
-        newsSwitch.classList.toggle('active', previousState);
-
+        showInfoModal('Ошибка', 'Ошибка при выполнении операции. Попробуйте позже.', 'fa-triangle-exclamation');
         modal.style.display = 'none';
         pendingNewsAction = null;
     });

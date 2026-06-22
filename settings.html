@@ -375,6 +375,7 @@ a:hover{
                 </div>
                 <div class="label">
                     <h3>Liquid Glass</h3>
+                    <small>Включает эффект жидкого стекла для интерфейса приложения.</small>
                 </div>
                 <div id="liquidSwitch" class="switch"></div>
             </div>
@@ -733,7 +734,7 @@ function confirmNewsSubscription() {
     const requestData = {
         action: action === 'enable' ? 'add' : 'delete',
         userToken: localStorage.getItem('user_Token'),
-        userID: Telegram?.WebApp?.initDataUnsafe?.user?.id || null,
+        userID: Telegram?.WebApp?.initDataUnsafe?.user?.id || 'null',
         userEmail: userEmail
     };
     

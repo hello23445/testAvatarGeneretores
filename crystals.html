@@ -252,15 +252,15 @@ position: sticky;
 /* Сетка карточек */
 .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 8px;
 }
 
 /* Карточки товара */
 .card {
     position: relative;
-    padding: 18px 12px;
-    border-radius: 20px;
+    padding: 10px 12px;
+    border-radius: 10px;
     background: var(--card-bg);
     border: 1px solid var(--card-border) !important;
     backdrop-filter: blur(16px);
@@ -271,16 +271,17 @@ position: sticky;
     transform-style: preserve-3d;
     touch-action: pan-y;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    text-align: center;
+    text-align: left;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255,255,255,0.03);
+    gap: 8px;
 }
 .card:hover {
-    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-4px);
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-2px) scale(1.01);
     border-color: var(--card-hover-border) !important;
-    box-shadow: 0 12px 24px rgba(56, 189, 248, 0.15), inset 0 1px 1px rgba(255,255,255,0.05);
+    box-shadow: 0 16px 32px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.08);
 }
 .card:active {
     transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) scale(0.96);
@@ -295,18 +296,17 @@ position: sticky;
 }
 
 .crystals {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 14px;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: -0.5px;
-    margin-top: 8px;
-    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+    margin: 0;
 }
 .price {
     font-size: 11px;
     color: var(--text-muted);
-    line-height: 1.3;
-    margin-bottom: 12px;
+    line-height: 1.2;
+    margin: 0;
 }
 .price strong {
     color: #cbd5e1;
@@ -315,14 +315,14 @@ position: sticky;
 .price-tag {
     background: rgba(37, 99, 235, 0.15);
     border: 1px solid rgba(56, 189, 248, 0.2);
-    padding: 6px 14px;
-    border-radius: 12px;
+    padding: 5px 10px;
+    border-radius: 10px;
     color: #ffffff;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     transition: background 0.2s;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
@@ -419,6 +419,38 @@ position: sticky;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Анимация заливки: от левого края к правому до полного заполнения, затем уход вправо */
+@keyframes borderFillLTR {
+    0% {
+        clip-path: inset(0 100% 0 0);
+    }
+    50% {
+        clip-path: inset(0 0 0 0);
+    }
+    100% {
+        clip-path: inset(0 0 0 100%);
+    }
+}
+
+.card-paying {
+    /* Прячем базовый бордер, чтобы он не просвечивал под анимацией */
+    border-color: transparent !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255,255,255,0.05) !important;
+}
+
+/* Создаем псевдоэлемент, который рисует анимированную белую границу */
+.card-paying::after {
+    content: "";
+    position: absolute;
+    inset: -1px; /* Выравниваем ровно поверх оригинальной границы (1px) */
+    border: 2px solid #ffffff; /* Толщина и цвет анимированной границы */
+    border-radius: inherit; /* Идеально повторяет скругления родительской карточки */
+    pointer-events: none; /* Блокируем перехват кликов */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: borderFillLTR 2s ease-in-out infinite;
+    z-index: 10;
+}
 @media (max-width: 480px) {
     .modal-overlay { padding: 12px; }
     .modal-content { max-width: 320px; width: 100%; padding: 16px; }
@@ -430,13 +462,13 @@ position: sticky;
 /* Адаптивная сетка под экраны ПК и Планшетов + позиционирование нижних панелей */
 @media (min-width: 1024px) {
     .container { max-width: 1200px; }
-    .grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
     .tabs-container { max-width: 1200px; }
     .crystal-counter { right: calc(50% - 600px + 16px); top: 24px; }
 }
 @media (min-width: 768px) and (max-width: 1023px) {
     .container { max-width: 800px; }
-    .grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid { grid-template-columns: 1fr; gap: 10px; }
     .tabs-container { max-width: 800px; }
     .crystal-counter { right: calc(50% - 400px + 16px); top: 24px; }
 }
@@ -596,15 +628,6 @@ function generateCards() {
         div.className = 'card';
         div.onclick = () => buy(index);
         
-        let badgeHTML = '';
-        if (isPopular) {
-            badgeHTML = `<div class="badge" style="background: #2563eb; color: #fff;"><i class="fa-solid fa-fire" style="margin-right:6px;"></i>Хит</div>`;
-        } else if (isEco) {
-            badgeHTML = `<div class="badge" style="background: #0284c7; color: #fff;"><i class="fa-regular fa-thumbs-up" style="margin-right:6px;"></i>Выгодно</div>`;
-        } else if (isVip) {
-            badgeHTML = `<div class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3)"><i class="fa-solid fa-crown" style="margin-right:6px;"></i>VIP</div>`;
-        }
-        
         let iconColor = '#38bdf8';
         let glow = '';
         if (item.crystals >= 50000) {
@@ -616,20 +639,19 @@ function generateCards() {
         }
 
         div.innerHTML = `
-            ${badgeHTML}
-            <div style="margin-top: 6px; ${glow}">
-                <i class="fa-solid fa-gem" style="font-size: 28px; color: ${iconColor}; margin-top: 90%"></i>
+            <div style="display: flex; align-items: center; gap: 8px; flex: 1; ${glow}">
+                <i class="fa-solid fa-gem" style="font-size: 16px; color: ${iconColor}; flex-shrink: 0;"></i>
+                <div style="display: flex; align-items: center; gap: 3px;">
+                    <div class="crystals">${formatNumber(item.crystals)}</div>
+                    <div class="price">кристаллов</div>
+                </div>
             </div>
-            <div class="crystals">${formatNumber(item.crystals)}</div>
-            <div class="price">кристаллов</div>
-            <div class="price-tag">
+            <div class="price-tag" style="flex-shrink: 0;">
                 <span>${formatNumber(item.price)}</span><span style="color: #fbbf24; font-size:11px;">🌟</span>
             </div>
         `;
         shop.appendChild(div);
     });
-    
-    attachTiltEffect('.card');
 }
 
 function setTabsMarginForCategory(category) {
@@ -683,8 +705,8 @@ function attachTiltEffect(selector) {
             const rect = card.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const offset = clientX - centerX;
-            const maxTilt = 5;
-            const tilt = (offset / (rect.width / 2)) * maxTilt;
+            const maxTilt = 3;
+            const tilt = Math.max(-maxTilt, Math.min(maxTilt, (offset / (rect.width / 2)) * maxTilt));
             card.style.setProperty('--card-tilt', `${tilt}deg`);
         };
         const resetTilt = () => {
@@ -764,7 +786,15 @@ async function buy(index) {
     const invoiceUrl = await createInvoiceLink(item);
     if (!invoiceUrl) return;
     
+    const cardElements = document.querySelectorAll('.card');
+    if (cardElements[index]) {
+        cardElements[index].classList.add('card-paying');
+    }
+    
     tg.openInvoice(invoiceUrl, function(status) {
+        if (cardElements[index]) {
+            cardElements[index].classList.remove('card-paying');
+        }
         if (status === 'paid' || status === 'success') {
             const newTotal = addCrystals(item.crystals);
             showMessageModal(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);

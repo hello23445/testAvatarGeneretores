@@ -536,13 +536,15 @@ position: sticky;
     document.head.appendChild(style);
   }
 })();</script>
-
-<div class="crystal-counter">
+<div class="crystal-counter" id="crystal-counter">
     <i class="fa-solid fa-gem"></i>
     <span id="crystalCount">0</span>
 </div>
 
 <script>
+    if (localStorage.getItem('fullscreenMode') === 'true') {
+        document.getElementById('crystal-counter').style.marginTop = '20%';
+    }
 // Навигационные функции сохранены
 function goBack() {
     const returnPage = localStorage.getItem('crystalReturnPage');

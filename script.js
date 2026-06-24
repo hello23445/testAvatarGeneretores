@@ -2253,3 +2253,12 @@ try {
   window.uploadReminderRemove = uploadReminderRemove;
   window.uploadReminderBack = uploadReminderBack;
 } catch (e) { /* ignore in restricted environments */ }
+
+if (localStorage.getItem('fullscreenMode') === 'true'){
+  const marginElements = document.getElementsByName('margin-top');
+  for (const el of marginElements) {
+    if (el && el.style) {
+      el.style.marginTop = '20%';
+    }
+  }
+}

@@ -269,7 +269,7 @@ position: sticky;
     overflow: hidden;
     transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
     transform-style: preserve-3d;
-    touch-action: pan-y;
+    touch-action: manipulation;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -283,8 +283,10 @@ position: sticky;
     border-color: var(--card-hover-border) !important;
     box-shadow: 0 16px 32px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.08);
 }
-.card:active {
+.card:active,
+.card:focus {
     transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) scale(0.96);
+    border-color: transparent !important;
 }
 .card::before {
     content: "";

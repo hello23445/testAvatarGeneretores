@@ -432,6 +432,7 @@
 
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="sheet" role="document">
+      <div name="margin-top"></div>
       <h2 id="modalTitle">Подробности параметров</h2>
       <div id="details" class="details"></div>
       <div class="bar">
@@ -824,6 +825,16 @@ if (/iPhone/i.test(navigator.userAgent)) {
   }
 }
   </script>
+      <script>
+        if (localStorage.getItem('fullscreenMode') === 'true'){
+          const marginElements = document.getElementsByName('margin-top');
+          for (const el of marginElements) {
+            if (el && el.style) {
+              el.style.marginTop = '20%';
+            }
+          }
+        }
+      </script>
   <script type="module" src="security.js"></script>
 </body>
 </html>

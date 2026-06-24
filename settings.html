@@ -518,6 +518,11 @@ function initSettings() {
         }
         
         fullscreenSwitch.classList.toggle('active');
+        
+        // Перезагружаем сайт
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
     });
 
     // === Confirmation Before Close ===

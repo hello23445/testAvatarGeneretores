@@ -9,6 +9,8 @@
 <style>
 /* --- ОБНОВЛЕННЫЙ ПРЕМИУМ-СТИЛЬ (СИНИЙ / ТЕМНО-СИНИЙ) --- */
 * {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -270,6 +272,10 @@ position: sticky;
     transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0);
     transform-style: preserve-3d;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    outline: none;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -279,14 +285,18 @@ position: sticky;
     gap: 8px;
 }
 .card:hover {
-    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(-2px) scale(1.01);
-    border-color: var(--card-hover-border) !important;
-    box-shadow: 0 16px 32px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.08);
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0) scale(1);
+    border-color: rgba(255,255,255,0.15) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255,255,255,0.03);
 }
 .card:active,
-.card:focus {
-    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) scale(0.96);
+.card:focus,
+.card:focus-visible,
+.card:focus-within {
+    transform: perspective(800px) rotateY(var(--card-tilt, 0deg)) translateY(0) scale(1) !important;
     border-color: transparent !important;
+    outline: none !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255,255,255,0.03) !important;
 }
 .card::before {
     content: "";
@@ -308,7 +318,7 @@ position: sticky;
     font-size: 11px;
     color: var(--text-muted);
     line-height: 1.2;
-    margin: 0;
+    margin: 0 0 0 4px;
 }
 .price strong {
     color: #cbd5e1;

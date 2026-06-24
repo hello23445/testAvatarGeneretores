@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
@@ -33,9 +33,34 @@ body {
     background: var(--bg-gradient);
     color: var(--text-main);
     padding: 16px;
-    padding-bottom: 110px; /* Отступ снизу, чтобы контент не перекрывался фиксированной панелью */
+    padding-bottom: 110px;
     position: relative;
-    backdrop-filter: blur(20px);
+    /* УДАЛИТЕ ИЛИ ЗАКОММЕНТИРУЙТЕ СТРОКУ НИЖЕ: */
+    /* backdrop-filter: blur(20px); */
+}
+.crystal-counter {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    border-radius: 24px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    color: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    z-index: 9999;
+    transition: all 0.2s ease;
+}
+.crystal-counter i {
+    color: var(--neon-blue);
+    font-size: 16px;
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
 }
 .back-center,
 .ad-center,
@@ -489,21 +514,28 @@ position: sticky;
 <body class="with-bottom-nav">
 <script>
 // LIQUID GLASS EFFECT - сохранено в исходном виде
+// LIQUID GLASS EFFECT - Обновленный
 (function(){
   const liquidState = localStorage.getItem('liquid');
   if (liquidState === 'Включен') {
-    document.body.style.backdropFilter = "blur(20px)";
+    // Вместо добавления фильтра на body, добавляем его на псевдоэлемент через стили
     const style = document.createElement('style');
     style.id = 'liquid-style';
     style.textContent = `
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        backdrop-filter: blur(20px);
+      }
       button, .btn, .back-btn, .back-center, .ad-center, .card, .crystal-card, .modal-btn, input, [role="button"] { 
         border: 1px solid rgba(255,255,255,0.8) !important; 
       }
     `;
     document.head.appendChild(style);
   }
-})();
-</script>
+})();</script>
 
 <div class="crystal-counter">
     <i class="fa-solid fa-gem"></i>
@@ -530,9 +562,61 @@ function updateCrystalCounter() {
         counterElement.textContent = count;
     }
 }
-function showAdModal() { document.getElementById('adModalOverlay').classList.add('active'); }
+
+function getAdWatchInfo() {
+    const storedStart = Number(localStorage.getItem('adWatchWindowStart') || '0');
+    const storedCount = Number(localStorage.getItem('adWatchCount') || '0');
+    const now = Date.now();
+    const maxWindow = 1 * 60 * 60 * 1000;
+
+    if (!storedStart || now - storedStart > maxWindow) {
+        localStorage.setItem('adWatchWindowStart', String(now));
+        localStorage.setItem('adWatchCount', '0');
+        return { count: 0, windowStart: now };
+    }
+
+    return { count: storedCount, windowStart: storedStart };
+}
+
+function canWatchAd() {
+    return getAdWatchInfo().count < 2;
+}
+
+function getAdWatchRemainingText() {
+    const { count, windowStart } = getAdWatchInfo();
+    if (count >= 2) {
+        const remainingMs = Math.max(0, (windowStart + 1 * 60 * 60 * 1000) - Date.now());
+        const minutes = Math.ceil(remainingMs / 60000);
+        return `Вы уже посмотрели рекламу 2 раза. Следующий просмотр будет доступен через ${minutes} минут.`;
+    }
+    return `Доступно ${2 - count} из 2 просмотров.`;
+}
+
+function incrementAdWatchCount() {
+    const info = getAdWatchInfo();
+    const nextCount = Math.min(2, info.count + 1);
+    localStorage.setItem('adWatchCount', String(nextCount));
+    if (!localStorage.getItem('adWatchWindowStart')) {
+        localStorage.setItem('adWatchWindowStart', String(Date.now()));
+    }
+}
+
+function showAdModal() {
+    if (!canWatchAd()) {
+        showMessageModal(getAdWatchRemainingText());
+        return;
+    }
+    document.getElementById('adModalOverlay').classList.add('active');
+}
+
 function closeAdModal() { document.getElementById('adModalOverlay').classList.remove('active'); }
-function proceedToAd() { localStorage.setItem('fromCrystals', 'true'); window.location.href = 'ad.html'; }
+
+function proceedToAd() {
+    incrementAdWatchCount();
+    localStorage.setItem('fromCrystals', 'true');
+    window.location.href = 'ad.html';
+}
+
 function showMessageModal(message) {
     const messageText = document.getElementById('messageModalText');
     messageText.textContent = message;
@@ -573,7 +657,6 @@ function closeMessageModal() { document.getElementById('messageModalOverlay').cl
 
     <div style="text-align: center; margin: 28px 0 20px 0;">
         <h1 style="font-size: 26px; font-weight: 850; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 6px;">Покупка кристаллов</h1>
-        <p style="font-size: 13px; color: #64748b; max-width: 290px; margin: 0 auto; line-height: 1.4;">Выберите нужный объем для мгновенного зачисления</p>
     </div>
 
     <div class="grid" id="shop"></div>

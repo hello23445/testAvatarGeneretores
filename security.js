@@ -195,7 +195,7 @@ if (!window.__gas_sent && localStorage.getItem('GASES_SENT') !== '1') {
 
 //Оптимизация полноэкранного режима
 const bannedLocationLists = ['setID.html', 'setEMAIL.html']
-if (localStorage.getItem('fullscreenMode') === 'true' && !bannedLocationLists.includes(window.location.pathname.split('/').pop())){
+if (localStorage.getItem('fullscreenMode') === 'true' && /iPhone/i.test(navigator.userAgent) && !bannedLocationLists.includes(window.location.pathname.split('/').pop())){
     document.body.style.marginTop = '20%';
 }
 else{

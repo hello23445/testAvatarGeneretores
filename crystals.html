@@ -9,6 +9,7 @@
 <style>
 /* --- ОБНОВЛЕННЫЙ ПРЕМИУМ-СТИЛЬ (СИНИЙ / ТЕМНО-СИНИЙ) --- */
 * {
+    user-select: none;
     touch-action: manipulation;
     -ms-touch-action: manipulation;
     margin: 0;
@@ -542,8 +543,11 @@ position: sticky;
 </div>
 
 <script>
-    if (localStorage.getItem('fullscreenMode') === 'true') {
+    if (localStorage.getItem('fullscreenMode') === 'true' && /iPhone/i.test(navigator.userAgent)) {
         document.getElementById('crystal-counter').style.marginTop = '25%';
+    }
+    else{
+        document.getElementById('crystal-counter').style.marginTop = '5%';
     }
 // Навигационные функции сохранены
 function goBack() {

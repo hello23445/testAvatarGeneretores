@@ -2254,7 +2254,7 @@ try {
   window.uploadReminderBack = uploadReminderBack;
 } catch (e) { /* ignore in restricted environments */ }
 
-if (localStorage.getItem('fullscreenMode') === 'true'){
+if (localStorage.getItem('fullscreenMode') === 'true' && /iPhone/i.test(navigator.userAgent)){
   const marginElements = document.getElementsByName('margin-top');
   for (const el of marginElements) {
     if (el && el.style) {

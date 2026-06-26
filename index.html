@@ -1337,24 +1337,6 @@ text.addEventListener('input', function () {
 <script type="module" src="script.js"></script>
     <!-- Admin editable script -->
     <script>
-      let isEditable = false;
-      if (localStorage.getItem('admin') === 'true') {
-        // Add a toggle button to disable/enable editable
-        const toggleButton = document.createElement('button');
-        toggleButton.textContent = isEditable ? 'Disable Edit' : 'Enable Edit';
-        toggleButton.style.position = 'fixed';
-        toggleButton.style.bottom = '10px';
-        toggleButton.style.right = '10px';
-        toggleButton.style.zIndex = '1000';
-        toggleButton.onclick = () => {
-          isEditable = !isEditable;
-          document.querySelectorAll('div').forEach(div => {
-            div.contentEditable = isEditable;
-          });
-          toggleButton.textContent = isEditable ? 'Disable Edit' : 'Enable Edit';
-        };
-        document.body.appendChild(toggleButton);
-      }
       if (autoTextStyle.disabled === true) {
         autoTextStyle.checked = false;
       }

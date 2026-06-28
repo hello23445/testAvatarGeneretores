@@ -893,23 +893,23 @@ async function buy(index) {
         cardElements[index].classList.add('card-paying');
     }
     
-    tg.openInvoice(invoiceUrl, function(status) {
-        if (cardElements[index]) {
-            cardElements[index].classList.remove('card-paying');
-        }
-        
-        window.Telegram?.WebApp.onEvent('successful_payment', () => {
+    Telegram.WebApp.onEvent('invoiceClosed', (event) => {
+        console.log(event.status);
+
+        if (event.status === 'paid') {
             const newTotal = addCrystals(item.crystals);
-            showMessageModal(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
-            if (tg.sendData) {
-                tg.sendData(JSON.stringify({
-                    action: 'purchase_complete',
-                    crystals: item.crystals,
-                    stars: item.price,
-                    timestamp: new Date().toISOString()
-                }));
-            }
-        });
+
+            showMessageModal(
+                `✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`
+            );
+
+            tg.sendData?.(JSON.stringify({
+                action: 'purchase_complete',
+                crystals: item.crystals,
+                stars: item.price,
+                timestamp: new Date().toISOString()
+            }));
+        }
     });
 }
 

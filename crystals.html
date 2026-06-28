@@ -897,8 +897,8 @@ async function buy(index) {
         if (cardElements[index]) {
             cardElements[index].classList.remove('card-paying');
         }
-        const paid = status === 'paid' || status === 'success' || (status && status.status === 'paid') || (status && status.status === 'success');
-        if (paid) {
+        
+        window.Telegram?.WebApp.onEvent('successful_payment', () => {
             const newTotal = addCrystals(item.crystals);
             showMessageModal(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
             if (tg.sendData) {
@@ -909,11 +909,7 @@ async function buy(index) {
                     timestamp: new Date().toISOString()
                 }));
             }
-        } else if (status === 'failed' || (status && status.status === 'failed')) {
-            showMessageModal('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
-        } else if (status === 'pending' || (status && status.status === 'pending')) {
-            showMessageModal('⏳ Платёж обрабатывается...');
-        }
+        });
     });
 }
 

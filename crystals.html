@@ -685,26 +685,26 @@ updateCrystalCounter();
 // VIP - 'VIP'
 // Товары
 const products = [
-    { crystals: 10, price: 5, buttonText: "5🌟", type: 'just' },
-    { crystals: 25, price: 10, buttonText: "10🌟", type: 'just' },
-    { crystals: 50, price: 18, buttonText: "18🌟", type: 'just' },
-    { crystals: 80, price: 25, buttonText: "25🌟", type: 'just' },
-    { crystals: 120, price: 35, buttonText: "35🌟", type: 'popular' },
-    { crystals: 200, price: 55, buttonText: "55🌟", type: 'just' },
-    { crystals: 350, price: 85, buttonText: "85🌟", type: 'popular' },
-    { crystals: 500, price: 120, buttonText: "120🌟", type: 'just' },
-    { crystals: 800, price: 180, buttonText: "180🌟", type: 'popular' },
-    { crystals: 1200, price: 250, buttonText: "250🌟(Выгодно)", type: 'cheaper' },
-    { crystals: 1800, price: 350, buttonText: "350🌟", type: 'cheaper' },
-    { crystals: 2500, price: 470, buttonText: "470🌟", type: 'just' },
-    { crystals: 3500, price: 620, buttonText: "620🌟", type: 'just' },
-    { crystals: 5000, price: 850, buttonText: "850🌟", type: 'just' },
-    { crystals: 7500, price: 1200, buttonText: "1 200🌟", type: 'popular' },
-    { crystals: 10000, price: 1500, buttonText: "1 500🌟", type: 'just' },
-    { crystals: 50000, price: 7500, buttonText: "7 500🌟", type: 'VIP' },
-    { crystals: 100000, price: 13000, buttonText: "13 000🌟", type: 'VIP' },
-    { crystals: 500000, price: 65000, buttonText: "65 000🌟", type: 'VIP' },
-    { crystals: 1000000, price: 90000, buttonText: "90 000🌟", type: 'VIP' }
+    { crystals: 10, price: 1, buttonText: "5🌟", type: 'just' }, //5
+    { crystals: 25, price: 1, buttonText: "10🌟", type: 'just' }, //10
+    { crystals: 50, price: 1, buttonText: "18🌟", type: 'just' }, //18
+    { crystals: 80, price: 1, buttonText: "25🌟", type: 'just' }, //25
+    { crystals: 120, price: 1, buttonText: "35🌟", type: 'popular' }, // 35
+    { crystals: 200, price: 1, buttonText: "55🌟", type: 'just' }, // 55
+    { crystals: 350, price: 1, buttonText: "85🌟", type: 'popular' }, //85
+    { crystals: 500, price: 1, buttonText: "120🌟", type: 'just' }, //120
+    { crystals: 800, price: 1, buttonText: "180🌟", type: 'popular' }, //180
+    { crystals: 1200, price: 1, buttonText: "250🌟(Выгодно)", type: 'cheaper' }, //250
+    { crystals: 1800, price: 1, buttonText: "350🌟", type: 'cheaper' }, //350
+    { crystals: 2500, price: 1, buttonText: "470🌟", type: 'just' }, //470
+    { crystals: 3500, price: 1, buttonText: "620🌟", type: 'just' }, //620
+    { crystals: 5000, price: 1, buttonText: "850🌟", type: 'just' }, //850
+    { crystals: 7500, price: 1, buttonText: "1 200🌟", type: 'popular' }, //1200
+    { crystals: 10000, price: 1, buttonText: "1 500🌟", type: 'just' }, //1500
+    { crystals: 50000, price: 1, buttonText: "7 500🌟", type: 'VIP' }, //7500
+    { crystals: 100000, price: 1, buttonText: "13 000🌟", type: 'VIP' }, //13000
+    { crystals: 500000, price: 1, buttonText: "65 000🌟", type: 'VIP' }, // 65000
+    { crystals: 1000000, price: 1, buttonText: "90 000🌟", type: 'VIP' } //90000
 ];
 
 const shop = document.getElementById('shop');
@@ -897,7 +897,8 @@ async function buy(index) {
         if (cardElements[index]) {
             cardElements[index].classList.remove('card-paying');
         }
-        if (status === 'paid' || status === 'success') {
+        const paid = status === 'paid' || status === 'success' || (status && status.status === 'paid') || (status && status.status === 'success');
+        if (paid) {
             const newTotal = addCrystals(item.crystals);
             showMessageModal(`✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`);
             if (tg.sendData) {
@@ -908,10 +909,10 @@ async function buy(index) {
                     timestamp: new Date().toISOString()
                 }));
             }
-        } else if (status === 'failed') {
+        } else if (status === 'failed' || (status && status.status === 'failed')) {
             showMessageModal('❌ Ошибка платежа. Пожалуйста, попробуйте снова.');
-        } else if (status === 'pending') {
-            showMessageModal('⏳ Платеж обрабатывается...');
+        } else if (status === 'pending' || (status && status.status === 'pending')) {
+            showMessageModal('⏳ Платёж обрабатывается...');
         }
     });
 }

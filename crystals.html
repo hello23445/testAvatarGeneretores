@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
@@ -893,30 +893,26 @@ async function buy(index) {
         cardElements[index].classList.add('card-paying');
     }
     
-    tg.openInvoice(invoiceUrl, function(status) {
-        if (cardElements[index]) {
-            cardElements[index].classList.remove('card-paying');
-        }
-        
-        Telegram.WebApp.onEvent('invoiceClosed', (event) => {
-            console.log(event.status);
+tg.openInvoice(invoiceUrl, function(status) {
+    if (cardElements[index]) {
+        cardElements[index].classList.remove('card-paying');
+    }
 
-            if (event.status === 'paid') {
-                const newTotal = addCrystals(item.crystals);
+    if (status === 'paid') {
+        const newTotal = addCrystals(item.crystals);
 
-                showMessageModal(
-                    `✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`
-                );
+        showMessageModal(
+            `✅ Спасибо за покупку!\n\nПолучено: 💎 ${item.crystals}\nВсего кристаллов: ${newTotal}`
+        );
 
-                tg.sendData?.(JSON.stringify({
-                    action: 'purchase_complete',
-                    crystals: item.crystals,
-                    stars: item.price,
-                    timestamp: new Date().toISOString()
-                }));
-            }
-        });
-    });
+        tg.sendData?.(JSON.stringify({
+            action: 'purchase_complete',
+            crystals: item.crystals,
+            stars: item.price,
+            timestamp: new Date().toISOString()
+        }));
+    }
+});
 }
 
 if (window.Telegram && window.Telegram.WebApp) {
